@@ -1,4 +1,6 @@
 import os
+import types
+import click
 
 from confluent_kafka import avro, Producer
 from confluent_kafka.avro import CachedSchemaRegistryClient
@@ -23,9 +25,6 @@ value_schema_str = """
 """
 
 value_schema = avro.loads(value_schema_str)
-value = {"topic": "iocin1-heartbeat", "mask": ""}
-key = "iocin1:heartbeat"
-
 
 def delivery_report(err, msg):
     """ Called once for each message produced to indicate delivery result.
@@ -33,7 +32,7 @@ def delivery_report(err, msg):
     if err is not None:
         print('Message delivery failed: {}'.format(err))
     else:
-        print('Message delivered to {} [{}]'.format(msg.topic(), msg.partition()))
+        print('Message delivered')
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 schema_registry = CachedSchemaRegistryClient(os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081'))
@@ -46,7 +45,39 @@ p = Producer({
     'on_delivery': delivery_report})
 
 topic = 'monitored-pvs'
-val_payload = serialize_avro(topic, value_schema, value, is_key=False)
 
-p.produce(topic=topic, value=val_payload, key=key)
-p.flush()
+def send() :
+    if params.value is None:
+        val_payload = None
+    else:
+        val_payload = serialize_avro(topic, value_schema, params.value, is_key=False)
+
+    p.produce(topic=topic, value=val_payload, key=params.key)
+    p.flush()
+
+@click.command()
+@click.option('--unset', is_flag=True, help="Stop monitoring the specified PV")
+@click.option('--topic', required=False, help="Topic to produce monitor messages on (because some pv names contain illegal topic characters)")
+@click.option('--mask', required=False, type=click.Choice(['VALUE', 'VALUE_ALARM', 'VALUE_ALARM_ATTRIBUTE']), help="EPICS CA Monitor Mask")
+@click.argument('name')
+
+def cli(unset, topic, mask, name):
+    global params
+
+    params = types.SimpleNamespace()
+
+    params.key = name
+
+    if unset:
+        params.value = None
+    else:
+        if topic == None or mask == None:
+            raise click.ClickException(
+                    "Must specify options --topic and --mask")
+
+        params.value = {"topic": topic, "mask": mask}
+
+    send()
+
+cli()
+
