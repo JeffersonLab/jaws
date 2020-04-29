@@ -1,6 +1,8 @@
-from confluent_kafka import avro
-from confluent_kafka.avro import AvroProducer
+import os
 
+from confluent_kafka import avro, Producer
+from confluent_kafka.avro import CachedSchemaRegistryClient
+from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
 
 value_schema_str = """
 {
@@ -9,25 +11,11 @@ value_schema_str = """
    "type": "record",
    "fields" : [
      {
-       "name" : "name",
+       "name" : "topic",
        "type" : "string"
      },
      {
-       "name" : "topic",
-       "type" : "string"
-     }
-   ]
-}
-"""
-
-key_schema_str = """
-{
-   "namespace": "org.jlab",
-   "name": "MonitoredPV",
-   "type": "record",
-   "fields" : [
-     {
-       "name" : "name",
+       "name" : "mask",
        "type" : "string"
      }
    ]
@@ -35,9 +23,8 @@ key_schema_str = """
 """
 
 value_schema = avro.loads(value_schema_str)
-key_schema = avro.loads(key_schema_str)
-value = {"name": "iocin1:heartbeat", "topic": "iocin1-heartbeat"}
-key = {"name": "iocin1:heartbeat"}
+value = {"topic": "iocin1-heartbeat", "mask": ""}
+key = "iocin1:heartbeat"
 
 
 def delivery_report(err, msg):
@@ -48,12 +35,18 @@ def delivery_report(err, msg):
     else:
         print('Message delivered to {} [{}]'.format(msg.topic(), msg.partition()))
 
+bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
+schema_registry = CachedSchemaRegistryClient(os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081'))
 
-avroProducer = AvroProducer({
-    'bootstrap.servers': 'localhost',
-    'on_delivery': delivery_report,
-    'schema.registry.url': 'http://localhost:8081'
-    }, default_key_schema=key_schema, default_value_schema=value_schema)
+avro_serde = AvroSerde(schema_registry)
+serialize_avro = avro_serde.encode_record_with_schema
 
-avroProducer.produce(topic='monitored-pvs', value=value, key=key)
-avroProducer.flush()
+p = Producer({
+    'bootstrap.servers': bootstrap_servers,
+    'on_delivery': delivery_report})
+
+topic = 'monitored-pvs'
+val_payload = serialize_avro(topic, value_schema, value, is_key=False)
+
+p.produce(topic=topic, value=val_payload, key=key)
+p.flush()

@@ -1,11 +1,20 @@
-from confluent_kafka.avro import AvroConsumer
+import os
+
+from confluent_kafka import avro, Consumer
+from confluent_kafka.avro import CachedSchemaRegistryClient
+from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
 from confluent_kafka.avro.serializer import SerializerError
 from confluent_kafka import OFFSET_BEGINNING
 
-c = AvroConsumer({
-    'bootstrap.servers': 'localhost',
-    'group.id': 'list-monitored.sh',
-    'schema.registry.url': 'http://127.0.0.1:8081'})
+
+bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
+schema_registry = CachedSchemaRegistryClient(os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081'))
+
+avro_serde = AvroSerde(schema_registry)
+
+c = Consumer({
+    'bootstrap.servers': bootstrap_servers,
+    'group.id': 'list-monitored.sh'})
 
 def my_on_assign(consumer, partitions):
     # We are assuming one partition, otherwise low/high would each be array and checking against high water mark would probably not work since other partitions could still contain unread messages.
@@ -33,7 +42,11 @@ while True:
         print("AvroConsumer error: {}".format(msg.error()))
         continue
 
-    print(msg.key(), msg.value())
+
+    key = msg.key().decode('utf-8')
+    value = avro_serde.decode_message(msg.value())
+
+    print(key, value)
 
     if msg.offset() + 1 == high:
         break
