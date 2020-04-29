@@ -8,4 +8,9 @@ cd $DIR
 
 echo "Dumping all schemas to $DIR"
 
-curl -s http://localhost:8081/subjects/$TOPIC-value/versions/latest | jq -r '.schema|fromjson' > $TOPIC-value.avsc
+schemas=`/opt/kafka/scripts/list-schemas.sh`
+
+IFS=$'\n'
+for schema in $schemas; do
+    curl -s http://localhost:8081/subjects/$schema/versions/latest | jq -r '.schema|fromjson' > $schema.avsc
+done
