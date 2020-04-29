@@ -2,6 +2,7 @@ import os
 import types
 import click
 
+# We can't use AvroProducer since it doesn't support string keys, see: https://github.com/confluentinc/confluent-kafka-python/issues/428
 from confluent_kafka import avro, Producer
 from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
@@ -43,16 +44,6 @@ value_schema_str = """
 }
 """
 
-test = """
-                {
-                  "name"      : "MonitorMask",
-                  "namespace" : "org.jlab",
-                  "type"      : "enum",
-                  "symbols"   : ["VALUE","VALUE_ALARM","VALUE_ALARM_ATTRIBUTE"]
-                }
-
-"""
-
 value_schema = avro.loads(value_schema_str)
 
 def delivery_report(err, msg):
@@ -86,8 +77,8 @@ def send() :
 
 @click.command()
 @click.option('--unset', is_flag=True, help="Stop monitoring the specified PV")
-@click.option('--topic', required=False, help="Topic to produce monitor messages on (because some pv names contain illegal topic characters)")
-@click.option('--mask', required=False, type=click.Choice(['VALUE', 'VALUE_ALARM', 'VALUE_ALARM_ATTRIBUTE']), help="EPICS CA Monitor Mask")
+@click.option('--topic', help="Topic to produce monitor messages on (because some pv names contain illegal topic characters)")
+@click.option('--mask', type=click.Choice(['VALUE', 'VALUE_ALARM', 'VALUE_ALARM_ATTRIBUTE']), help="EPICS CA Monitor Mask")
 @click.argument('name')
 
 def cli(unset, topic, mask, name):
