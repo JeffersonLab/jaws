@@ -12,3 +12,5 @@ The alarm system consists of a few subsystems:
 
 The alarm system relies on Kafka not only for notification of changes, but for Event Sourcing - everything is stored in Kafka and the entire state of
 the system is built by replaying messages.   All topics have compaction enabled to remove old messages that would be overwritten on replay.  Compaction is not very aggressive though so some candidates for deletion are often lingering when clients connect so they must be prepared to handle the ordered messages on replay as ones later in the stream may overwrite ones earlier.
+
+To unset (remove) a record use the --unset option with the "set" scripts.  To see all options use the --help option.  Instead of documenting the AVRO schemas here, just dump them using the dump-schemas.sh script.  They are self-documenting.
