@@ -1,14 +1,15 @@
 #!/bin/sh
 
-DIR=/tmp/schema-cache
-TOPIC=alarms
+SCRIPT_DIR=/opt/kafka/scripts
+OUT_DIR=/tmp/schema-cache
 
-mkdir -p $DIR
-cd $DIR
+cd $SCRIPT_DIR
+schemas=`./list-schemas.sh`
 
-echo "Dumping all schemas to $DIR"
+mkdir -p $OUT_DIR
+cd $OUT_DIR
 
-schemas=`/opt/kafka/scripts/list-schemas.sh`
+echo "Dumping all schemas to $OUT_DIR"
 
 IFS=$'\n'
 for schema in $schemas; do
