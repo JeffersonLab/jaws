@@ -5,6 +5,21 @@ import click
 from confluent_kafka import avro, Producer
 from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
+from avro.schema import Field
+
+Field.to_json_old = Field.to_json
+
+# Fixes an issue with python3-avro:
+# https://github.com/confluentinc/confluent-kafka-python/issues/610
+def to_json(self, names=None):
+    to_dump = self.to_json_old(names)
+    type_name = type(to_dump["type"]).__name__
+    if type_name == "mappingproxy":
+        to_dump["type"] = to_dump["type"].copy()
+    return to_dump
+
+
+Field.to_json = to_json
 
 value_schema_str = """
 {
@@ -18,10 +33,24 @@ value_schema_str = """
      },
      {
        "name" : "mask",
-       "type" : "string"
+       "type" : {
+           "name" : "MonitorMask",
+           "type" : "enum",
+           "symbols" : ["VALUE","VALUE_ALARM","VALUE_ALARM_ATTRIBUTE"]
+       }
      }
-   ]
+  ]
 }
+"""
+
+test = """
+                {
+                  "name"      : "MonitorMask",
+                  "namespace" : "org.jlab",
+                  "type"      : "enum",
+                  "symbols"   : ["VALUE","VALUE_ALARM","VALUE_ALARM_ATTRIBUTE"]
+                }
+
 """
 
 value_schema = avro.loads(value_schema_str)
