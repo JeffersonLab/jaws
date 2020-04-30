@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import types
 import click
@@ -121,15 +123,15 @@ def send() :
 
 @click.command()
 @click.option('--unset', is_flag=True, help="Remove the alarm")
-@click.option('--producerPv', help="The name of the EPICS CA PV that directly powers this alarm, only needed if not using producerJar")
-@click.option('--producerJar', help="The name of the Java JAR file containing the stream rules powering this alarm, only needed if not using producerPv")
+@click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm, only needed if not using producerJar")
+@click.option('--producerjar', help="The name of the Java JAR file containing the stream rules powering this alarm, only needed if not using producerPv")
 @click.option('--location', type=click.Choice(['INJ', 'NL', 'SL', 'HA', 'HB', 'HC', 'HD']), help="The alarm location")
 @click.option('--category', type=click.Choice(['Magnet', 'Vacuum', 'RF', 'RADCON', 'Safety']), help="The alarm category")
-@click.option('--docUrl', help="Relative path to documentation from https://alarms.jlab.org/doc")
-@click.option('--edmPath', help="Relative path to OPS fiefdom EDM screen from /cs/mccops/edm")
+@click.option('--docurl', help="Relative path to documentation from https://alarms.jlab.org/doc")
+@click.option('--edmpath', help="Relative path to OPS fiefdom EDM screen from /cs/mccops/edm")
 @click.argument('name')
 
-def cli(unset, producerPv, producerJar, location, category, docUrl, edmPath, name):
+def cli(unset, producerpv, producerjar, location, category, docurl, edmpath, name):
     global params
 
     params = types.SimpleNamespace()
@@ -139,19 +141,19 @@ def cli(unset, producerPv, producerJar, location, category, docUrl, edmPath, nam
     if unset:
         params.value = None
     else:
-        if producerPv == None and producerJar == None:
-            raise click.ClickException("Must specify one of --producerPv or --producerJar")
+        if producerpv == None and producerjar == None:
+            raise click.ClickException("Must specify one of --producerpv or --producerjar")
 
-        if producerPv:
-          producer = {"pv": producerPv}
+        if producerpv:
+          producer = {"pv": producerpv}
         else:
-          producer = {"jar" : producerJar}
+          producer = {"jar" : producerjar}
 
-        if location == None or category == None or docUrl == None or edmPath == None:
+        if location == None or category == None or docurl == None or edmpath == None:
             raise click.ClickException(
-                    "Must specify options --location,  --category, --docUrl, --edmPath")
+                    "Must specify options --location,  --category, --docurl, --edmpath")
 
-        params.value = {"producer": producer, "location": location, "category": category, "docUrl": docUrl, "edmPath": edmPath}
+        params.value = {"producer": producer, "location": location, "category": category, "docUrl": docurl, "edmPath": edmpath}
 
     send()
 
