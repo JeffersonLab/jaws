@@ -1,5 +1,5 @@
 # kafka-alarm-scripts
-Bash and Python scripts for managing alarms in Kafka
+Bash and Python scripts for managing alarms in [Kafka](https://kafka.apache.org/).  Schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.
 
 The alarm system consists of a few subsystems:
 
