@@ -1,0 +1,159 @@
+import os
+import types
+import click
+
+# We can't use AvroProducer since it doesn't support string keys, see: https://github.com/confluentinc/confluent-kafka-python/issues/428
+from confluent_kafka import avro, Producer
+from confluent_kafka.avro import CachedSchemaRegistryClient
+from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
+from avro.schema import Field
+
+Field.to_json_old = Field.to_json
+
+# Fixes an issue with python3-avro:
+# https://github.com/confluentinc/confluent-kafka-python/issues/610
+def to_json(self, names=None):
+    to_dump = self.to_json_old(names)
+    type_name = type(to_dump["type"]).__name__
+    if type_name == "mappingproxy":
+        to_dump["type"] = to_dump["type"].copy()
+    return to_dump
+
+
+Field.to_json = to_json
+
+value_schema_str = """
+{
+   "namespace" : "org.jlab",
+   "name"      : "Alarm",
+   "type"      : "record",
+   "fields"    : [
+     {
+       "name" : "producer",
+       "type" : [
+         {
+           "name"   : "DirectCAAlarm",
+           "type"   : "record",
+           "fields" : [
+             {
+               "name" : "pv",
+               "type" : "string",
+               "doc"  : "The name of the EPICS CA PV, which can be correlated with the key of the monitored-pvs toipc"
+             }
+           ]
+         },
+         {
+           "name"   : "StreamRuleAlarm",
+           "type"   : "record",
+           "fields" : [
+             {
+               "name" : "jar",
+               "type" : "string",
+               "doc"  : "Name of the Java jar file containing the strema rule logic, stored in the stream rule engine rules directory"
+             }
+           ]
+         }
+       ],
+       "doc"  : "Indicates how this alarm is produced, useful for producers to monitor when new alarms are added/removed"
+     },
+     {
+       "name" : "location",
+       "type" : {
+           "name"    : "AlarmLocation",
+           "type"    : "enum",
+           "symbols" : ["INJ","NL","SL","HA","HB","HC","HD"],
+           "doc"     : "The alarm location" 
+       }
+     },
+     {
+       "name" : "category",
+       "type" : {
+           "name"    : "AlarmCategory",
+           "type"    : "enum",
+           "symbols" : ["Magnet","Vacuum","RF","RADCON","Safety"],
+           "doc"     : "The alaram category, useful for consumers to filter out alarms of interest"
+       }
+     },
+     {
+       "name" : "docUrl",
+       "type" : "string",
+       "doc"  : "The relative URL to documentation for this alarm from base path https://alarms.jlab.org/docs"
+     },
+     {
+       "name" : "edmPath",
+       "type" : "string",
+       "doc"  : "Relative path to ops fiefdom EDM screen most useful for this alarm from base path /cs/mccops/edm"
+     }
+  ]
+}
+"""
+
+value_schema = avro.loads(value_schema_str)
+
+def delivery_report(err, msg):
+    """ Called once for each message produced to indicate delivery result.
+        Triggered by poll() or flush(). """
+    if err is not None:
+        print('Message delivery failed: {}'.format(err))
+    else:
+        print('Message delivered')
+
+bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
+schema_registry = CachedSchemaRegistryClient(os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081'))
+
+avro_serde = AvroSerde(schema_registry)
+serialize_avro = avro_serde.encode_record_with_schema
+
+p = Producer({
+    'bootstrap.servers': bootstrap_servers,
+    'on_delivery': delivery_report})
+
+topic = 'alarms'
+
+def send() :
+    if params.value is None:
+        val_payload = None
+    else:
+        val_payload = serialize_avro(topic, value_schema, params.value, is_key=False)
+
+    p.produce(topic=topic, value=val_payload, key=params.key)
+    p.flush()
+
+@click.command()
+@click.option('--unset', is_flag=True, help="Remove the alarm")
+@click.option('--producerPv', help="The name of the EPICS CA PV that directly powers this alarm, only needed if not using producerJar")
+@click.option('--producerJar', help="The name of the Java JAR file containing the stream rules powering this alarm, only needed if not using producerPv")
+@click.option('--location', type=click.Choice(['INJ', 'NL', 'SL', 'HA', 'HB', 'HC', 'HD']), help="The alarm location")
+@click.option('--category', type=click.Choice(['Magnet', 'Vacuum', 'RF', 'RADCON', 'Safety']), help="The alarm category")
+@click.option('--docUrl', help="Relative path to documentation from https://alarms.jlab.org/doc")
+@click.option('--edmPath', help="Relative path to OPS fiefdom EDM screen from /cs/mccops/edm")
+@click.argument('name')
+
+def cli(unset, producerPv, producerJar, location, category, docUrl, edmPath, name):
+    global params
+
+    params = types.SimpleNamespace()
+
+    params.key = name
+
+    if unset:
+        params.value = None
+    else:
+        if producerPv == None and producerJar == None:
+            raise click.ClickException("Must specify one of --producerPv or --producerJar")
+
+        if producerPv:
+          producer = {"pv": producerPv}
+        else:
+          producer = {"jar" : producerJar}
+
+        if location == None or category == None or docUrl == None or edmPath == None:
+            raise click.ClickException(
+                    "Must specify options --location,  --category, --docUrl, --edmPath")
+
+        params.value = {"producer": producer, "location": location, "category": category, "docUrl": docUrl, "edmPath": edmPath}
+
+    send()
+
+cli()
+
