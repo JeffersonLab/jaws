@@ -27,7 +27,7 @@ Field.to_json = to_json
 value_schema_str = """
 {
    "namespace" : "org.jlab",
-   "name"      : "ActiveAlarm",
+   "name"      : "ShelvedAlarm",
    "type"      : "record",
    "fields"    : [
      {
