@@ -35,7 +35,7 @@ value_schema_str = """
        "type"    : {
          "name"    : "AlarmPriority",
          "type"    : "enum",
-         "symbols" : ["P1_LIFE","P2_PROPERTY","P3_PRODUCTIVITY", "P4_DIAGNOSITC"],
+         "symbols" : ["P1_LIFE","P2_PROPERTY","P3_PRODUCTIVITY", "P4_DIAGNOSTIC"],
          "doc"     : "Alarm severity organized as a way for operators to prioritize which alarms to take action on first"
        }
      }
