@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 
 from confluent_kafka import avro, Consumer

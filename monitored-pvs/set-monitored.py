@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import types
 import click
@@ -30,14 +32,16 @@ value_schema_str = """
    "fields" : [
      {
        "name" : "topic",
-       "type" : "string"
+       "type" : "string",
+       "doc"  : "The topic to generate monitor messages on (some pv names contain illegal topic characters)"
      },
      {
        "name" : "mask",
        "type" : {
-           "name" : "MonitorMask",
-           "type" : "enum",
-           "symbols" : ["VALUE","VALUE_ALARM","VALUE_ALARM_ATTRIBUTE"]
+           "name"    : "MonitorMask",
+           "type"    : "enum",
+           "symbols" : ["VALUE","VALUE_ALARM","VALUE_ALARM_ATTRIBUTE"],
+           "doc"     : "The EPICS CA monitor mask"
        }
      }
   ]
