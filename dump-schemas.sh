@@ -2,7 +2,7 @@
 
 SCHEMA_REGISTRY=${SCHEMA_REGISTRY:=http://localhost:8081}
 
-SCRIPT_DIR=/opt/kafka/scripts
+SCRIPT_DIR=`dirname "$(readlink -f "$0")"`
 DMP_DIR=${DMP_DIR:=/tmp/schema-cache}
 
 cd $SCRIPT_DIR
