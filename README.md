@@ -25,3 +25,10 @@ python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 ```
+
+*Note*: [Jefferson Lab Internal Proxy](https://github.com/JeffersonLab/kafka-alarm-scripts/wiki/JeffersonLabProxy)
+
+## Configure
+By default the scripts assume you are executing them on the same box as a standalone Kafka with zookeeper and Schema Registry.  If these servers are NOT localhost, then set the following environment variables:
+
+
