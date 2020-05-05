@@ -33,6 +33,6 @@ By default the scripts assume you are executing them on the same box as a standa
 
 | Variable | Default |
 |----------|---------|
-| ZOOKEEPER | localhost:2181 |
-| BOOTSTRAP_SERVERS | localhost:9092 |
-| SCHEMA_REGISTRY | http://localhost:8081 |
+| ZOOKEEPER | `localhost:2181` |
+| BOOTSTRAP_SERVERS | `localhost:9092` |
+| SCHEMA_REGISTRY | `http://localhost:8081` |
