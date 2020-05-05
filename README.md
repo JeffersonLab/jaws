@@ -31,4 +31,7 @@ pip install -r requirements.txt
 ## Configure
 By default the scripts assume you are executing them on the same box as a standalone Kafka with zookeeper and Schema Registry.  If these servers are NOT localhost, then set the following environment variables:
 
-
+| Variable | Default |
+|----------|---------|
+| BOOTSTRAP_SERVERS | localhost:9092 |
+| SCHEMA_REGISTRY | http://localhost:8081 |
