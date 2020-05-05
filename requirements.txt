@@ -1,0 +1,10 @@
+avro-python3==1.9.2.1
+certifi==2020.4.5.1
+chardet==3.0.4
+click==7.1.2
+confluent-kafka==1.4.1
+fastavro==0.23.3
+idna==2.9
+pytz==2020.1
+requests==2.23.0
+urllib3==1.25.9
