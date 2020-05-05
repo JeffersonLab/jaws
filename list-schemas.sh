@@ -1,4 +1,6 @@
 #!/bin/sh
 
-curl -s -X GET -w "\n" http://localhost:8081/subjects | jq -r '.[]'
+SCHEMA_REGISTRY=${SCHEMA_REGISTRY:=http://localhost:8081}
+
+curl -s -X GET -w "\n" $SCHEMA_REGISTRY/subjects | jq -r '.[]'
 

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+ZOOKEEPER=${ZOOKEEPER:=localhost:2181}
+
 cd -P /opt/kafka/pro
 
-bin/kafka-topics.sh --list --zookeeper localhost:2181
+bin/kafka-topics.sh --list --zookeeper $ZOOKEEPER
