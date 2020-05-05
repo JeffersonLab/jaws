@@ -80,7 +80,9 @@ def delivery_report(err, msg):
         print('Message delivered')
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-schema_registry = CachedSchemaRegistryClient(os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081'))
+
+conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
+schema_registry = CachedSchemaRegistryClient(conf)
 
 avro_serde = AvroSerde(schema_registry)
 serialize_avro = avro_serde.encode_record_with_schema
