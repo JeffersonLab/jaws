@@ -11,7 +11,7 @@ cd kafka-alarm-system
 ```
 docker-compose up
 ```
-3. Monitor for an alarm
+3. Monitor active alarms
 ```
 docker exec kafka kafka-console-consumer --bootstrap-server kafka:9092 --topic active-alarms
 ```
