@@ -1,5 +1,5 @@
 # kafka-alarm-system
-An alarm system built on Kafka that supports pluggable alarm sources.
+An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.
 
 ## Quick Start with Docker 
 1. Grab project
