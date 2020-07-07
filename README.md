@@ -15,7 +15,7 @@ docker-compose up
 ```
 docker exec kafka kafka-console-consumer --bootstrap-server kafka:9092 --topic active-alarms
 ```
-4. Create an EPICS alarm
+4. Trip an EPICS alarm
 ```
 docker exec softioc caput hello 1
 ```
