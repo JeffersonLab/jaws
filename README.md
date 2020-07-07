@@ -1,11 +1,31 @@
-# kafka-alarm-scripts
+# kafka-alarm-system
+An alarm system built on Kafka that supports pluggable alarm sources.
+
+## Quick Start with Docker 
+1. Grab project
+```
+git clone https://github.com/JeffersonLab/kafka-alarm-system
+cd kafka-alarm-system
+```
+2. Launch Docker
+```
+docker-compose up
+```
+3. Monitor for an alarm
+```
+docker exec kafka kafka-console-consumer --bootstrap-server kafka:9092 --topic active-alarms
+```
+4. Create an EPICS alarm
+```
+docker exec softioc caput hello 1
+```
+## Scripts
 Bash and Python scripts for managing alarms in [Kafka](https://kafka.apache.org/).  Schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.
 
 The alarm system consists of a few subsystems:
 
 | Subsystem | Description | Topics | Key Schema | Value Schema | Scripts |
 |----------|---------------|----------|-----------|-----------|----------|
-| monitored-pvs | Set of monitored EPICS CA pvs.  A PV may not directly map to an alarm one-to-one.  A PV could be used as part of a custom alarm rule.  This is why the set of monitored PVs is separate from the set of alarms.   The CA monitor mask is part of the schema to control more precisely what is monitored from CA. | monitored-pvs |  String: EPICS CA PV name | AVRO: monitored-pvs-value | set-monitored.py, list-monitored.py |
 | alarms | Set of all possible alarm metadata (descriptions).  Some alarms may come from sources other than directly from an EPICS CA PV alarm such as from evaluating custom conditions/rules. | alarms | String: alarm name | AVRO: alarms-value | set-alarm.py, list-alarms.py |
 | shelved-alarms | Set of alarms that have been shelved. | shelved-alarms | String: alarm name | AVRO: shelved-alarms-value | set-shelved.py, list-shelved.py |
 | active-alarms | Set of alarms currently active (alarming). | active-alarms | String: alarm name | AVRO: active-alarms-value | set-active.py, list-active.py |
