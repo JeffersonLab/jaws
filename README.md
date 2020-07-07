@@ -25,7 +25,7 @@ The alarm system is composed of the following services:
    - [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
    - [Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
    
-Alarms are triggered by producing messages on the active-alarms topic, which is generally done programmatically via Kafka Connect and Kafka Streams services.  For example EPICS alarms are handled by:  
+Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect and Kafka Streams services.  For example EPICS alarms are handled by:  
    - [Connect EPICS](https://github.com/JeffersonLab/epics2kafka) - transfer EPICS CA messages into Kafka, one topic per EPICS channel
    - Streams EPICS Alarms - conditionally consolidates and propogates EPICS alarms read from Connect EPICS topics to the __active-alarms__ topic based on configuration in the master __alarms__ topic
 
