@@ -19,6 +19,17 @@ docker exec kafka kafka-console-consumer --bootstrap-server kafka:9092 --topic a
 ```
 docker exec softioc caput hello 1
 ```
+
+The alarm system is composed of the following services:
+   - Kafka - distributed message system
+   - ZooKeeper - required by Kafka for bookkeeping and coordination
+   - Schema Registry - message schema lookup
+   
+Alarms are triggered by producing messages on the active-alarms topic, which is generally done programmatically via Kafka Connect and Kafka Stream services.  For example:  
+   - Connect EPICS - transfer EPICS CA messages into Kafka, one topic per EPICS channel
+   - Streams EPICS Alarms - conditionally consolidates and propogates EPICS alarms read from Connect EPICS topics to the __active-alarms__ topic based on configuration in the master __alarms__ topic
+
+
 ## Scripts
 Bash and Python scripts for managing alarms in [Kafka](https://kafka.apache.org/).  Schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.
 
