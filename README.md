@@ -1,5 +1,5 @@
 # kafka-alarm-system
-An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.
+An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together all of the services that make up the alarm system in a docker-compose file and adds an alarm system client Docker image containing Python client scripts for configuring and interacting with the alarm system.
 
 ## Quick Start with Docker 
 1. Grab project
