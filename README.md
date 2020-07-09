@@ -77,6 +77,3 @@ By default the scripts assume you are executing them on the same box as a standa
 |----------|---------|
 | BOOTSTRAP_SERVERS | `localhost:9092` |
 | SCHEMA_REGISTRY | `http://localhost:8081` |
-
-## See
-   - [Kafka EPICS CA Connector](https://github.com/JeffersonLab/epics2kafka)
