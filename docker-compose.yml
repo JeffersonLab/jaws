@@ -46,6 +46,19 @@ services:
     volumes:
       - ./examples/kafka-scripts:/scripts
 
+  registry:
+    image: confluentinc/cp-schema-registry:5.5.0
+    hostname: registry
+    container_name: registry
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - 8081:8081
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
+      SCHEMA_REGISTRY_HOST_NAME: registry
+
   connect:
     image: slominskir/epics2kafka:0.2.0
     hostname: connect
