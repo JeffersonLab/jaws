@@ -2,7 +2,7 @@ FROM python:3.8-alpine
 
 ARG CUSTOM_CRT_URL
 
-RUN apk add --no-cache librdkafka git \
+RUN apk add --no-cache librdkafka git bash curl \
     && git clone https://github.com/JeffersonLab/kafka-alarm-system \
     && cd ./kafka-alarm-system/scripts \
     && cp --parents -r * /scripts \
@@ -20,4 +20,4 @@ RUN apk add --no-cache librdkafka git \
 
 WORKDIR /scripts
 
-ENTRYPOINT ["sh"]
+ENTRYPOINT ["bash"]

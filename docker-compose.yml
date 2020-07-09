@@ -96,6 +96,9 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
+      ALARM_DEFINITIONS: "hello|hello|INJ|RF|/|/"
+    entrypoint:
+      - /entrypoint/docker-entrypoint.sh
     volumes:
-# During development we override with latest
       - ./scripts:/scripts
+      - ./examples/client-entrypoint:/entrypoint
