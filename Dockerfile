@@ -15,7 +15,7 @@ RUN apk add --no-cache librdkafka git \
           && export OPTIONAL_CERT_ARG=--cert=/etc/ssl/certs/ca-certificates.crt \
           ; fi \
     && pip install --no-cache-dir -r ./kafka-alarm-system/requirements.txt $OPTIONAL_CERT_ARG \
-    && apk del .build-deps \
+    && apk del .build-deps git \
     && rm -rf ./kafka-alarm-system
 
 WORKDIR /scripts
