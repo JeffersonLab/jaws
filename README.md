@@ -71,14 +71,12 @@ pip install -r requirements.txt
 *Note*: [Jefferson Lab Internal Proxy](https://github.com/JeffersonLab/kafka-alarm-scripts/wiki/JeffersonLabProxy)
 
 ### Configure
-By default the scripts assume you are executing them on the same box as a standalone Kafka with zookeeper and Schema Registry with Kafka installed at /opt/kafka/pro.  To modify the defaults set the following environment variables:
+By default the scripts assume you are executing them on the same box as a standalone Kafka with and Schema Registry.  To modify the defaults set the following environment variables:
 
 | Variable | Default |
 |----------|---------|
-| ZOOKEEPER | `localhost:2181` |
 | BOOTSTRAP_SERVERS | `localhost:9092` |
 | SCHEMA_REGISTRY | `http://localhost:8081` |
-| KAFKA_HOME | `/opt/kafka/pro` |
 
 ## See
    - [Kafka EPICS CA Connector](https://github.com/JeffersonLab/epics2kafka)
