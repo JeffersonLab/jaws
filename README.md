@@ -42,7 +42,7 @@ The alarm system consists of a few subsystems:
 
 | Subsystem | Description | Topics | Key Schema | Value Schema | Scripts |
 |----------|---------------|----------|-----------|-----------|----------|
-| alarms | Set of all possible alarm metadata (descriptions).  Alarms may come from a variety of sources such as from an EPICS alarm service or from a network alarm service that evaluates custom conditions/rules. | alarms | String: alarm name | AVRO: alarms-value | set-alarm.py, list-alarms.py |
+| alarms | Set of all possible alarm metadata (descriptions).  Alarms may come from a variety of sources such as from an EPICS alarm service or from a network alarm service that evaluates custom conditions/rules.  All alarms that are possible should be registered here. | alarms | String: alarm name | AVRO: alarms-value | set-alarm.py, list-alarms.py |
 | shelved-alarms | Set of alarms that have been shelved. | shelved-alarms | String: alarm name | AVRO: shelved-alarms-value | set-shelved.py, list-shelved.py |
 | active-alarms | Set of alarms currently active (alarming). | active-alarms | String: alarm name | AVRO: active-alarms-value | set-active.py, list-active.py |
 
