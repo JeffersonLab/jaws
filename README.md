@@ -58,7 +58,7 @@ docker build -t client . --build-arg CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.c
 ```
 
 ### Python Environment
-Scripts tested with Python 3.7.6
+Scripts tested with Python 3.8
 
 Generally recommended to use a Python virtual environment to avoid dependency conflicts.  You can use the requirements.txt file to ensure the Python module dependences are installed:
 
