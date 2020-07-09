@@ -79,7 +79,9 @@ services:
       - ./examples/connect-config:/config
 
   client:
-    image: python:3.8-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
     tty: true
     stdin_open: true
     hostname: client
@@ -89,7 +91,6 @@ services:
       - kafka
       - softioc
       - connect
-    entrypoint:
-      /bin/sh
     volumes:
+# During development we override with latest
       - ./scripts:/scripts
