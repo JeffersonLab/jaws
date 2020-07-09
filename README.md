@@ -47,6 +47,12 @@ the system is built by replaying messages.   All topics have compaction enabled 
 
 To unset (remove) a record use the --unset option with the "set" scripts, This writes a null/None tombstone record.  To modify a record simply set a new one with the same key as the message stream is ordered and newer records overwrite older ones.  To see all options use the --help option.  Instead of documenting the AVRO schemas here, just dump them using the dump-schemas.sh script.  They are self-documenting.
 
+## Alarm System Client Docker
+A docker image containing client scripts can be built from the Dockerfile included in the project.  To build within a network using man-in-the-middle network scanning (self-signed certificate injection) you can provide an optional build argument pointing to the custom CA certificate file.   For example:
+```
+docker build -t client . --build-arg CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
+```
+
 ## Python Environment
 Scripts tested with Python 3.7.6
 
