@@ -6,7 +6,8 @@ COPY ./scripts /scripts
 
 WORKDIR /scripts
 
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev librdkafka librdkafka-dev \
+RUN apk add --no-cache librdkafka \
+    && apk add --no-cache --virtual .build-deps gcc musl-dev librdkafka-dev \
     && if [ -z "$CUSTOM_CRT_URL" ] ; then echo "No custom cert needed"; else \
           wget -O /usr/local/share/ca-certificates/customcert.crt $CUSTOM_CRT_URL \
           && update-ca-certificates \
