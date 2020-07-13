@@ -19,6 +19,7 @@ docker exec kafka kafka-console-consumer --bootstrap-server kafka:9092 --topic a
 ```
 docker exec softioc caput hello 1
 ```
+[Scripts Reference](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Scripts-Reference)
 
 The alarm system is composed of the following services:
    - Kafka - distributed message system
