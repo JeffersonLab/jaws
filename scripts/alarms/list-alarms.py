@@ -17,7 +17,7 @@ avro_serde = AvroSerde(schema_registry)
 
 c = Consumer({
     'bootstrap.servers': bootstrap_servers,
-    'group.id': 'list-alarms.sh'})
+    'group.id': 'list-alarms.py'})
 
 def my_on_assign(consumer, partitions):
     # We are assuming one partition, otherwise low/high would each be array and checking against high water mark would probably not work since other partitions could still contain unread messages.
