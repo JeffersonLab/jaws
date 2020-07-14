@@ -3,7 +3,7 @@
 import os
 import types
 import click
-import time;
+import time
 
 from confluent_kafka import avro, Consumer
 from confluent_kafka.avro import CachedSchemaRegistryClient
