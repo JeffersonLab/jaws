@@ -13,7 +13,7 @@ docker-compose up
 ```
 3. Monitor active alarms
 ```
-docker exec client /scripts/active-alarms/list-active.py -monitor
+docker exec client /scripts/active-alarms/list-active.py --monitor
 ```
 4. Trip an EPICS alarm  
 ~~docker exec softioc caput channel1 1~~  
