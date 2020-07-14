@@ -65,7 +65,7 @@ services:
       CONFIG_STORAGE_TOPIC: connect-configs
       OFFSET_STORAGE_TOPIC: connect-offsets
       STATUS_STORAGE_TOPIC: connect-status
-      MONITOR_CHANNELS: "hello:hello:VALUE ALARM"
+      MONITOR_CHANNELS: "channel1:channel1:VALUE ALARM,channel2:channel2:VALUE ALARM,channel3:channel3:VALUE ALARM"
     volumes:
       - ./examples/connect-config:/config
 
@@ -87,7 +87,7 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-      ALARM_DEFINITIONS: "hello|hello|INJ|RF|/|/"
+      ALARM_DEFINITIONS: "channel1|channel1|INJ|RF|/|/,channel2|channel2|INJ|RF|/|/,channel3|channel3|INJ|RF|/|/"
     entrypoint:
       - /entrypoint/docker-entrypoint.sh
     volumes:
