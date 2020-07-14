@@ -3,6 +3,7 @@
 import os
 import types
 import click
+import time;
 
 from confluent_kafka import avro, Consumer
 from confluent_kafka.avro import CachedSchemaRegistryClient
@@ -32,9 +33,11 @@ def my_on_assign(consumer, partitions):
     consumer.assign(partitions)
 
 def list():
+    ts = time.time()
+
     c = Consumer({
         'bootstrap.servers': bootstrap_servers,
-        'group.id': 'list-alarms.py'})
+        'group.id': 'list-alarms.py' + str(ts)})
 
     c.subscribe(['alarms'], on_assign=my_on_assign)
 
