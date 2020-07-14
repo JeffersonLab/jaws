@@ -25,7 +25,7 @@ The alarm system is composed of the following services:
    - Kafka - distributed message system
    - [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
    - [Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
-   - Alarm Client - defined in this project, provides Python scripts for setup and interacting with the alarm system
+   - Alarm Client - defined in this project; provides Python scripts for setup and interacting with the alarm system
    
 Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect and Kafka Streams services.  For example EPICS alarms are handled by the following additional services:  
    - [Connect EPICS](https://github.com/JeffersonLab/epics2kafka) - transfer EPICS CA messages into Kafka, one topic per EPICS channel
