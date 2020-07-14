@@ -16,7 +16,8 @@ docker-compose up
 docker exec kafka kafka-console-consumer --bootstrap-server kafka:9092 --topic active-alarms
 ```
 4. Trip an EPICS alarm  
-~~docker exec softioc caput channel1 1~~ (Streams EPICS Alarms isn't ready yet!  Just manually create active alarm for now:)
+~~docker exec softioc caput channel1 1~~  
+_Streams EPICS Alarms isn't ready yet!  Just manually create active alarm for now:_
 ```
 docker exec client /scripts/active-alarms/set-active.py channel1 --priority P1_LIFE
 ```
