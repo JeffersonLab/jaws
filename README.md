@@ -36,6 +36,8 @@ Alarms are triggered by producing messages on the __active-alarms__ topic, which
 
 Anything can produce messages on the active-alarms topic (with proper authorization).
 
+Note: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
+
 ## Alarm System Client
 
 ### Scripts
