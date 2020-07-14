@@ -27,7 +27,7 @@ The alarm system is composed of the following services:
    - [Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
    - Alarm Client - defined in this project; provides Python scripts for setup and interacting with the alarm system
    
-Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect and Kafka Streams services.  For example EPICS alarms are handled by the following additional services:  
+Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms are handled by the following additional services:  
    - [Connect EPICS](https://github.com/JeffersonLab/epics2kafka) - transfer EPICS CA messages into Kafka, one topic per EPICS channel
    - Streams EPICS Alarms - conditionally consolidates and propogates EPICS alarms read from Connect EPICS topics to the __active-alarms__ topic based on configuration in the master __alarms__ topic
    - [softioc](https://github.com/JeffersonLab/softioc) - hosts an EPICS CA database, a softioc is used for testing and demonstration, but this could be replaced with an entire EPICS environment
