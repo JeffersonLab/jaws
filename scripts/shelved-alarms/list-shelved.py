@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import os
+import types
+import click
 
 from confluent_kafka import avro, Consumer
 from confluent_kafka.avro import CachedSchemaRegistryClient
@@ -15,44 +17,65 @@ schema_registry = CachedSchemaRegistryClient(conf)
 
 avro_serde = AvroSerde(schema_registry)
 
-c = Consumer({
-    'bootstrap.servers': bootstrap_servers,
-    'group.id': 'list-shelved.py'})
+empty = False
 
 def my_on_assign(consumer, partitions):
     # We are assuming one partition, otherwise low/high would each be array and checking against high water mark would probably not work since other partitions could still contain unread messages.
     global low
     global high
+    global empty
     for p in partitions:
         p.offset = OFFSET_BEGINNING
-        low, high = c.get_watermark_offsets(p)
+        low, high = consumer.get_watermark_offsets(p)
+        if high == 0:
+            empty = True
     consumer.assign(partitions)
 
-c.subscribe(['shelved-alarms'], on_assign=my_on_assign)
+def list():
+    c = Consumer({
+        'bootstrap.servers': bootstrap_servers,
+        'group.id': 'list-shelved.py'})
 
-while True:
-    try:
-        msg = c.poll(1.0)
+    c.subscribe(['shelved-alarms'], on_assign=my_on_assign)
 
-    except SerializerError as e:
-        print("Message deserialization failed for {}: {}".format(msg, e))
-        break
+    while True:
+        try:
+            msg = c.poll(1.0)
 
-    if msg is None:
-        continue
+        except SerializerError as e:
+            print("Message deserialization failed for {}: {}".format(msg, e))
+            break
 
-    if msg.error():
-        print("AvroConsumer error: {}".format(msg.error()))
-        continue
+        if (not params.monitor) and empty:
+            break
 
+        if msg is None:
+            continue
 
-    key = msg.key().decode('utf-8')
-    value = avro_serde.decode_message(msg.value())
+        if msg.error():
+            print("AvroConsumer error: {}".format(msg.error()))
+            continue
 
-    print(key, value)
+        key = msg.key().decode('utf-8')
+        value = avro_serde.decode_message(msg.value())
 
-    if msg.offset() + 1 == high:
-        break
+        print(key, value)
 
+        if (not params.monitor) and msg.offset() + 1 == high:
+            break
 
-c.close()
+    c.close()
+
+@click.command()
+@click.option('--monitor', is_flag=True, help="Monitor indefinitely")
+
+def cli(monitor):
+    global params
+
+    params = types.SimpleNamespace()
+
+    params.monitor = monitor
+
+    list()
+
+cli()
