@@ -15,9 +15,7 @@ docker-compose up
 ```
 docker exec -it client /scripts/active-alarms/list-active.py --monitor
 ```
-4. Trip an EPICS alarm  
-~~docker exec softioc caput channel1 1~~  
-_Streams EPICS Alarms isn't ready yet!  Just manually create active alarm for now:_
+4. Trip an alarm  
 ```
 docker exec client /scripts/active-alarms/set-active.py channel1 --priority P1_LIFE
 ```
@@ -31,7 +29,7 @@ The alarm system is composed of the following services:
    
 Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms are handled by the following additional services:  
    - [Connect EPICS](https://github.com/JeffersonLab/epics2kafka) - transfer EPICS CA messages into Kafka, one topic per EPICS channel
-   - Streams EPICS Alarms - conditionally consolidates and propogates EPICS alarms read from Connect EPICS topics to the __active-alarms__ topic based on configuration in the master __alarms__ topic
+   - [Streams EPICS Alarms](https://github.com/JeffersonLab/kafka-streams-epics-alarms) - conditionally consolidates and propogates EPICS alarms read from Connect EPICS topics to the __active-alarms__ topic based on configuration in the master __alarms__ topic
    - [softioc](https://github.com/JeffersonLab/softioc) - hosts an EPICS CA database, a softioc is used for testing and demonstration, but this could be replaced with an entire EPICS environment
 
 Anything can produce messages on the active-alarms topic (with proper authorization).
