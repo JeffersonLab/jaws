@@ -54,6 +54,10 @@ A docker image containing scripts can be built from the Dockerfile included in t
 ```
 docker build -t console . --build-arg CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
 ```
+Grab Image from [DockerHub](https://hub.docker.com/r/slominskir/kafka-alarm-system):
+```
+docker pull slominskir/kafka-alarm-system
+```
 
 ### Python Environment
 Scripts tested with Python 3.7
