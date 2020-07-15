@@ -2,20 +2,6 @@
 version: '2'
 
 services:
-  softioc:
-    image: slominskir/softioc:1.1.0
-    tty: true
-    stdin_open: true
-    hostname: softioc
-    container_name: softioc
-    ports:
-      - "5064:5064/tcp"
-      - "5065:5065/tcp"
-      - "5064:5064/udp"
-      - "5065:5065/udp"
-    volumes:
-      - ./examples/softioc-db:/db
-
   zookeeper:
     image: debezium/zookeeper:1.3
     hostname: zookeeper
@@ -50,25 +36,6 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: registry
 
-  connect:
-    image: slominskir/epics2kafka:0.2.0
-    hostname: connect
-    container_name: connect
-    depends_on:
-      - zookeeper
-      - kafka
-      - softioc
-    ports:
-      - 8083:8083
-    environment:
-      BOOTSTRAP_SERVERS: "kafka:9092"
-      CONFIG_STORAGE_TOPIC: connect-configs
-      OFFSET_STORAGE_TOPIC: connect-offsets
-      STATUS_STORAGE_TOPIC: connect-status
-      MONITOR_CHANNELS: "channel1:channel1:VALUE ALARM,channel2:channel2:VALUE ALARM,channel3:channel3:VALUE ALARM"
-    volumes:
-      - ./examples/connect-config:/config
-
   client:
     build:
       context: .
@@ -82,8 +49,7 @@ services:
     depends_on:
       - zookeeper
       - kafka
-      - softioc
-      - connect
+      - registry
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
