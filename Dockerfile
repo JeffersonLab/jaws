@@ -8,6 +8,7 @@ RUN apk add --no-cache librdkafka git bash curl jq \
     && cp --parents -r * /scripts \
     && cd ../.. \
     && chmod -R +x /scripts/* \
+    && cp ./kafka-alarm-system/docker-entrypoint.sh / \
     && apk add --no-cache --virtual .build-deps gcc musl-dev librdkafka-dev \
     && if [ -z "$CUSTOM_CRT_URL" ] ; then echo "No custom cert needed"; else \
           wget -O /usr/local/share/ca-certificates/customcert.crt $CUSTOM_CRT_URL \
@@ -20,4 +21,4 @@ RUN apk add --no-cache librdkafka git bash curl jq \
 
 WORKDIR /scripts
 
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

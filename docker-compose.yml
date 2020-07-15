@@ -36,7 +36,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: registry
 
-  client:
+  console:
     build:
       context: .
       dockerfile: Dockerfile
@@ -44,8 +44,8 @@ services:
         - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
     tty: true
     stdin_open: true
-    hostname: client
-    container_name: client
+    hostname: console
+    container_name: console
     depends_on:
       - zookeeper
       - kafka
@@ -54,8 +54,5 @@ services:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
       ALARM_DEFINITIONS: "channel1|channel1|INJ|RF|/|/,channel2|channel2|INJ|RF|/|/,channel3|channel3|INJ|RF|/|/"
-    entrypoint:
-      - /entrypoint/docker-entrypoint.sh
     volumes:
       - ./scripts:/scripts
-      - ./examples/client-entrypoint:/entrypoint

@@ -1,5 +1,5 @@
 # kafka-alarm-system
-An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together all of the services that make up the alarm system in a docker-compose file and adds an alarm system client Docker image containing Python scripts for configuring and interacting with the system.
+An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together all of the services that make up the alarm system in a docker-compose file and adds an alarm system console Docker image containing Python scripts for configuring and interacting with the system.
 
 ## Quick Start with Docker 
 1. Grab project
@@ -13,11 +13,11 @@ docker-compose up
 ```
 3. Monitor active alarms
 ```
-docker exec -it client /scripts/active-alarms/list-active.py --monitor
+docker exec -it console /scripts/active-alarms/list-active.py --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec client /scripts/active-alarms/set-active.py channel1 --priority P1_LIFE
+docker exec console /scripts/active-alarms/set-active.py channel1 --priority P1_LIFE
 ```
 [Scripts Reference](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Scripts-Reference)
 
@@ -25,13 +25,13 @@ The alarm system is composed of the following services:
    - Kafka - distributed message system
    - [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
    - [Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
-   - Alarm Client - defined in this project; provides Python scripts for setup and interacting with the alarm system
+   - Alarm Console - defined in this project; provides Python scripts for setup and interacting with the alarm system
    
 Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [Streams EPICS Alarms](https://github.com/JeffersonLab/kafka-streams-epics-alarms) (and it's dependencies).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
-## Alarm System Client
+## Alarm System Console
 
 ### Scripts
 Python scripts for managing alarms in [Kafka](https://kafka.apache.org/).  Schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.
@@ -50,9 +50,9 @@ the system is built by replaying messages.   All topics have compaction enabled 
 To unset (remove) a record use the --unset option with the "set" scripts, This writes a null/None tombstone record.  To modify a record simply set a new one with the same key as the message stream is ordered and newer records overwrite older ones.  To see all options use the --help option.  Instead of documenting the AVRO schemas here, just dump them using the dump-schemas.sh script.  They are self-documenting. 
 
 ### Docker
-A docker image containing client scripts can be built from the Dockerfile included in the project.  To build within a network using man-in-the-middle network scanning (self-signed certificate injection) you can provide an optional build argument pointing to the custom CA certificate file (pip will fail to download dependencies if certificates can't be verified).   For example:
+A docker image containing scripts can be built from the Dockerfile included in the project.  To build within a network using man-in-the-middle network scanning (self-signed certificate injection) you can provide an optional build argument pointing to the custom CA certificate file (pip will fail to download dependencies if certificates can't be verified).   For example:
 ```
-docker build -t client . --build-arg CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
+docker build -t console . --build-arg CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
 ```
 
 ### Python Environment
