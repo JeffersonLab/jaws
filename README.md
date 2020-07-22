@@ -27,7 +27,7 @@ The alarm system is composed of the following services:
    - [Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
    - Alarm Console - defined in this project; provides Python scripts for setup and interacting with the alarm system
    
-Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [Streams EPICS Alarms](https://github.com/JeffersonLab/kafka-streams-epics-alarms) (and it's dependencies).  Anything can produce messages on the active-alarms topic (with proper authorization).
+Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [epics2Kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
