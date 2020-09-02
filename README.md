@@ -1,6 +1,12 @@
 # kafka-alarm-system
 An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together all of the message pipeline services that make up the alarm system in a docker-compose file and adds an alarm system console Docker image containing Python scripts for configuring and interacting with the system.
 
+---
+- [Quick Start with Docker](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-docker)
+- [Alarm System Console](https://github.com/JeffersonLab/kafka-alarm-system#alarm-system-console)
+- [See Also](https://github.com/JeffersonLab/kafka-alarm-system#see-also)
+---
+
 ## Quick Start with Docker 
 1. Grab project
 ```
@@ -79,3 +85,6 @@ By default the scripts assume you are executing them on the same box as a standa
 |----------|---------|
 | BOOTSTRAP_SERVERS | `localhost:9092` |
 | SCHEMA_REGISTRY | `http://localhost:8081` |
+
+## See Also
+- [Graphical User Interface to Alarm System](https://github.com/JeffersonLab/graphical-alarm-client)
