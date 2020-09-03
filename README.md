@@ -1,5 +1,11 @@
 # kafka-alarm-system
-An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together all of the services that make up the alarm system in a docker-compose file and adds an alarm system console Docker image containing Python scripts for configuring and interacting with the system.
+An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together all of the message pipeline services that make up the alarm system in a docker-compose file and adds an alarm system console Docker image containing Python scripts for configuring and interacting with the system.
+
+---
+- [Quick Start with Docker](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-docker)
+- [Alarm System Console](https://github.com/JeffersonLab/kafka-alarm-system#alarm-system-console)
+- [See Also](https://github.com/JeffersonLab/kafka-alarm-system#see-also)
+---
 
 ## Quick Start with Docker 
 1. Grab project
@@ -25,9 +31,9 @@ The alarm system is composed of the following services:
    - Kafka - distributed message system
    - [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
    - [Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
-   - Alarm Console - defined in this project; provides Python scripts for setup and interacting with the alarm system
+   - Alarm Console - defined in this project; provides Python scripts to setup and interact with the alarm system
    
-Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [Streams EPICS Alarms](https://github.com/JeffersonLab/kafka-streams-epics-alarms) (and it's dependencies).  Anything can produce messages on the active-alarms topic (with proper authorization).
+Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [epics2Kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
@@ -54,6 +60,10 @@ A docker image containing scripts can be built from the Dockerfile included in t
 ```
 docker build -t console . --build-arg CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
 ```
+Grab Image from [DockerHub](https://hub.docker.com/r/slominskir/kafka-alarm-system):
+```
+docker pull slominskir/kafka-alarm-system
+```
 
 ### Python Environment
 Scripts tested with Python 3.7
@@ -75,3 +85,6 @@ By default the scripts assume you are executing them on the same box as a standa
 |----------|---------|
 | BOOTSTRAP_SERVERS | `localhost:9092` |
 | SCHEMA_REGISTRY | `http://localhost:8081` |
+
+## See Also
+- [Graphical User Interface to Alarm System](https://github.com/JeffersonLab/graphical-alarm-client)
