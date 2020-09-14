@@ -40,7 +40,7 @@ The alarm system console, included in this project, provides scripts to manage t
 
 Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [epics2Kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
-An Operator [Graphical User Interface to the Alarm System](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions for active alarms, see the entire list of possible alarms, and shelve active alarms.
+An [Operator Graphical User Interface to the Alarm System](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions for active alarms, see the entire list of possible alarms, and shelve active alarms.
 
 TODO: An admin web interface provides a convenient app for admins to manage the list of all possible alarms and their definitions.
 
