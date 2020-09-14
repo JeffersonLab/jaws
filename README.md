@@ -36,7 +36,7 @@ The alarm system is composed of the following services:
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
 ## Overview
-The alarm system console, included in this project, houses the scripts to manage the Kafka topics and their schemas needed for the alarm system. 
+The alarm system console, included in this project, provides scripts to manage the Kafka topics and their schemas needed for the alarm system. 
 
 Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [epics2Kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
