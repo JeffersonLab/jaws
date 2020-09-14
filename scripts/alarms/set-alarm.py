@@ -37,7 +37,7 @@ value_schema_str = """
              {
                "name" : "jar",
                "type" : "string",
-               "doc"  : "Name of the Java jar file containing the strema rule logic, stored in the stream rule engine rules directory"
+               "doc"  : "Name of the Java jar file containing the stream rule logic, stored in the stream rule engine rules directory"
              }
            ]
          }
