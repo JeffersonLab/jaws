@@ -59,7 +59,7 @@ value_schema_str = """
            "name"    : "AlarmCategory",
            "type"    : "enum",
            "symbols" : ["Magnet","Vacuum","RF","RADCON","Safety"],
-           "doc"     : "The alaram category, useful for consumers to filter out alarms of interest"
+           "doc"     : "The alarm category, useful for consumers to filter out alarms of interest"
        }
      },
      {
