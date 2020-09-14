@@ -44,7 +44,7 @@ An Operator [Graphical User Interface to the Alarm System](https://github.com/Je
 
 TODO: An admin web interface provides a convenient app for admins to manage the list of all possible alarms and their definitions.
 
-TODO: A Kafka Streams app to manage the shelved-alarms topic (The Shelf Service).   The shelf service looks for expired shelved messages and unsets them with tombstone records as a matter of book-keeping to speed up processing for clients (on a compacted topic tombstone records keep most recent message list short).  The shelf-service will also monitor active-alarms topic and ensure that channels can only be shelved if they are active - automatically cleanup (tombstone) shelved messages for channels that are not in active alarm.  Finally, the shelved service will perform an EPICS alarm acknowledgement on alarms of provider "DirectCAAlarm", necessary for alarms which have latched.
+TODO: A Kafka Streams app to manage the shelved-alarms topic (The Shelf Service).   The shelf service looks for expired shelved messages and unsets them with tombstone records as a matter of book-keeping to speed up processing for clients (on a compacted topic tombstone records keep most recent message list short).  The shelf service will also monitor active-alarms topic and ensure that channels can only be shelved if they are active - automatically cleanup (tombstone) shelved messages for channels that are no longer in active alarm.  Finally, the shelved service will perform an EPICS alarm acknowledgement on alarms of provider "DirectCAAlarm", necessary for alarms which have latched.
 
 ## Alarm System Console
 
