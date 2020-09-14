@@ -26,7 +26,7 @@ value_schema_str = """
              {
                "name" : "pv",
                "type" : "string",
-               "doc"  : "The name of the EPICS CA PV, which can be correlated with the key of the monitored-pvs toipc"
+               "doc"  : "The name of the EPICS CA PV, which can be correlated with the key of the epics-channels topic"
              }
            ]
          },
