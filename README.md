@@ -4,7 +4,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 - [Quick Start with Docker](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-docker)
 - [Alarm System Console](https://github.com/JeffersonLab/kafka-alarm-system#alarm-system-console)
-- [See Also](https://github.com/JeffersonLab/kafka-alarm-system#see-also)
+- [Overview](https://github.com/JeffersonLab/kafka-alarm-system#overview)
 ---
 
 ## Quick Start with Docker 
@@ -32,10 +32,19 @@ The alarm system is composed of the following services:
    - [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
    - [Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
    - Alarm Console - defined in this project; provides Python scripts to setup and interact with the alarm system
-   
-Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [epics2Kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
+
+## Overview
+The alarm system console, included in this project, houses the scripts to manage the Kafka topics and their schemas needed for the alarm system. 
+
+Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [epics2Kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
+
+An Operator [Graphical User Interface to the Alarm System](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions for active alarms, see the entire list of possible alarms, and shelve active alarms.
+
+TODO: An admin web interface provides a convenient app for admins to manage the list of all possible alarms and their definitions.
+
+TODO: A Kafka Streams app to manage the shelved-alarms topic (The Shelf Service).   The shelf service looks for expired shelved messages and unsets them with tombstone records as a matter of book-keeping to speed up processing for clients (on a compacted topic tombstone records keep most recent message list short).  The shelf-service will also monitor active-alarms topic and ensure that channels can only be shelved if they are active - automatically cleanup (tombstone) shelved messages for channels that are not in active alarm.  Finally, the shelved service will perform an EPICS alarm acknowledgement on alarms of provider "DirectCAAlarm", necessary for alarms which have latched.
 
 ## Alarm System Console
 
@@ -85,6 +94,3 @@ By default the scripts assume you are executing them on the same box as a standa
 |----------|---------|
 | BOOTSTRAP_SERVERS | `localhost:9092` |
 | SCHEMA_REGISTRY | `http://localhost:8081` |
-
-## See Also
-- [Graphical User Interface to Alarm System](https://github.com/JeffersonLab/graphical-alarm-client)
