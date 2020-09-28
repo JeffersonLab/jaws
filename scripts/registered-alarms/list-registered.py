@@ -37,7 +37,7 @@ def list():
 
     c = Consumer({
         'bootstrap.servers': bootstrap_servers,
-        'group.id': 'list-alarms.py' + str(ts)})
+        'group.id': 'list-registered.py' + str(ts)})
 
     c.subscribe(['alarms'], on_assign=my_on_assign)
 
