@@ -33,15 +33,15 @@ def my_on_assign(consumer, partitions):
         highOffsets[p.topic] = high
     consumer.assign(partitions)
 
-c.subscribe(['active-alarms','shelved-alarms','registered-alarms'], on_assign=my_on_assign)
+c.subscribe(['registered-alarms','active-alarms','shelved-alarms'], on_assign=my_on_assign)
 
+registered = {}
 active = {}
 shelved = {}
-registered = {}
 
+registeredLoaded = False
 activeLoaded = False
 shelvedLoaded = False
-registeredLoaded = False
 
 class ContinueException(Exception):
   pass
@@ -72,17 +72,18 @@ def poll_msg():
       if msg.offset() + 1 == highOffsets["registered"]:
         registeredLoaded = True
 
-    elif topic == "shelved-alarms":
-      shelved[key] = value
-
-      if msg.offset() + 1 == highOffsets["shelved-alarms"]:
-        shelvedLoaded = True
-
     elif topic == "active-alarms":
       active[key] = value
 
       if msg.offset() + 1 == highOffsets["active-alarms"]:
         activeLoaded = True
+
+    elif topic == "shelved-alarms":
+        shelved[key] = value
+
+        if msg.offset() + 1 == highOffsets["shelved-alarms"]:
+            shelvedLoaded = True
+
     else:
       print("Unknown topic {}", topic)
 
