@@ -39,7 +39,7 @@ def list():
         'bootstrap.servers': bootstrap_servers,
         'group.id': 'list-registered.py' + str(ts)})
 
-    c.subscribe(['alarms'], on_assign=my_on_assign)
+    c.subscribe(['registered-alarms'], on_assign=my_on_assign)
 
     while True:
         try:

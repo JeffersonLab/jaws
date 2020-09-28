@@ -13,7 +13,7 @@ from avro.schema import Field
 value_schema_str = """
 {
    "namespace" : "org.jlab",
-   "name"      : "Alarm",
+   "name"      : "RegisteredAlarm",
    "type"      : "record",
    "fields"    : [
      {
@@ -98,7 +98,7 @@ p = Producer({
     'bootstrap.servers': bootstrap_servers,
     'on_delivery': delivery_report})
 
-topic = 'alarms'
+topic = 'registered-alarms'
 
 def send() :
     if params.value is None:

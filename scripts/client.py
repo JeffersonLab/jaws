@@ -69,7 +69,7 @@ def poll_msg():
     if topic == "registered-alarms":
       registered[key] = value
 
-      if msg.offset() + 1 == highOffsets["registered"]:
+      if msg.offset() + 1 == highOffsets["registered-alarms"]:
         registeredLoaded = True
 
     elif topic == "active-alarms":
