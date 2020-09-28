@@ -56,8 +56,8 @@ The alarm system consists of a few subsystems:
 | Subsystem | Description | Topics | Key Schema | Value Schema | Scripts |
 |----------|---------------|----------|-----------|-----------|----------|
 | registered-alarms | Set of all possible alarm metadata (descriptions).  Alarms may come from a variety of sources such as from an EPICS alarm service.  A custom alarm service (Kafka Streams) could evaluate custom conditions/rules.  All alarms that are possible should be registered here. | registered-alarms | String: alarm name | AVRO: alarms-value | set-registered.py, list-registered.py |
-| shelved-alarms | Set of alarms that have been shelved. | shelved-alarms | String: alarm name | AVRO: shelved-alarms-value | set-shelved.py, list-shelved.py |
 | active-alarms | Set of alarms currently active (alarming). | active-alarms | String: alarm name | AVRO: active-alarms-value | set-active.py, list-active.py |
+| shelved-alarms | Set of alarms that have been shelved. | shelved-alarms | String: alarm name | AVRO: shelved-alarms-value | set-shelved.py, list-shelved.py |
 
 The alarm system relies on Kafka not only for notification of changes, but for [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) - everything is stored in Kafka and the entire state of
 the system is built by replaying messages.   All topics have compaction enabled to remove old messages that would be overwritten on replay.  Compaction is not very aggressive though so some candidates for deletion are often lingering when clients connect so they must be prepared to handle the ordered messages on replay as ones later in the stream may overwrite ones earlier.
