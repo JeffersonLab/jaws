@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import time
 
 from confluent_kafka import avro, Consumer
 from confluent_kafka.avro import CachedSchemaRegistryClient
@@ -15,9 +16,11 @@ schema_registry = CachedSchemaRegistryClient(conf)
 
 avro_serde = AvroSerde(schema_registry)
 
+ts = time.time()
+
 c = Consumer({
     'bootstrap.servers': bootstrap_servers,
-    'group.id': 'client.py'})
+    'group.id': 'client.py' + str(ts)})
 
 def my_on_assign(consumer, partitions):
     global highOffsets
@@ -30,15 +33,15 @@ def my_on_assign(consumer, partitions):
         highOffsets[p.topic] = high
     consumer.assign(partitions)
 
-c.subscribe(['active-alarms','shelved-alarms','alarms'], on_assign=my_on_assign)
+c.subscribe(['active-alarms','shelved-alarms','registered-alarms'], on_assign=my_on_assign)
 
 active = {}
 shelved = {}
-alarms = {}
+registered = {}
 
 activeLoaded = False
 shelvedLoaded = False
-alarmsLoaded = False
+registeredLoaded = False
 
 class ContinueException(Exception):
   pass
@@ -46,23 +49,28 @@ class ContinueException(Exception):
 def poll_msg(): 
     global activeLoaded
     global shelvedLoaded
-    global alarmsLoaded
+    global registeredLoaded
     global highOffsets
+
+    print('polling')
 
     msg = c.poll(1.0)
 
     if msg is None or msg.error():
+      print('None msg')
       return [msg, None] 
 
     topic = msg.topic()
     key = msg.key().decode('utf-8')
     value = avro_serde.decode_message(msg.value())
 
-    if topic == "alarms":
-      alarms[key] = value
+    print(topic, key, value)
 
-      if msg.offset() + 1 == highOffsets["alarms"]:
-        alarmsLoaded = True
+    if topic == "registered-alarms":
+      registered[key] = value
+
+      if msg.offset() + 1 == highOffsets["registered"]:
+        registeredLoaded = True
 
     elif topic == "shelved-alarms":
       shelved[key] = value
@@ -81,28 +89,34 @@ def poll_msg():
     #print(topic, key, value)
     return [msg, key]
 
+noneCount = 0
+
 while True:
+  if noneCount > 10:  
+    raise RuntimeError("Timeout: taking too long to obtain initial state")
+
   try:
     msg, key = poll_msg()
   except SerializerError as e:
     print("Message deserialization failed for {}".format(e))
-    break
+    raise 
 
   if msg is None:
+    noneCount = noneCount + 1
     continue
 
   if msg.error():
     print("Continuing {}: {}".format(msg, msg.error()))
     continue
 
-  if alarmsLoaded and shelvedLoaded and activeLoaded:
+  if registeredLoaded and shelvedLoaded and activeLoaded:
     break
 
 # At this point the inital flurry of messages have been read up to the high water mark offsets read moments ago.  Now we can report somewhat up-to-date snapshot of system state and start monitoring for anything that has happend since reading high water mark or anything coming in the furure
 print("Initial State:")
 for key in active:
    if active.get(key):
-     print(key, active.get(key), "shelved:", shelved.get(key), "info:", alarms.get(key))
+     print(key, active.get(key), "shelved:", shelved.get(key), "info:", registered.get(key))
 
 print("Continuing to monitor: ")
 while True:
@@ -120,7 +134,7 @@ while True:
     continue 
 
   if active.get(key):
-    print(key, active.get(key), "shelved:", shelved.get(key), "info:", alarms.get(key))
+    print(key, active.get(key), "shelved:", shelved.get(key), "info:", registered.get(key))
   else:
     print(key, "No longer alarming")
 
