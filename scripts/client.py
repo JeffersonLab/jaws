@@ -24,6 +24,7 @@ c = Consumer({
 
 def my_on_assign(consumer, partitions):
     global highOffsets
+    global topicLoaded
 
     highOffsets = {}
 
@@ -31,25 +32,27 @@ def my_on_assign(consumer, partitions):
         p.offset = OFFSET_BEGINNING
         low, high = c.get_watermark_offsets(p)
         highOffsets[p.topic] = high
+        print(p.topic, low, high)
+        if high == 0:
+            topicLoaded[p.topic] = True
     consumer.assign(partitions)
 
 c.subscribe(['registered-alarms','active-alarms','shelved-alarms'], on_assign=my_on_assign)
 
-registered = {}
-active = {}
-shelved = {}
+topicState = {
+  'registered-alarms': {},
+  'active-alarms': {},
+  'shelved-alarms': {}
+}
 
-registeredLoaded = False
-activeLoaded = False
-shelvedLoaded = False
-
-class ContinueException(Exception):
-  pass
+topicLoaded = {
+  'registered-alarms': False,
+  'active-alarms': False,
+  'shelved-alarms': False
+}
 
 def poll_msg(): 
-    global activeLoaded
-    global shelvedLoaded
-    global registeredLoaded
+    global topicLoaded
     global highOffsets
 
     print('polling')
@@ -66,23 +69,10 @@ def poll_msg():
 
     print(topic, key, value)
 
-    if topic == "registered-alarms":
-      registered[key] = value
+    topicState[topic][key] = value
 
-      if msg.offset() + 1 == highOffsets["registered-alarms"]:
-        registeredLoaded = True
-
-    elif topic == "active-alarms":
-      active[key] = value
-
-      if msg.offset() + 1 == highOffsets["active-alarms"]:
-        activeLoaded = True
-
-    elif topic == "shelved-alarms":
-        shelved[key] = value
-
-        if msg.offset() + 1 == highOffsets["shelved-alarms"]:
-            shelvedLoaded = True
+    if msg.offset() + 1 == highOffsets[topic]:
+        topicLoaded[topic] = True
 
     else:
       print("Unknown topic {}", topic)
@@ -110,14 +100,14 @@ while True:
     print("Continuing {}: {}".format(msg, msg.error()))
     continue
 
-  if registeredLoaded and shelvedLoaded and activeLoaded:
+  if topicLoaded['registered-alarms'] and topicLoaded['active-alarms'] and topicLoaded['shelved-alarms']:
     break
 
 # At this point the initial flurry of messages have been read up to the high water mark offsets read moments ago.  Now we can report somewhat up-to-date snapshot of system state and start monitoring for anything that has happened since reading high water mark or anything coming in the future
 print("Initial State:")
-for key in active:
-   if active.get(key):
-     print(key, active.get(key), "shelved:", shelved.get(key), "info:", registered.get(key))
+for key in topicState['active-alarms']:
+   if topicState['active-alarms'].get(key):
+     print(key, topicState['active-alarms'].get(key), "shelved:", topicState['shelved-alarms'].get(key), "info:", topicState['registered-alarms'].get(key))
 
 print("Continuing to monitor: ")
 while True:
@@ -134,8 +124,8 @@ while True:
     print("Continuing {}: {}".format(msg, msg.error()))
     continue 
 
-  if active.get(key):
-    print(key, active.get(key), "shelved:", shelved.get(key), "info:", registered.get(key))
+  if topicState['active-alarms'].get(key):
+    print(key, topicState['active-alarms'].get(key), "shelved:", topicState['shelved-alarms'].get(key), "info:", topicState['registered-alarms'].get(key))
   else:
     print(key, "No longer alarming")
 
