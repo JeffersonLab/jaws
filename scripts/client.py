@@ -112,7 +112,7 @@ while True:
   if registeredLoaded and shelvedLoaded and activeLoaded:
     break
 
-# At this point the inital flurry of messages have been read up to the high water mark offsets read moments ago.  Now we can report somewhat up-to-date snapshot of system state and start monitoring for anything that has happend since reading high water mark or anything coming in the furure
+# At this point the initial flurry of messages have been read up to the high water mark offsets read moments ago.  Now we can report somewhat up-to-date snapshot of system state and start monitoring for anything that has happened since reading high water mark or anything coming in the future
 print("Initial State:")
 for key in active:
    if active.get(key):
