@@ -32,6 +32,29 @@ def my_on_assign(consumer, partitions):
             empty = True
     consumer.assign(partitions)
 
+def disp_msg(msg):
+    timestamp = msg.timestamp()
+    headers = msg.headers()
+    key = msg.key().decode('utf-8')
+    value = avro_serde.decode_message(msg.value())
+
+    ts = time.ctime(timestamp[1])
+
+    user = ''
+    producer = ''
+    host = ''
+
+    if headers is not None:
+        lookup = dict(headers)
+        bytez = lookup.get('user', b'')
+        user = bytez.decode()
+        bytez = lookup.get('producer', b'')
+        producer = bytez.decode()
+        bytez = lookup.get('host', b'')
+        host = bytez.decode()
+
+    print(ts, '|', user, '|', producer, '|', host, '|', key, value)
+
 def list():
     ts = time.time()
 
@@ -59,29 +82,7 @@ def list():
             print("AvroConsumer error: {}".format(msg.error()))
             continue
 
-        timestamp = msg.timestamp()
-        headers = msg.headers()
-        key = msg.key().decode('utf-8')
-        value = avro_serde.decode_message(msg.value())
-
-        ts = time.ctime(timestamp[1])
-
-        user = ''
-        producer = ''
-        host = ''
-
-
-        if headers is not None:
-            lookup = dict(headers)
-            bytez = lookup.get('user', b'')
-            user = bytez.decode()
-            bytez = lookup.get('producer', b'')
-            producer = bytez.decode()
-            bytez = lookup.get('host', b'')
-            host = bytez.decode()
-            
-
-        print(ts, '|', user, '|', producer, '|', host, '|', key, value)
+        disp_msg(msg)
 
         if (not params.monitor) and msg.offset() + 1 == high:
             break

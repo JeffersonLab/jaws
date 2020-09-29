@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import pwd
 import types
 import click
 
@@ -79,13 +80,15 @@ p = Producer({
 
 topic = 'shelved-alarms'
 
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active.py'),('host',os.uname().nodename)]
+
 def send() :
     if params.value is None:
         val_payload = None
     else:
         val_payload = serialize_avro(topic, value_schema, params.value, is_key=False)
 
-    p.produce(topic=topic, value=val_payload, key=params.key)
+    p.produce(topic=topic, value=val_payload, key=params.key, headers=hdrs)
     p.flush()
 
 @click.command()
