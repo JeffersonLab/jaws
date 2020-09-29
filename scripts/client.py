@@ -2,6 +2,7 @@
 
 import os
 import time
+import json
 
 from confluent_kafka import avro, Consumer
 from confluent_kafka.avro import CachedSchemaRegistryClient
@@ -61,15 +62,17 @@ def poll_msg():
 
     if msg is None or msg.error():
       print('None msg')
-      return [msg, None] 
+      return [msg, None]
 
     topic = msg.topic()
     key = msg.key().decode('utf-8')
     value = avro_serde.decode_message(msg.value())
+    timestamp = msg.timestamp()
+    headers = msg.headers()
 
     print(topic, key, value)
 
-    topicState[topic][key] = value
+    topicState[topic][key] = (timestamp, headers, value)
 
     if msg.offset() + 1 == highOffsets[topic]:
         topicLoaded[topic] = True
@@ -79,6 +82,58 @@ def poll_msg():
 
     #print(topic, key, value)
     return [msg, key]
+
+def state_str(state):
+  str = ''
+
+  print('state: ', state)
+
+  timestamp = state[0]
+  headers = state[1]
+  value = state[2]
+
+  ts = time.ctime(timestamp[1])
+
+  user = ''
+  producer = ''
+  host = ''
+
+  if headers is not None:
+    lookup = dict(headers)
+    bytez = lookup.get('user', b'')
+    user = bytez.decode()
+    bytez = lookup.get('producer', b'')
+    producer = bytez.decode()
+    bytez = lookup.get('host', b'')
+    host = bytez.decode()
+
+  jvalue = json.dumps(value)
+
+  str = '[' + ts + ', ' + user + ', ' + producer + ', ' + host + ', ' + jvalue + ']'
+
+  return str
+
+def disp_alarm(key):
+  registered = topicState['registered-alarms'].get(key)
+  active = topicState['active-alarms'].get(key)
+  shelved = topicState['shelved-alarms'].get(key)
+
+  if registered:
+    registeredInfo = state_str(registered)
+  else:
+    registeredInfo = 'None'
+
+  if active:
+      activeInfo = state_str(active)
+  else:
+      activeInfo = 'None'
+
+  if shelved:
+      shelvedInfo = state_str(shelved)
+  else:
+      shelvedInfo = 'None'
+
+  print(key, 'Reg: ', registeredInfo, 'Act: ', activeInfo, 'Shel: ', shelvedInfo)
 
 noneCount = 0
 
@@ -106,8 +161,7 @@ while True:
 # At this point the initial flurry of messages have been read up to the high water mark offsets read moments ago.  Now we can report somewhat up-to-date snapshot of system state and start monitoring for anything that has happened since reading high water mark or anything coming in the future
 print("Initial State:")
 for key in topicState['active-alarms']:
-   if topicState['active-alarms'].get(key):
-     print(key, topicState['active-alarms'].get(key), "shelved:", topicState['shelved-alarms'].get(key), "info:", topicState['registered-alarms'].get(key))
+  disp_alarm(key)
 
 print("Continuing to monitor: ")
 while True:
@@ -124,9 +178,6 @@ while True:
     print("Continuing {}: {}".format(msg, msg.error()))
     continue 
 
-  if topicState['active-alarms'].get(key):
-    print(key, topicState['active-alarms'].get(key), "shelved:", topicState['shelved-alarms'].get(key), "info:", topicState['registered-alarms'].get(key))
-  else:
-    print(key, "No longer alarming")
+  disp_alarm(key)
 
 c.close()
