@@ -18,11 +18,6 @@ value_schema_str = """
    "type"      : "record",
    "fields"    : [
      {
-       "name" : "user",
-       "type" : "string",
-       "doc"  : "The username of the operator who shelved the alarm"
-     },
-     {
        "name"    : "duration",
        "type"    : [
          {
@@ -93,7 +88,6 @@ def send() :
 
 @click.command()
 @click.option('--unset', is_flag=True, help="Remove the alarm")
-@click.option('--user', help="The username of the operator who shelved the alarm")
 @click.option('--expiration', type=int, help="The milliseoncds since the epoch 1970 (unix timestamp) when this temporary shelving (acknowledgement) expires, only needed if --reason not provided")
 @click.option('--reason', help="The explanation for why this alarm has been indefinately shelved (disabled), only needed if --expiration is not provided")
 @click.argument('name')
@@ -116,11 +110,7 @@ def cli(unset, user, expiration, reason, name):
         else:
             duration = {"reason": reason}
 
-        if user == None:
-            raise click.ClickException(
-                    "Must specify option --user")
-
-        params.value = {"user": user, "duration": duration}
+        params.value = {"duration": duration}
 
     send()
 
