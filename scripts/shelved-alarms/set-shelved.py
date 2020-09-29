@@ -27,7 +27,7 @@ value_schema_str = """
            {
              "name"        : "expiration",
              "type"        : "long",
-             "logicalType" : "timestampi-millis",
+             "logicalType" : "timestamp-millis",
              "doc"         : "Timestamp when this shelved alarm should expire"
            }
          ],
@@ -40,10 +40,10 @@ value_schema_str = """
              {
                "name" : "reason",
                "type" : "string",
-               "doc"  : "If you are going to indefinately shelve an alarm you better be able to explain why"
+               "doc"  : "If you are going to indefinitely shelve an alarm you better be able to explain why"
              }
            ],
-           "doc"    : "Alarm that is indefinately shelved"
+           "doc"    : "Alarm that is indefinitely shelved"
          }
        ]
      }
@@ -88,8 +88,8 @@ def send() :
 
 @click.command()
 @click.option('--unset', is_flag=True, help="Remove the alarm")
-@click.option('--expiration', type=int, help="The milliseoncds since the epoch 1970 (unix timestamp) when this temporary shelving (acknowledgement) expires, only needed if --reason not provided")
-@click.option('--reason', help="The explanation for why this alarm has been indefinately shelved (disabled), only needed if --expiration is not provided")
+@click.option('--expiration', type=int, help="The milliseconds since the epoch 1970 (unix timestamp) when this temporary shelving (acknowledgement) expires, only needed if --reason not provided")
+@click.option('--reason', help="The explanation for why this alarm has been indefinitely shelved (disabled), only needed if --expiration is not provided")
 @click.argument('name')
 
 def cli(unset, expiration, reason, name):
