@@ -80,7 +80,7 @@ p = Producer({
 
 topic = 'shelved-alarms'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active.py'),('host',os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-shelved.py'),('host',os.uname().nodename)]
 
 def send() :
     if params.value is None:
