@@ -28,7 +28,7 @@ else
       docurl="${def[4]}"
       edmpath="${def[5]}"
       echo "Creating alarm definition ${name} ${pv} ${location}" "${category}" "${docurl}" "${edmpath}"
-      /scripts/registered/set-registered.py "${name}" --producerpv "${pv}" --location "${location}" --category "${category}" --docurl "${docurl}" --edmpath "${edmpath}"
+      /scripts/registered-alarms/set-registered.py "${name}" --producerpv "${pv}" --location "${location}" --category "${category}" --docurl "${docurl}" --edmpath "${edmpath}"
     done
 fi
 
