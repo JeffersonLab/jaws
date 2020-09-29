@@ -55,7 +55,7 @@ The alarm system consists of a few subsystems:
 
 | Subsystem | Description | Topics | Key Schema | Value Schema | Scripts |
 |----------|---------------|----------|-----------|-----------|----------|
-| registered-alarms | Set of all possible alarm metadata (descriptions).  Alarms may come from a variety of sources such as from an EPICS alarm service.  A custom alarm service (Kafka Streams) could evaluate custom conditions/rules.  All alarms that are possible should be registered here. | registered-alarms | String: alarm name | AVRO: alarms-value | set-registered.py, list-registered.py |
+| registered-alarms | Set of all possible alarm metadata (descriptions).  Alarms may come from a variety of sources such as from an EPICS alarm service.  A custom alarm service (Kafka Streams) could evaluate custom conditions/rules.  All alarms that are possible should be registered here. | registered-alarms | String: alarm name | AVRO: registered-alarms-value | set-registered.py, list-registered.py |
 | active-alarms | Set of alarms currently active (alarming). | active-alarms | String: alarm name | AVRO: active-alarms-value | set-active.py, list-active.py |
 | shelved-alarms | Set of alarms that have been shelved. | shelved-alarms | String: alarm name | AVRO: shelved-alarms-value | set-shelved.py, list-shelved.py |
 
