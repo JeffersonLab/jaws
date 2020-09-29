@@ -92,7 +92,7 @@ def send() :
 @click.option('--reason', help="The explanation for why this alarm has been indefinately shelved (disabled), only needed if --expiration is not provided")
 @click.argument('name')
 
-def cli(unset, user, expiration, reason, name):
+def cli(unset, expiration, reason, name):
     global params
 
     params = types.SimpleNamespace()
