@@ -77,16 +77,13 @@ def poll_msg():
     if msg.offset() + 1 == highOffsets[topic]:
         topicLoaded[topic] = True
 
-    else:
-      print("Unknown topic {}", topic)
-
     #print(topic, key, value)
     return [msg, key]
 
 def state_str(state):
   str = ''
 
-  print('state: ', state)
+  #print('state: ', state)
 
   timestamp = state[0]
   headers = state[1]
