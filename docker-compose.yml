@@ -19,7 +19,7 @@ services:
       - "9092:9092"
     environment:
       ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      CREATE_TOPICS: 'alarms:1:1:compact,active-alarms:1:1:compact,shelved-alarms:1:1:compact'
+      CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,shelved-alarms:1:1:compact'
     volumes:
       - ./examples/kafka-scripts:/scripts
 
