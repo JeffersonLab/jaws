@@ -89,7 +89,7 @@ def state_str(state):
   headers = state[1]
   value = state[2]
 
-  ts = time.ctime(timestamp[1])
+  ts = time.ctime(timestamp[1] / 1000)
 
   user = ''
   producer = ''

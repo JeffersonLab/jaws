@@ -38,7 +38,7 @@ def disp_msg(msg):
     key = msg.key().decode('utf-8')
     value = avro_serde.decode_message(msg.value())
 
-    ts = time.ctime(timestamp[1])
+    ts = time.ctime(timestamp[1] / 1000)
 
     user = ''
     producer = ''
