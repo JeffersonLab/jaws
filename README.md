@@ -62,6 +62,16 @@ the system is built by replaying messages.   All topics have compaction enabled 
 
 To unset (remove) a record use the --unset option with the "set" scripts, This writes a null/None tombstone record.  To modify a record simply set a new one with the same key as the message stream is ordered and newer records overwrite older ones.  To see all options use the --help option.  Instead of documenting the AVRO schemas here, just dump them using the dump-schemas.sh script.  They are self-documenting. 
 
+### Message Metadata
+The alarm system topics are expected to include audit information in Kafka message headers and includes the following:
+| Header | Description |
+|--------|-------------|
+| user | The username of the account whom produced the message |
+| producer | The application name that produced the message |
+| host | The hostname where the message was produced |
+
+Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The timestamp is configurable in Kafka, and we rely the default broker provided timestamp (as opposed to producer provided).
+
 ### Docker
 A docker image containing scripts can be built from the Dockerfile included in the project.  To build within a network using man-in-the-middle network scanning (self-signed certificate injection) you can provide an optional build argument pointing to the custom CA certificate file (pip will fail to download dependencies if certificates can't be verified).   For example:
 ```
