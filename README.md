@@ -72,6 +72,8 @@ The alarm system topics are expected to include audit information in Kafka messa
 
 Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The timestamp is configurable in Kafka, and we rely the default broker provided timestamp (as opposed to producer provided).
 
+**Note**: There is no schema for message headers so content is not easily enforceable.  The topic management scripts provided include audit headers with messages produced.
+
 ### Docker
 A docker image containing scripts can be built from the Dockerfile included in the project.  To build within a network using man-in-the-middle network scanning (self-signed certificate injection) you can provide an optional build argument pointing to the custom CA certificate file (pip will fail to download dependencies if certificates can't be verified).   For example:
 ```
