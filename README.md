@@ -48,16 +48,14 @@ The alarm system is composed of the following services:
 
 ## Alarm System Console
 
-### Scripts
-Python scripts for managing alarms in [Kafka](https://kafka.apache.org/).  Schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.
+### Kafka Topics
+The alarm system state is stored in three [Kafka](https://kafka.apache.org/) topics.   Topic schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.  Python scripts are provided for managing the alarm system topics.  
 
-The alarm system consists of a few subsystems:
-
-| Subsystem | Description | Topics | Key Schema | Value Schema | Scripts |
-|----------|---------------|----------|-----------|-----------|----------|
-| registered-alarms | Set of all possible alarm metadata (descriptions). | registered-alarms | String: alarm name | AVRO: registered-alarms-value | set-registered.py, list-registered.py |
-| active-alarms | Set of alarms currently active (alarming). | active-alarms | String: alarm name | AVRO: active-alarms-value | set-active.py, list-active.py |
-| shelved-alarms | Set of alarms that have been shelved. | shelved-alarms | String: alarm name | AVRO: shelved-alarms-value | set-shelved.py, list-shelved.py |
+| Topic | Description | Key Schema | Value Schema | Scripts |
+|-------|-------------|------------|--------------|---------|
+| registered-alarms | Set of all possible alarm metadata (descriptions). | String: alarm name | AVRO: registered-alarms-value | set-registered.py, list-registered.py |
+| active-alarms | Set of alarms currently active (alarming). | String: alarm name | AVRO: active-alarms-value | set-active.py, list-active.py |
+| shelved-alarms | Set of alarms that have been shelved. | String: alarm name | AVRO: shelved-alarms-value | set-shelved.py, list-shelved.py |
 
 The alarm system relies on Kafka not only for notification of changes, but for [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) - everything is stored in Kafka and the entire state of
 the system is built by replaying messages.   All topics have compaction enabled to remove old messages that would be overwritten on replay.  Compaction is not very aggressive though so some candidates for deletion are often lingering when clients connect so they must be prepared to handle the ordered messages on replay as ones later in the stream may overwrite ones earlier.
