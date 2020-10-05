@@ -63,14 +63,14 @@ the system is built by replaying messages.   All topics have compaction enabled 
 To unset (remove) a record use the --unset option with the "set" scripts, This writes a null/None tombstone record.  To modify a record simply set a new one with the same key as the message stream is ordered and newer records overwrite older ones.  To see all options use the --help option. 
 
 ### Message Metadata
-The alarm system topics are expected to include audit information in Kafka message headers and includes the following:
+The alarm system topics are expected to include audit information in Kafka message headers:
 | Header | Description |
 |--------|-------------|
 | user | The username of the account whom produced the message |
 | producer | The application name that produced the message |
 | host | The hostname where the message was produced |
 
-Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The timestamp is configurable in Kafka.  The alarm system uses the default broker provided timestamp (as opposed to producer provided).
+Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The alarm system uses the default broker provided timestamp (as opposed to producer provided).
 
 **Note**: There is no schema for message headers so content is not easily enforceable.  However, the topic management scripts provided include the audit headers listed.
 
