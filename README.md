@@ -49,7 +49,7 @@ The alarm system is composed of the following services:
 ## Alarm System Console
 
 ### Kafka Topics
-The alarm system state is stored in three [Kafka](https://kafka.apache.org/) topics.   Topic schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.  Python scripts are provided for managing the alarm system topics.  
+The alarm system state is stored in three Kafka topics.   Topic schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.  Python scripts are provided for managing the alarm system topics.  
 
 | Topic | Description | Key Schema | Value Schema | Scripts |
 |-------|-------------|------------|--------------|---------|
