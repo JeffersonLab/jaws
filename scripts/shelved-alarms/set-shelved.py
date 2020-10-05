@@ -13,7 +13,7 @@ from avro.schema import Field
 
 value_schema_str = """
 {
-   "namespace" : "org.jlab",
+   "namespace" : "org.jlab.kafka.alarms",
    "name"      : "ShelvedAlarm",
    "type"      : "record",
    "fields"    : [
