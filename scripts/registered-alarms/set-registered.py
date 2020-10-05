@@ -13,7 +13,7 @@ from avro.schema import Field
 
 value_schema_str = """
 {
-   "namespace" : "org.jlab",
+   "namespace" : "org.jlab.kafka.alarms",
    "name"      : "RegisteredAlarm",
    "type"      : "record",
    "fields"    : [
@@ -64,12 +64,18 @@ value_schema_str = """
        }
      },
      {
-       "name" : "docUrl",
+        "name"    : "latching",
+        "type"    : "boolean",
+        "default" : false,
+        "doc"     : "Indicates whether this alarm latches when activated and can only be cleared after an explicit acknowledgement"
+     },
+     {
+       "name" : "docurl",
        "type" : "string",
        "doc"  : "The relative URL to documentation for this alarm from base path https://alarms.jlab.org/docs"
      },
      {
-       "name" : "edmPath",
+       "name" : "edmpath",
        "type" : "string",
        "doc"  : "Relative path to ops fiefdom EDM screen most useful for this alarm from base path /cs/mccops/edm"
      }
@@ -118,11 +124,12 @@ def send() :
 @click.option('--producerjar', help="The name of the Java JAR file containing the stream rules powering this alarm, only needed if not using producerPv")
 @click.option('--location', type=click.Choice(['INJ', 'NL', 'SL', 'HA', 'HB', 'HC', 'HD']), help="The alarm location")
 @click.option('--category', type=click.Choice(['Magnet', 'Vacuum', 'RF', 'RADCON', 'Safety']), help="The alarm category")
+@click.option('--latching', is_flag=True, help="Indicate that the alarm latches and requires acknowledgement to clear")
 @click.option('--docurl', help="Relative path to documentation from https://alarms.jlab.org/doc")
 @click.option('--edmpath', help="Relative path to OPS fiefdom EDM screen from /cs/mccops/edm")
 @click.argument('name')
 
-def cli(unset, producerpv, producerjar, location, category, docurl, edmpath, name):
+def cli(unset, producerpv, producerjar, location, category, latching, docurl, edmpath, name):
     global params
 
     params = types.SimpleNamespace()
@@ -142,9 +149,9 @@ def cli(unset, producerpv, producerjar, location, category, docurl, edmpath, nam
 
         if location == None or category == None or docurl == None or edmpath == None:
             raise click.ClickException(
-                    "Must specify options --location,  --category, --docurl, --edmpath")
+                    "Must specify options --location, --category, --docurl, --edmpath")
 
-        params.value = {"producer": producer, "location": location, "category": category, "docUrl": docurl, "edmPath": edmpath}
+        params.value = {"producer": producer, "location": location, "category": category, "latching": latching, "docurl": docurl, "edmpath": edmpath}
 
     send()
 

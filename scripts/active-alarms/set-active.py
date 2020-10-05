@@ -13,7 +13,7 @@ from avro.schema import Field
 
 value_schema_str = """
 {
-   "namespace" : "org.jlab",
+   "namespace" : "org.jlab.kafka.alarms",
    "name"      : "ActiveAlarm",
    "type"      : "record",
    "fields"    : [
@@ -25,6 +25,12 @@ value_schema_str = """
          "symbols" : ["P1_LIFE","P2_PROPERTY","P3_PRODUCTIVITY", "P4_DIAGNOSTIC"],
          "doc"     : "Alarm severity organized as a way for operators to prioritize which alarms to take action on first"
        }
+     },
+     {
+        "name"    : "acknowledged",
+        "type"    : "boolean",
+        "default" : false,
+        "doc"     : "Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement"
      }
   ]
 }
@@ -68,9 +74,10 @@ def send() :
 @click.command()
 @click.option('--unset', is_flag=True, help="Remove the alarm")
 @click.option('--priority', type=click.Choice(['P1_LIFE', 'P2_PROPERTY', 'P3_PRODUCTIVITY', 'P4_DIAGNOSTIC']), help="The alarm serverity as a priority for operators")
+@click.option('--ack', is_flag=True, help="Acknowledge the alarm")
 @click.argument('name')
 
-def cli(unset, priority, name):
+def cli(unset, priority, ack, name):
     global params
 
     params = types.SimpleNamespace()
@@ -84,7 +91,7 @@ def cli(unset, priority, name):
             raise click.ClickException(
                     "Must specify option --priority")
 
-        params.value = {"priority": priority}
+        params.value = {"priority": priority, "acknowledged": ack}
 
     send()
 
