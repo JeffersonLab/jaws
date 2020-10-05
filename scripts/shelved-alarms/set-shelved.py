@@ -18,34 +18,15 @@ value_schema_str = """
    "type"      : "record",
    "fields"    : [
      {
-       "name"    : "duration",
-       "type"    : [
-         {
-         "name"    : "AcknowledgedAlarm",
-         "type"    : "record",
-         "fields"  : [
-           {
-             "name"        : "expiration",
-             "type"        : "long",
-             "logicalType" : "timestamp-millis",
-             "doc"         : "Timestamp when this shelved alarm should expire"
-           }
-         ],
-         "doc"     : "Alarm that is temporarily shelved"
-         },
-         {
-           "name"   : "DisabledAlarm",
-           "type"   : "record",
-           "fields" : [
-             {
-               "name" : "reason",
-               "type" : "string",
-               "doc"  : "If you are going to indefinitely shelve an alarm you better be able to explain why"
-             }
-           ],
-           "doc"    : "Alarm that is indefinitely shelved"
-         }
-       ]
+         "name"        : "expiration",
+         "type"        : "long",
+         "logicalType" : "timestamp-millis",
+         "doc"         : "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this shelved alarm should expire"
+     },
+     {
+         "name" : "reason",
+         "type" : "string",
+         "doc"  : "Reason this alarm is shelved"
      }
   ]
 }
@@ -102,15 +83,10 @@ def cli(unset, expiration, reason, name):
     if unset:
         params.value = None
     else:
-        if expiration == None and reason == None:
-            raise click.ClickException("Either --expiration or --reason is required")
+        if expiration == None or reason == None:
+            raise click.ClickException("Both --expiration and --reason are required")
 
-        if expiration:
-            duration = {"expiration": expiration}
-        else:
-            duration = {"reason": reason}
-
-        params.value = {"duration": duration}
+        params.value = {"expiration": expiration, "reason": reason}
 
     send()
 

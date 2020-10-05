@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "ShelvedAlarm",
+  "namespace": "org.jlab.kafka.alarms",
+  "fields": [
+    {
+      "name": "expiration",
+      "type": "long",
+      "doc": "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this shelved alarm should expire",
+      "logicalType": "timestamp-millis"
+    },
+    {
+      "name": "reason",
+      "type": "string",
+      "doc": "Reason this alarm is shelved"
+    }
+  ]
+}
