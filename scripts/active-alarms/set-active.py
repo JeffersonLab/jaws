@@ -13,24 +13,27 @@ from avro.schema import Field
 
 value_schema_str = """
 {
-   "namespace" : "org.jlab.kafka.alarms",
-   "name"      : "ActiveAlarm",
    "type"      : "record",
+   "name"      : "ActiveAlarm",   
+   "namespace" : "org.jlab.kafka.alarms",
+   "doc"       : "Alarms currently alarming",
    "fields"    : [
      {
        "name"    : "priority",
        "type"    : {
-         "name"    : "AlarmPriority",
-         "type"    : "enum",
-         "symbols" : ["P1_LIFE","P2_PROPERTY","P3_PRODUCTIVITY", "P4_DIAGNOSTIC"],
-         "doc"     : "Alarm severity organized as a way for operators to prioritize which alarms to take action on first"
-       }
+         "type"      : "enum",       
+         "name"      : "AlarmPriority",
+         "namespace" : "org.jlab.kafka.alarms",
+         "doc"       : "Enumeration of possible alarm priorities",
+         "symbols"   : ["P1_LIFE","P2_PROPERTY","P3_PRODUCTIVITY", "P4_DIAGNOSTIC"]
+       },
+       "doc"     : "Alarm severity organized as a way for operators to prioritize which alarms to take action on first"
      },
      {
         "name"    : "acknowledged",
         "type"    : "boolean",
-        "default" : false,
-        "doc"     : "Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement"
+        "doc"     : "Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement",
+        "default" : false        
      }
   ]
 }

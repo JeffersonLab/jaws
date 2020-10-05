@@ -2,20 +2,22 @@
   "type": "record",
   "name": "ActiveAlarm",
   "namespace": "org.jlab.kafka.alarms",
+  "doc": "Alarms currently alarming",
   "fields": [
     {
       "name": "priority",
       "type": {
         "type": "enum",
         "name": "AlarmPriority",
-        "doc": "Alarm severity organized as a way for operators to prioritize which alarms to take action on first",
+        "doc": "Enumeration of possible alarm priorities",
         "symbols": [
           "P1_LIFE",
           "P2_PROPERTY",
           "P3_PRODUCTIVITY",
           "P4_DIAGNOSTIC"
         ]
-      }
+      },
+      "doc": "Alarm severity organized as a way for operators to prioritize which alarms to take action on first"
     },
     {
       "name": "acknowledged",
