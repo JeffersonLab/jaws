@@ -53,14 +53,14 @@ The alarm system state is stored in three [Kafka](https://kafka.apache.org/) top
 
 | Topic | Description | Key Schema | Value Schema | Scripts |
 |-------|-------------|------------|--------------|---------|
-| registered-alarms | Set of all possible alarm metadata (descriptions). | String: alarm name | AVRO: registered-alarms-value | set-registered.py, list-registered.py |
-| active-alarms | Set of alarms currently active (alarming). | String: alarm name | AVRO: active-alarms-value | set-active.py, list-active.py |
+| registered-alarms | Set of all possible alarm metadata (descriptions). | String: alarm name | AVRO: [registered-alarms-value](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/registered-alarms-value.avsc) | set-registered.py, list-registered.py |
+| active-alarms | Set of alarms currently active (alarming). | String: alarm name | AVRO: [active-alarms-value](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/active-alarms-value.avsc) | set-active.py, list-active.py |
 | shelved-alarms | Set of alarms that have been shelved. | String: alarm name | AVRO: shelved-alarms-value | set-shelved.py, list-shelved.py |
 
 The alarm system relies on Kafka not only for notification of changes, but for [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) - everything is stored in Kafka and the entire state of
 the system is built by replaying messages.   All topics have compaction enabled to remove old messages that would be overwritten on replay.  Compaction is not very aggressive though so some candidates for deletion are often lingering when clients connect so they must be prepared to handle the ordered messages on replay as ones later in the stream may overwrite ones earlier.
 
-To unset (remove) a record use the --unset option with the "set" scripts, This writes a null/None tombstone record.  To modify a record simply set a new one with the same key as the message stream is ordered and newer records overwrite older ones.  To see all options use the --help option.  Instead of documenting the AVRO schemas here, just dump them using the dump-schemas.sh script.  They are self-documenting. 
+To unset (remove) a record use the --unset option with the "set" scripts, This writes a null/None tombstone record.  To modify a record simply set a new one with the same key as the message stream is ordered and newer records overwrite older ones.  To see all options use the --help option. 
 
 ### Message Metadata
 The alarm system topics are expected to include audit information in Kafka message headers and includes the following:
