@@ -1,0 +1,83 @@
+{
+  "type": "record",
+  "name": "RegisteredAlarm",
+  "namespace": "org.jlab.kafka.alarms",
+  "fields": [
+    {
+      "name": "producer",
+      "type": [
+        {
+          "type": "record",
+          "name": "DirectCAAlarm",
+          "fields": [
+            {
+              "name": "pv",
+              "type": "string",
+              "doc": "The name of the EPICS CA PV, which can be correlated with the key of the epics-channels topic"
+            }
+          ]
+        },
+        {
+          "type": "record",
+          "name": "StreamRuleAlarm",
+          "fields": [
+            {
+              "name": "jar",
+              "type": "string",
+              "doc": "Name of the Java jar file containing the stream rule logic, stored in the stream rule engine rules directory"
+            }
+          ]
+        }
+      ],
+      "doc": "Indicates how this alarm is produced, useful for producers to monitor when new alarms are added/removed"
+    },
+    {
+      "name": "location",
+      "type": {
+        "type": "enum",
+        "name": "AlarmLocation",
+        "doc": "The alarm location",
+        "symbols": [
+          "INJ",
+          "NL",
+          "SL",
+          "HA",
+          "HB",
+          "HC",
+          "HD"
+        ]
+      }
+    },
+    {
+      "name": "category",
+      "type": {
+        "type": "enum",
+        "name": "AlarmCategory",
+        "doc": "The alarm category, useful for consumers to filter out alarms of interest",
+        "symbols": [
+          "Magnet",
+          "Vacuum",
+          "RF",
+          "RADCON",
+          "Safety"
+        ]
+      }
+    },
+    {
+      "name": "latching",
+      "type": "boolean",
+      "doc": "Indicates whether this alarm latches when activated and can only be cleared after an explicit acknowledgement",
+      "default": false
+    },
+    {
+      "name": "docurl",
+      "type": "string",
+      "doc": "The relative URL to documentation for this alarm from base path https://alarms.jlab.org/docs"
+    },
+    {
+      "name": "edmpath",
+      "type": "string",
+      "doc": "Relative path to ops fiefdom EDM screen most useful for this alarm from base path /cs/mccops/edm"
+    }
+  ]
+}
