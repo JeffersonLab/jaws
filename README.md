@@ -64,6 +64,7 @@ To unset (remove) a record use the --unset option with the "set" scripts, This w
 
 ### Message Metadata
 The alarm system topics are expected to include audit information in Kafka message headers:
+
 | Header | Description |
 |--------|-------------|
 | user | The username of the account whom produced the message |
