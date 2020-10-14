@@ -64,6 +64,15 @@
       }
     },
     {
+      "name": "maxshelveduration",
+      "type": [
+        "null",
+        "int"
+      ],
+      "doc": "Maximum amount of time an alarm is allowed to be shelved in seconds; zero means alarm cannot be shelved and null means no limit",
+      "default": null
+    },
+    {
       "name": "latching",
       "type": "boolean",
       "doc": "Indicates whether this alarm latches when activated and can only be cleared after an explicit acknowledgement",
