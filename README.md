@@ -14,7 +14,7 @@ Alarms are triggered by producing messages on the __active-alarms__ topic, which
 
 An [Operator Graphical User Interface to the Alarm System](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions (registered-alarms), and shelve active alarms.
 
-TODO: An admin web interface provides a convenient app for admins to manage the list of all possible alarms and their definitions.
+TODO: An admin web interface provides a convenient app for admins to manage the list of all possible alarms and their definitions (registered-alarms).
 
 A Kafka Streams app [acknowledgements2epics](https://github.com/JeffersonLab/acknowledgements2epics) performs an EPICS alarm acknowledgement on alarms of provider __DirectCAAlarm__, an optional extension to forward acknoweldgements to latched alarms.  This app seems unnecessary at this point ([Issue #4](https://github.com/JeffersonLab/kafka-alarm-system/issues/4)).
 
