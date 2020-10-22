@@ -18,7 +18,7 @@ TODO: An admin web interface provides a convenient app for admins to manage the 
 
 A Kafka Streams app [acknowledgements2epics](https://github.com/JeffersonLab/acknowledgements2epics) performs an EPICS alarm acknowledgement on alarms of provider __DirectCAAlarm__, an optional extension to forward acknoweldgements to latched alarms.  This app seems unnecessary at this point ([Issue #4](https://github.com/JeffersonLab/kafka-alarm-system/issues/4)).
 
-TODO: A Kafka Streams app to manage the shelved-alarms topic (The Shelf Service).   The shelf service looks for expired shelved messages and unsets them with tombstone records as a matter of book-keeping to speed up processing for clients (on a compacted topic tombstone records keep most recent message list short).  The shelf service will also monitor active-alarms topic and ensure that channels can only be shelved if they are active - automatically cleanup (tombstone) shelved messages for channels that are no longer in active alarm. 
+TODO: A Kafka Streams app to expire messages from the shelved-alarms topic (The Shelf Service).   The shelf service looks for expired shelved messages and unsets them with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.  If clients wanted to set their own timers, they could, and they could even write the tombstone on expiration.  This would likely result in n-concurrent tomestone messages at timeout where n is the number of clients, but that would be fine.
 
 ## Quick Start with Docker 
 1. Grab project
