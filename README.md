@@ -69,7 +69,7 @@ To unset (remove) a record use the --unset option with the "set" scripts, This w
 The alarm system supports acknowledgements - alarms registered as "latching" require acknowledgment.  Since acknowledgements need to be tied to a specific instance of an alarming message alarm acknowledgements are placed on the same topic as alarming messages (active-alarms) to ensure messages are ordered (given a single partition).
 
 ### Active Alarm Types
-Since different alarm producers may have producer specific alarm data the active alarm schema is actually an extendable union of schemas.   Generally the basic alarming or acknowledgement messagse should be used for simplicity, but sometimes extra info is required.  For example, EPICS alarms have severity and status fields.
+Since different alarm producers may have producer specific alarm data the active alarm schema is actually an extendable union of schemas.   Generally the basic alarming or acknowledgement messages should be used for simplicity, but sometimes extra info is required.  For example, EPICS alarms have severity and status fields.
 
 ### Message Metadata
 The alarm system topics are expected to include audit information in Kafka message headers:
