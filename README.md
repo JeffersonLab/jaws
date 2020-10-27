@@ -36,7 +36,7 @@ docker exec -it console /scripts/active-alarms/list-active.py --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec console /scripts/active-alarms/set-active.py channel1 --priority P1_LIFE
+docker exec console /scripts/active-alarms/set-active-alarming.py channel1
 ```
 [Scripts Reference](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Scripts-Reference)
 
