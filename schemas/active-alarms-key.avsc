@@ -14,7 +14,6 @@
       "type" : {
         "type"      : "enum",
         "name"      : "ActiveMessageType",
-        "namespace" : "org.jlab.kafka.alarms",
         "doc"       : "Enumeration of possible message types",
         "symbols"   : ["alarming","ack"]
 

@@ -10,7 +10,6 @@
         {
           "type"      : "record",
           "name"      : "AlarmingMsg",
-          "namespace" : "org.jlab.kafka.alarms",
           "doc"       : "Alarming state for a basic alarm",
           "fields"    : [
             {
@@ -23,7 +22,6 @@
         {
           "type"      : "record",
           "name"      : "AcknowledgementMsg",
-          "namespace" : "org.jlab.kafka.alarms",
           "doc"       : "A basic acknowledgment message",
           "fields"    : [
             {
@@ -44,7 +42,6 @@
               "type"    : {
                 "type"      : "enum",
                 "name"      : "EPICSAlarmingEnum",
-                "namespace" : "org.jlab.kafka.alarms",
                 "doc"       : "Enumeration of possible EPICS alarming states",
                 "symbols"   : ["MAJOR","MINOR","NO_ALARM"]
               },
@@ -63,7 +60,6 @@
               "type"    : {
                 "type"      : "enum",
                 "name"      : "EPICSAcknowledgementEnum",
-                "namespace" : "org.jlab.kafka.alarms",
                 "doc"       : "Enumeration of possible EPICS acknowledgement states",
                 "symbols"   : ["MAJOR_ACK", "MINOR_ACK", "NO_ACK"]
               },
