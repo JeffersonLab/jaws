@@ -11,30 +11,111 @@ from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
 from avro.schema import Field
 
+key_schema_str = """
+{
+    "type"      : "record",
+    "name"      : "ActiveAlarmKey",
+    "namespace" : "org.jlab.kafka.alarms",
+    "doc"       : "Active alarms state (alarming or acknowledgment)",
+    fields      : [
+        {
+            "name" : "alarmname",
+            "type" : "string",
+            "doc"  : "The unique name of the alarm"
+        },
+        {
+            "name" : "msgtype",
+            "type" : {
+                "type"      : "enum",
+                "name"      : "ActiveMessageType",
+                "namespace" : "org.jlab.kafka.alarms",
+                "doc"       : "Enumeration of possible message types",
+                "symbols"   : ["alarming","acknowledgement"]
+                
+            },
+            "doc"  : "The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type" 
+        }
+    ]
+}
+"""
+
 value_schema_str = """
 {
    "type"      : "record",
-   "name"      : "ActiveAlarm",   
+   "name"      : "ActiveAlarmValue",   
    "namespace" : "org.jlab.kafka.alarms",
-   "doc"       : "Alarms currently alarming",
+   "doc"       : "Alarming and Acknowledgements state",
    "fields"    : [
-     {
-       "name"    : "priority",
-       "type"    : {
-         "type"      : "enum",       
-         "name"      : "AlarmPriority",
-         "namespace" : "org.jlab.kafka.alarms",
-         "doc"       : "Enumeration of possible alarm priorities",
-         "symbols"   : ["P1_LIFE","P2_PROPERTY","P3_PRODUCTIVITY", "P4_DIAGNOSTIC"]
-       },
-       "doc"     : "Alarm severity organized as a way for operators to prioritize which alarms to take action on first"
-     },
-     {
-        "name"    : "acknowledged",
-        "type"    : "boolean",
-        "doc"     : "Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement",
-        "default" : false        
-     }
+        {
+            "name" : "ActiveState",
+            "type" : [
+                {
+                    "type"      : "record",
+                    "name"      : "AlarmingMsg",
+                    "namespace" : "org.jlab.kafka.alarms",
+                    "doc"       : "Alarming state for a basic alarm",
+                    "fields"    : [
+                        {
+                           "name" : "alarming",
+                           "type" : "boolean",
+                           "doc"  : "true if the alarm is alarming, false otherwise"
+                        }
+                    ]
+                },
+                {
+                    "type"      : "record",
+                    "name"      : "AcknowledgementMsg",
+                    "namespace" : "org.jlab.kafka.alarms",
+                    "doc"       : "A basic acknowledgment message",
+                    "fields"    : [
+                        {
+                            "name" : "acknowledged",
+                            "type" : "boolean",
+                            "doc"  : "true if the alarm is acknowledged, false otherwise"
+                        }
+                    ]
+                },
+                {
+                    "type"      : "record",
+                    "name"      : "EPICSAlarmingMsg",
+                    "namespace" : "org.jlab.kafka.alarms",
+                    "doc"       : "EPICS alarming state",
+                    "fields"    : [
+                        {
+                            "name" : "state",
+                            "type"    : {
+                                "type"      : "enum",       
+                                "name"      : "EPICSAlarmingEnum",
+                                "namespace" : "org.jlab.kafka.alarms",
+                                "doc"       : "Enumeration of possible EPICS alarming states",
+                                "symbols"   : ["MAJOR","MINOR","NO_ALARM"]
+                            },
+                            "doc" : "Alarming state"
+                        }
+                    ]
+                },
+                {
+                    "type"      : "record",
+                    "name"      : "EPICSAcknowledgementMsg",
+                    "namespace" : "org.jlab.kafka.alarms",
+                    "doc"       : "EPICS acknowledgement state",
+                    "fields"    : [
+                        {
+                            "name"    : "state",
+                            "type"    : {
+                                "type"      : "enum",
+                                "name"      : "EPICSAcknowledgementEnum",
+                                "namespace" : "org.jlab.kafka.alarms",
+                                "doc"       : "Enumeration of possible EPICS acknowledgement states",
+                                "symbols"   : ["MAJOR_ACK", "MINOR_ACK", "NO_ACK"]
+                            },
+                            "doc"     : "Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement"        
+                        }
+                    ]
+                }
+            ],
+            "doc" : "Two types of messages are allowed: Alarming and Acknowledgement; There can be multiple flavors of each type for different alarm producers; modeled as a nested union to avoid complications of union at root of schema."
+        }
   ]
 }
 """
