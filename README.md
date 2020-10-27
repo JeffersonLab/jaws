@@ -62,7 +62,14 @@ The alarm system state is stored in three Kafka topics.   Topic schemas are stor
 The alarm system relies on Kafka not only for notification of changes, but for [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) - everything is stored in Kafka and the entire state of
 the system is built by replaying messages.   All topics have compaction enabled to remove old messages that would be overwritten on replay.  Compaction is not very aggressive though so some candidates for deletion are often lingering when clients connect so they must be prepared to handle the ordered messages on replay as ones later in the stream may overwrite ones earlier.
 
+### Unregister, Unshelve
 To unset (remove) a record use the --unset option with the "set" scripts, This writes a null/None tombstone record.  To modify a record simply set a new one with the same key as the message stream is ordered and newer records overwrite older ones.  To see all options use the --help option. 
+
+### Acknowlegement
+The alarm system supports acknowledgements - alarms registered as "latching" require acknowledgment.  Since acknowledgements need to be tied to a specific instance of an alarming message alarm acknowledgements are placed on the same topic as alarming messages (active-alarms) to ensure messages are ordered (given a single partition).
+
+### Active Alarm Types
+Since different alarm producers may have producer specific alarm data the active alarm schema is actually an extendable union of schemas.   Generally the basic alarming or acknowledgement messagse should be used for simplicity, but sometimes extra info is required.  For example, EPICS alarms have severity and status fields.
 
 ### Message Metadata
 The alarm system topics are expected to include audit information in Kafka message headers:
