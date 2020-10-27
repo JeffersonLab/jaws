@@ -34,7 +34,6 @@
         {
           "type"      : "record",
           "name"      : "EPICSAlarmingMsg",
-          "namespace" : "org.jlab.kafka.alarms",
           "doc"       : "EPICS alarming state",
           "fields"    : [
             {
@@ -52,7 +51,6 @@
         {
           "type"      : "record",
           "name"      : "EPICSAcknowledgementMsg",
-          "namespace" : "org.jlab.kafka.alarms",
           "doc"       : "EPICS acknowledgement state",
           "fields"    : [
             {
