@@ -35,7 +35,7 @@ def my_on_assign(consumer, partitions):
 def disp_msg(msg):
     timestamp = msg.timestamp()
     headers = msg.headers()
-    key = msg.key().decode('utf-8')
+    key = avro_serde.decode_message(msg.key())
     value = avro_serde.decode_message(msg.value())
 
     ts = time.ctime(timestamp[1] / 1000)
@@ -53,7 +53,7 @@ def disp_msg(msg):
         bytez = lookup.get('host', b'')
         host = bytez.decode()
 
-    print(ts, '|', user, '|', producer, '|', host, '|', key, value)
+    print(ts, '|', user, '|', producer, '|', host, '|', key, '=', value)
 
 def list():
     ts = time.time()

@@ -11,20 +11,23 @@ from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
 from avro.schema import Field
 
+#with open('active-alarms-key.avsc', 'r') as file:
+#    key_schema_str = file.read()
+
 key_schema_str = """
 {
     "type"      : "record",
     "name"      : "ActiveAlarmKey",
     "namespace" : "org.jlab.kafka.alarms",
     "doc"       : "Active alarms state (alarming or acknowledgment)",
-    fields      : [
+    "fields"    : [
         {
-            "name" : "alarmname",
+            "name" : "name",
             "type" : "string",
             "doc"  : "The unique name of the alarm"
         },
         {
-            "name" : "msgtype",
+            "name" : "type",
             "type" : {
                 "type"      : "enum",
                 "name"      : "ActiveMessageType",
@@ -47,7 +50,7 @@ value_schema_str = """
    "doc"       : "Alarming and Acknowledgements state",
    "fields"    : [
         {
-            "name" : "ActiveState",
+            "name" : "msg",
             "type" : [
                 {
                     "type"      : "record",
@@ -82,7 +85,7 @@ value_schema_str = """
                     "doc"       : "EPICS alarming state",
                     "fields"    : [
                         {
-                            "name" : "state",
+                            "name" : "sevr",
                             "type"    : {
                                 "type"      : "enum",       
                                 "name"      : "EPICSAlarmingEnum",
@@ -101,7 +104,7 @@ value_schema_str = """
                     "doc"       : "EPICS acknowledgement state",
                     "fields"    : [
                         {
-                            "name"    : "state",
+                            "name"    : "ack",
                             "type"    : {
                                 "type"      : "enum",
                                 "name"      : "EPICSAcknowledgementEnum",
@@ -120,6 +123,7 @@ value_schema_str = """
 }
 """
 
+key_schema = avro.loads(key_schema_str)
 value_schema = avro.loads(value_schema_str)
 
 def delivery_report(err, msg):
@@ -144,7 +148,7 @@ p = Producer({
 
 topic = 'active-alarms'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active.py'),('host',os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active-epics-ack.py'),('host',os.uname().nodename)]
 
 def send() :
     if params.value is None:
@@ -152,30 +156,27 @@ def send() :
     else:
         val_payload = serialize_avro(topic, value_schema, params.value, is_key=False)
 
-    p.produce(topic=topic, value=val_payload, key=params.key, headers=hdrs)
+    key_payload = serialize_avro(topic, key_schema, params.key, is_key=True)
+
+    p.produce(topic=topic, value=val_payload, key=key_payload, headers=hdrs)
     p.flush()
 
 @click.command()
-@click.option('--unset', is_flag=True, help="Remove the alarm")
-@click.option('--priority', type=click.Choice(['P1_LIFE', 'P2_PROPERTY', 'P3_PRODUCTIVITY', 'P4_DIAGNOSTIC']), help="The alarm serverity as a priority for operators")
-@click.option('--ack', is_flag=True, help="Acknowledge the alarm")
+@click.option('--ack', type=click.Choice(['MAJOR_ACK', 'MINOR_ACK', 'NO_ACK']), help="The alarm acknowledgement")
 @click.argument('name')
 
-def cli(unset, priority, ack, name):
+def cli(ack, name):
     global params
 
     params = types.SimpleNamespace()
 
-    params.key = name
+    params.key = {"name": name, "type": "acknowledgement"}
 
-    if unset:
-        params.value = None
-    else:
-        if priority == None:
-            raise click.ClickException(
-                    "Must specify option --priority")
+    if ack == None:
+        raise click.ClickException(
+            "Must specify option --ack")
 
-        params.value = {"priority": priority, "acknowledged": ack}
+    params.value = {"msg": {"ack": ack}}
 
     send()
 
