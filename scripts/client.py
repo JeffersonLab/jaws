@@ -40,9 +40,12 @@ def my_on_assign(consumer, partitions):
 
 c.subscribe(['registered-alarms','active-alarms','shelved-alarms'], on_assign=my_on_assign)
 
-topicState = {
+msgState = {
   'registered-alarms': {},
-  'active-alarms': {},
+  'Alarming': {},
+  'Ack': {},
+  'AlarmingEPICS' : {},
+  'AckEPICS' : {},
   'shelved-alarms': {}
 }
 
@@ -65,20 +68,30 @@ def poll_msg():
       return [msg, None]
 
     topic = msg.topic()
-    key = msg.key().decode('utf-8')
+
+    if topic == 'active-alarms':
+        key = avro_serde.decode_message(msg.key())
+        print(key)
+        alarmname = key['name']
+        msgtype = key['type']
+    else:
+        key = msg.key().decode('utf-8')
+        alarmname = key
+        msgtype = topic
+
     value = avro_serde.decode_message(msg.value())
     timestamp = msg.timestamp()
     headers = msg.headers()
 
     print(topic, key, value)
 
-    topicState[topic][key] = (timestamp, headers, value)
+    msgState[msgtype][alarmname] = (timestamp, headers, value)
 
     if msg.offset() + 1 == highOffsets[topic]:
         topicLoaded[topic] = True
 
     #print(topic, key, value)
-    return [msg, key]
+    return [msg, alarmname]
 
 def state_str(state):
   str = ''
@@ -111,26 +124,39 @@ def state_str(state):
   return str
 
 def disp_alarm(key):
-  registered = topicState['registered-alarms'].get(key)
-  active = topicState['active-alarms'].get(key)
-  shelved = topicState['shelved-alarms'].get(key)
+  registered = msgState['registered-alarms'].get(key)
+  shelved = msgState['shelved-alarms'].get(key)
+
+  alarming = msgState['Alarming'].get(key)
+  ack = msgState['Ack'].get(key)
+  alarmingEPICS = msgState['AlarmingEPICS'].get(key)
+  ackEPICS = msgState['AckEPICS'].get(key)
 
   if registered:
     registeredInfo = state_str(registered)
   else:
     registeredInfo = 'None'
 
-  if active:
-      activeInfo = state_str(active)
+  if alarming:
+      alarmingInfo = state_str(alarming)
+  elif alarmingEPICS:
+      alarmingInfo = state_str(alarmingEPICS)
   else:
-      activeInfo = 'None'
+      alarmingInfo = 'None'
+
+  if ack:
+      ackInfo = state_str(ack)
+  elif ackEPICS:
+      ackInfo = state_str(ackEPICS)
+  else:
+      ackInfo = 'None'
 
   if shelved:
       shelvedInfo = state_str(shelved)
   else:
       shelvedInfo = 'None'
 
-  print(key, 'Reg: ', registeredInfo, 'Act: ', activeInfo, 'Shel: ', shelvedInfo)
+  print(key, 'Reg: ', registeredInfo, 'Alm: ', alarmingInfo, 'Ack: ', ackInfo, 'Shel: ', shelvedInfo)
 
 noneCount = 0
 
@@ -139,7 +165,7 @@ while True:
     raise RuntimeError("Timeout: taking too long to obtain initial state")
 
   try:
-    msg, key = poll_msg()
+    msg, alarmname = poll_msg()
   except SerializerError as e:
     print("Message deserialization failed for {}".format(e))
     raise 
@@ -157,13 +183,16 @@ while True:
 
 # At this point the initial flurry of messages have been read up to the high water mark offsets read moments ago.  Now we can report somewhat up-to-date snapshot of system state and start monitoring for anything that has happened since reading high water mark or anything coming in the future
 print("Initial State:")
-for key in topicState['active-alarms']:
-  disp_alarm(key)
+for alarmname in msgState['Alarming']:
+  disp_alarm(alarmname)
+
+for alarmname in msgState['AlarmingEPICS']:
+    disp_alarm(alarmname)
 
 print("Continuing to monitor: ")
 while True:
   try:
-    msg, key  = poll_msg()
+    msg, alarmname  = poll_msg()
   except SerializerError as e:
     print("Message deserialization failed for {}".format(e))
     break
@@ -175,6 +204,6 @@ while True:
     print("Continuing {}: {}".format(msg, msg.error()))
     continue 
 
-  disp_alarm(key)
+  disp_alarm(alarmname)
 
 c.close()
