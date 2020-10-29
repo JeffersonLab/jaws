@@ -86,6 +86,14 @@ def poll_msg():
 
     msgState[msgtype][alarmname] = (timestamp, headers, value)
 
+    # Clear most recent ack on new alarming instance
+    if msgtype == 'Alarming' and value['msg']['alarming'] == True:
+        msgState['Ack'].pop(alarmname, None)
+
+    # Clear most recent ackEPICS on new alarming instance
+    if msgtype == 'AlarmingEPICS' and value['msg']['sevr'] in ["MINOR", "MAJOR"]:
+        msgState['AckEPICS'].pop(alarmname, None)
+
     if msg.offset() + 1 == highOffsets[topic]:
         topicLoaded[topic] = True
 
