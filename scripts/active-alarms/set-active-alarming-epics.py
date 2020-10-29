@@ -56,21 +56,25 @@ def send() :
     p.flush()
 
 @click.command()
-@click.option('--sevr', type=click.Choice(['MAJOR', 'MINOR', 'NO_ALARM']), help="The alarm severity as a priority for operators")
+@click.option('--sevr', type=click.Choice(['NO_ALARM', 'MINOR', 'MAJOR', 'INVALID']), help="The alarm severity as a priority for operators")
+@click.option('--stat', type=click.Choice(["NO_ALARM","READ","WRITE","HIHI","HIGH","LOLO","LOW","STATE","COS","COMM","TIMEOUT","HW_LIMIT","CALC","SCAN","LINK","SOFT","BAD_SUB","UDF","DISABLE","SIMM","READ_ACCESS","WRITE_ACCESS"]), help="The alarm status")
 @click.argument('name')
 
-def cli(sevr, name):
+def cli(sevr, stat, name):
     global params
 
     params = types.SimpleNamespace()
 
-    params.key = {"name": name, "type": "alarming"}
+    params.key = {"name": name, "type": "AlarmingEPICS"}
 
     if sevr == None:
         raise click.ClickException(
             "Must specify option --sevr")
 
-    params.value = {"msg": {"sevr": sevr}}
+    if stat == None:
+        stat = "NO_ALARM"
+
+    params.value = {"msg": {"sevr": sevr, "stat": stat}}
 
     send()
 

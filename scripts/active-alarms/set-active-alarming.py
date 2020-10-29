@@ -64,7 +64,7 @@ def cli(alarming, name):
 
     params = types.SimpleNamespace()
 
-    params.key = {"name": name, "type": "alarming"}
+    params.key = {"name": name, "type": "Alarming"}
 
     params.value = {"msg": {"alarming": alarming}}
 
