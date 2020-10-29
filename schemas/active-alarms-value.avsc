@@ -9,7 +9,7 @@
       "type" : [
         {
           "type"      : "record",
-          "name"      : "AlarmingMsg",
+          "name"      : "Alarming",
           "doc"       : "Alarming state for a basic alarm",
           "fields"    : [
             {
@@ -21,7 +21,7 @@
         },
         {
           "type"      : "record",
-          "name"      : "AcknowledgementMsg",
+          "name"      : "Ack",
           "doc"       : "A basic acknowledgment message",
           "fields"    : [
             {
@@ -33,7 +33,7 @@
         },
         {
           "type"      : "record",
-          "name"      : "EPICSAlarmingMsg",
+          "name"      : "AlarmingEPICS",
           "doc"       : "EPICS alarming state",
           "fields"    : [
             {
@@ -50,7 +50,7 @@
         },
         {
           "type"      : "record",
-          "name"      : "EPICSAcknowledgementMsg",
+          "name"      : "AckEPICS",
           "doc"       : "EPICS acknowledgement state",
           "fields"    : [
             {

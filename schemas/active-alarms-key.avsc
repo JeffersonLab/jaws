@@ -15,7 +15,7 @@
         "type"      : "enum",
         "name"      : "ActiveMessageType",
         "doc"       : "Enumeration of possible message types",
-        "symbols"   : ["alarming","ack"]
+        "symbols"   : ["Alarming","Ack","AlarmingEPICS","AckEPICS"]
 
       },
       "doc"  : "The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type"
