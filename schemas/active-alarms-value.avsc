@@ -38,13 +38,23 @@
           "fields"    : [
             {
               "name" : "sevr",
-              "type"    : {
+              "type" : {
                 "type"      : "enum",
-                "name"      : "EPICSAlarmingEnum",
-                "doc"       : "Enumeration of possible EPICS alarming states",
-                "symbols"   : ["MAJOR","MINOR","NO_ALARM"]
+                "name"      : "SevrEnum",
+                "doc"       : "Enumeration of possible EPICS .SEVR values",
+                "symbols"   : ["NO_ALARM","MINOR","MAJOR","INVALID"]
               },
-              "doc" : "Alarming state"
+              "doc"  : "Alarming state (EPICS .SEVR field)"
+            },
+            {
+              "name" : "stat",
+              "type" : {
+                "type"    : "enum",
+                "name"    : "StatEnum",
+                "doc"     : "Enumeration of possible EPICS .STAT values",
+                "symbols" : ["NO_ALARM","READ","WRITE","HIHI","HIGH","LOLO","LOW","STATE","COS","COMM","TIMEOUT","HW_LIMIT","CALC","SCAN","LINK","SOFT","BAD_SUB","UDF","DISABLE","SIMM","READ_ACCESS","WRITE_ACCESS"]
+              },
+              "doc"  : "Alarming status (EPICS .STAT field)"
             }
           ]
         },
