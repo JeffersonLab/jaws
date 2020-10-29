@@ -69,7 +69,7 @@
                 "type"      : "enum",
                 "name"      : "EPICSAcknowledgementEnum",
                 "doc"       : "Enumeration of possible EPICS acknowledgement states",
-                "symbols"   : ["MAJOR_ACK", "MINOR_ACK", "NO_ACK"]
+                "symbols"   : ["NO_ACK","MINOR_ACK", "MAJOR_ACK"]
               },
               "doc"     : "Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement"
             }
