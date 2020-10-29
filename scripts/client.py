@@ -71,7 +71,6 @@ def poll_msg():
 
     if topic == 'active-alarms':
         key = avro_serde.decode_message(msg.key())
-        print(key)
         alarmname = key['name']
         msgtype = key['type']
     else:
