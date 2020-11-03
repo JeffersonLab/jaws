@@ -14,8 +14,6 @@ Alarms are triggered by producing messages on the __active-alarms__ topic, which
 
 An [Operator Graphical User Interface to the Alarm System](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions (registered-alarms), and shelve active alarms.
 
-TODO: An admin web interface provides a convenient app for admins to manage the list of all possible alarms and their definitions (registered-alarms).
-
 TODO: A Kafka Streams app to expire messages from the shelved-alarms topic (The Shelf Service).   The shelf service looks for expired shelved messages and unsets them with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.  If clients wanted to set their own timers, they could, and they could even write the tombstone on expiration.  This would likely result in n-concurrent tomestone messages at timeout where n is the number of clients, but that would be fine.
 
 ## Quick Start with Docker 
