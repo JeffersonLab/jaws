@@ -76,7 +76,7 @@ The alarm system topics are expected to include audit information in Kafka messa
 | producer | The application name that produced the message |
 | host | The hostname where the message was produced |
 
-Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The alarm system uses the default broker provided timestamp (as opposed to producer provided).
+Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The alarm system uses the default producer provided timestamps (as opposed to broker provided), so timestamps may not be ordered.
 
 **Note**: There is no schema for message headers so content is not easily enforceable.  However, the topic management scripts provided include the audit headers listed.
 
