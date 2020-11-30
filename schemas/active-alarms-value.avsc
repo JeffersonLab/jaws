@@ -10,26 +10,12 @@
         {
           "type"      : "record",
           "name"      : "Alarming",
-          "doc"       : "Alarming state for a basic alarm",
-          "fields"    : [
-            {
-              "name" : "alarming",
-              "type" : "boolean",
-              "doc"  : "true if the alarm is alarming, false otherwise"
-            }
-          ]
+          "doc"       : "Alarming state for a basic alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields."
         },
         {
           "type"      : "record",
           "name"      : "Ack",
-          "doc"       : "A basic acknowledgment message",
-          "fields"    : [
-            {
-              "name" : "acknowledged",
-              "type" : "boolean",
-              "doc"  : "true if the alarm is acknowledged, false otherwise"
-            }
-          ]
+          "doc"       : "A basic acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields"
         },
         {
           "type"      : "record",

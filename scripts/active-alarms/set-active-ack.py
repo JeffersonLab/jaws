@@ -56,17 +56,20 @@ def send() :
     p.flush()
 
 @click.command()
-@click.option('--ack', is_flag=True, help="present to ack, missing otherwise")
+@click.option('--unset', is_flag=True, help="present to clear, missing to ack")
 @click.argument('name')
 
-def cli(ack, name):
+def cli(unset, name):
     global params
 
     params = types.SimpleNamespace()
 
     params.key = {"name": name, "type": "Ack"}
 
-    params.value = {"msg": {"acknowledged": ack}}
+    if unset:
+        params.value = None
+    else:
+        params.value = {"msg": {}}
 
     send()
 

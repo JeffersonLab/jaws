@@ -56,17 +56,20 @@ def send() :
     p.flush()
 
 @click.command()
-@click.option('--alarming', is_flag=True, help="present if alarming, missing otherwise")
+@click.option('--unset', is_flag=True, help="present to clear an alarm, missing to set active")
 @click.argument('name')
 
-def cli(alarming, name):
+def cli(unset, name):
     global params
 
     params = types.SimpleNamespace()
 
     params.key = {"name": name, "type": "Alarming"}
 
-    params.value = {"msg": {"alarming": alarming}}
+    if unset:
+      params.value = None
+    else:
+      params.value = {"msg": {}}
 
     send()
 
