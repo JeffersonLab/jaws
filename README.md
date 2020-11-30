@@ -8,7 +8,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 
 ## Overview
-The alarm system is comprised of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic.   Alarms are triggered active by producing messages on the __active-alarms__ topic.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).   An alarm can be shelved to de-emphasize the fact its active by placing a message on the __shelved-alarms__ topic.
+The alarm system is comprised of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic.   Alarms are triggered active by producing messages on the __active-alarms__ topic.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).   An alarm can be shelved to deemphasize the fact it is active by placing a message on the __shelved-alarms__ topic.
 
 The Shelf Service is a a Kafka Streams app used to expire messages from the shelved-alarms topic.   The shelf service looks for expired shelved messages and unsets them with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.
 
