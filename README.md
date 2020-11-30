@@ -3,8 +3,9 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 
 ---
 - [Overview](https://github.com/JeffersonLab/kafka-alarm-system#overview)
-- [Quick Start with Docker](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-docker)
+- [Quick Start with Compose](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-compose)
 - [Topics and Schemas](https://github.com/JeffersonLab/kafka-alarm-system#topics-and-schemas)
+- [Scripts](https://github.com/JeffersonLab/kafka-alarm-system#scripts)
 ---
 
 ## Overview
@@ -16,7 +17,7 @@ An [Operator Graphical User Interface to the Alarm System](https://github.com/Je
 
 The alarm system console Docker image, included in this project, contains the scripts to manage the Kafka topics and their schemas needed for the alarm system. 
 
-## Quick Start with Docker 
+## Quick Start with Compose 
 1. Grab project
 ```
 git clone https://github.com/JeffersonLab/kafka-alarm-system
@@ -34,8 +35,6 @@ docker exec -it console /scripts/active-alarms/list-active.py --monitor
 ```
 docker exec console /scripts/active-alarms/set-active-alarming.py channel1
 ```
-[Scripts Reference](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Scripts-Reference)
-
 The alarm system is composed of the following services:
    - Kafka - distributed message system
    - [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
@@ -82,6 +81,10 @@ The alarm system topics are expected to include audit information in Kafka messa
 Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The alarm system uses the default producer provided timestamps (as opposed to broker provided), so timestamps may not be ordered.
 
 **Note**: There is no schema for message headers so content is not easily enforceable.  However, the topic management scripts provided include the audit headers listed.
+
+## Scripts
+
+[Scripts Reference](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Scripts-Reference)
 
 ### Docker
 A docker image containing scripts can be built from the Dockerfile included in the project.  To build within a network using man-in-the-middle network scanning (self-signed certificate injection) you can provide an optional build argument pointing to the custom CA certificate file (pip will fail to download dependencies if certificates can't be verified).   For example:
