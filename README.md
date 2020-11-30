@@ -1,5 +1,5 @@
 # kafka-alarm-system
-An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together the message pipeline services that make up the core alarm system in a docker-compose file and provides Python scripts for configuring and interacting with the system.  Modules that extend the core including alarm sources, operator interfaces, and the alarm shelving service are separate projects.
+An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together the message pipeline services that make up the core alarm system in a docker-compose file and provides Python scripts for configuring and interacting with the system.  
 
 ---
 - [Overview](https://github.com/JeffersonLab/kafka-alarm-system#overview)
@@ -9,7 +9,9 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 
 ## Overview
-The alarm system is comprised of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic.   Alarms are triggered active by producing messages on the __active-alarms__ topic.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).   An alarm can be shelved to deemphasize the fact it is active by placing a message on the __shelved-alarms__ topic.
+The alarm system is comprised of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic.   Alarms are triggered active by producing messages on the __active-alarms__ topic.     An alarm can be shelved to deemphasize the fact it is active by placing a message on the __shelved-alarms__ topic.
+
+Modules that extend the core including alarm sources, operator interfaces, and the alarm shelving service are separate projects.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
 The Shelf Service is a a Kafka Streams app used to expire messages from the shelved-alarms topic.   The shelf service looks for expired shelved messages and unsets them with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.
 
