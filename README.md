@@ -1,20 +1,20 @@
 # kafka-alarm-system
-An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together the message pipeline services that make up the core alarm system in a docker-compose file and provides an alarm system console containing Python scripts for configuring and interacting with the system.  Modules that extend the core including alarm sources, operator interfaces, and the alarm shelving service are separate projects.
+An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project ties together the message pipeline services that make up the core alarm system in a docker-compose file and provides Python scripts for configuring and interacting with the system.  Modules that extend the core including alarm sources, operator interfaces, and the alarm shelving service are separate projects.
 
 ---
 - [Overview](https://github.com/JeffersonLab/kafka-alarm-system#overview)
 - [Quick Start with Docker](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-docker)
-- [Alarm System Console](https://github.com/JeffersonLab/kafka-alarm-system#alarm-system-console)
+- [Topics and Schemas](https://github.com/JeffersonLab/kafka-alarm-system#topics-and-schemas)
 ---
 
 ## Overview
-The alarm system console, included in this project, provides scripts to manage the Kafka topics and their schemas needed for the alarm system. 
-
-Alarms are triggered by producing messages on the __active-alarms__ topic, which is generally done programmatically via Kafka Connect or Kafka Streams services.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
+Alarms are triggered by producing messages on the __active-alarms__ topic.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
 An [Operator Graphical User Interface to the Alarm System](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions (registered-alarms), and shelve active alarms.
 
-TODO: A Kafka Streams app to expire messages from the shelved-alarms topic (The Shelf Service).   The shelf service looks for expired shelved messages and unsets them with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.  If clients wanted to set their own timers, they could, and they could even write the tombstone on expiration.  This would likely result in n-concurrent tomestone messages at timeout where n is the number of clients, but that would be fine.
+The Shelf Service is a a Kafka Streams app used to expire messages from the shelved-alarms topic.   The shelf service looks for expired shelved messages and unsets them with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.
+
+The alarm system console Docker image, included in this project, contains the scripts to manage the Kafka topics and their schemas needed for the alarm system. 
 
 ## Quick Start with Docker 
 1. Grab project
@@ -44,9 +44,8 @@ The alarm system is composed of the following services:
 
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
-## Alarm System Console
+## Topics and Schemas
 
-### Kafka Topics
 The alarm system state is stored in three Kafka topics.   Topic schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.  Python scripts are provided for managing the alarm system topics.  
 
 | Topic | Description | Key Schema | Value Schema | Scripts |
@@ -66,6 +65,8 @@ The alarm system supports acknowledgements - alarms registered as "latching" req
 
 ### Active Alarm Types
 Since different alarm producers may have producer specific alarm data the active alarm schema is actually an extendable union of schemas.   Generally the basic alarming or acknowledgement messages should be used for simplicity, but sometimes extra info is required.  For example, EPICS alarms have severity and status fields.
+
+**Note**: It is difficult to have a single (non-union) active-alarm schema that represents all possible alarm sources and has a fixed set of fields because that requires translation from the original fields to the unified fields, and decisions about (1) what are the set of unified fields and (2) how to map data to them, may result in some information being lost in translation.   Therefore, a union of schemas is used to preserve original fields.    If desired, a custom translation layer could be added using a Kafka Streams app for example in order to consolidate the various types.
 
 ### Message Metadata
 The alarm system topics are expected to include audit information in Kafka message headers:
