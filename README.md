@@ -68,6 +68,8 @@ Since different alarm producers may have producer specific alarm data the active
 ### Acknowlegement
 The alarm system supports acknowledgements - alarms that move in and out of an alarming state too quickly for users to notice can be emphasiszed by registering them as "latching", so they require acknowledgment.  Since acknowledgements need to be tied to a specific instance of an alarming message alarm acknowledgements are placed on the same topic as alarming messages (active-alarms) to ensure messages are ordered (on a single partition).  Since they share the active-alarms topic, acks are also typed - for example EPICS acknowledgements include severity for timing purposes - an ack on a MINOR alarm does not interfere with a new MAJOR alarm that may happen before the MINOR ack is delivered (an untyped ack could inadvertantly acknowledge a more severe alarm than was intended by the user). 
 
+**Note**: Acknowledgements are for alarms that toggle active _quickly_, whereas shelving is for alarms that go active _frequently_.
+
 ### Message Metadata
 The alarm system topics are expected to include audit information in Kafka message headers:
 
