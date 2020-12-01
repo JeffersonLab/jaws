@@ -87,7 +87,7 @@ def poll_msg():
     msgState[msgtype][alarmname] = (timestamp, headers, value)
 
     # Clear most recent ack on new alarming instance
-    if msgtype == 'Alarming' and value['msg']['alarming'] == True:
+    if msgtype == 'Alarming' and value != None:
         msgState['Ack'].pop(alarmname, None)
 
     # Clear most recent ackEPICS on new alarming instance
