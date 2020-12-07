@@ -19,7 +19,7 @@ Modules that extend the core including alarm sources, operator interfaces, and t
 
 The [shelved-timer](https://github.com/JeffersonLab/shelved-timer) is a a Kafka Streams app used to expire messages from the shelved-alarms topic.   The shelved-timer app expires shelved messages with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.
 
-An [Operator Graphical User Interface to the Alarm System](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions (registered-alarms), and shelve active alarms.
+A [graphical-alarm-client](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions (registered-alarms), and shelve active alarms.
 
 The alarm system console Docker image, included in this project, contains the scripts to manage the Kafka topics and their schemas needed for the alarm system. 
 
