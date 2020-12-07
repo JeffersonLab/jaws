@@ -11,6 +11,9 @@ from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
 from avro.schema import Field
 
+from datetime import datetime
+from datetime import timedelta
+
 value_schema_str = """
 {
    "namespace" : "org.jlab.kafka.alarms",
@@ -73,11 +76,11 @@ def send() :
 
 @click.command()
 @click.option('--unset', is_flag=True, help="Remove the alarm")
-@click.option('--expiration', type=int, help="The milliseconds since the epoch 1970 (unix timestamp) when this temporary shelving expires, optional")
+@click.option('--expirationseconds', type=int, help="The number of seconds until the shelved status expires, None for indefinite")
 @click.option('--reason', help="The explanation for why this alarm has been shelved")
 @click.argument('name')
 
-def cli(unset, expiration, reason, name):
+def cli(unset, expirationseconds, reason, name):
     global params
 
     params = types.SimpleNamespace()
@@ -90,7 +93,13 @@ def cli(unset, expiration, reason, name):
         if reason == None:
             raise click.ClickException("--reason is required")
 
-        params.value = {"expiration": expiration, "reason": reason}
+        if expirationseconds == None:
+            timestampMillis = None
+        else:
+            timestampSeconds = (datetime.now() + timedelta(seconds = expirationseconds)).timestamp() # .replace(tzinfo=timezone.utc)
+            timestampMillis = int(timestampSeconds * 1000);
+
+        params.value = {"expiration": timestampMillis, "reason": reason}
 
     send()
 
