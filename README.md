@@ -10,6 +10,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
    - [Acknowledgements](https://github.com/JeffersonLab/kafka-alarm-system#acknowledgements)
    - [Headers](https://github.com/JeffersonLab/kafka-alarm-system#headers)
 - [Scripts](https://github.com/JeffersonLab/kafka-alarm-system#scripts)
+- [See Also](https://github.com/JeffersonLab/kafka-alarm-system#see-also)
 ---
 
 ## Overview
@@ -139,3 +140,6 @@ By default the scripts assume you are executing them on the same box as a standa
 |----------|---------|
 | BOOTSTRAP_SERVERS | `localhost:9092` |
 | SCHEMA_REGISTRY | `http://localhost:8081` |
+
+## See Also
+ - [Developer Notes](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Developer-Notes)
