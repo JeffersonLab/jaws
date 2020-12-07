@@ -5,9 +5,13 @@
   "fields": [
     {
       "name": "expiration",
-      "type": "long",
-      "doc": "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this shelved alarm should expire",
-      "logicalType": "timestamp-millis"
+      "type": [
+        "null",
+        "long"
+      ],
+      "doc": "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this shelved alarm should expire, null for indefinite",
+      "logicalType": "timestamp-millis",
+      "default": null
     },
     {
       "name": "reason",

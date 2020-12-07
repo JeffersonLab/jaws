@@ -19,9 +19,13 @@ value_schema_str = """
    "fields"    : [
      {
          "name"        : "expiration",
-         "type"        : "long",
+         "type"        : [
+           "null",
+           "long"
+         ],
+         "doc"         : "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this shelved alarm should expire, null for indefinite",
          "logicalType" : "timestamp-millis",
-         "doc"         : "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this shelved alarm should expire"
+         "default"     : null
      },
      {
          "name" : "reason",
@@ -69,8 +73,8 @@ def send() :
 
 @click.command()
 @click.option('--unset', is_flag=True, help="Remove the alarm")
-@click.option('--expiration', type=int, help="The milliseconds since the epoch 1970 (unix timestamp) when this temporary shelving (acknowledgement) expires, only needed if --reason not provided")
-@click.option('--reason', help="The explanation for why this alarm has been indefinitely shelved (disabled), only needed if --expiration is not provided")
+@click.option('--expiration', type=int, help="The milliseconds since the epoch 1970 (unix timestamp) when this temporary shelving expires, optional")
+@click.option('--reason', help="The explanation for why this alarm has been shelved")
 @click.argument('name')
 
 def cli(unset, expiration, reason, name):
@@ -83,8 +87,8 @@ def cli(unset, expiration, reason, name):
     if unset:
         params.value = None
     else:
-        if expiration == None or reason == None:
-            raise click.ClickException("Both --expiration and --reason are required")
+        if reason == None:
+            raise click.ClickException("--reason is required")
 
         params.value = {"expiration": expiration, "reason": reason}
 
