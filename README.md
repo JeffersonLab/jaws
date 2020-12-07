@@ -17,7 +17,7 @@ The alarm system is comprised of three subsystems: registered-alarms, active-ala
 
 Modules that extend the core including alarm sources, operator interfaces, and the alarm shelving service are separate projects.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
-The [shevled-timer](https://github.com/JeffersonLab/shelved-timer) is a a Kafka Streams app used to expire messages from the shelved-alarms topic.   The shelved-timer app expires shelved messages with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.
+The [shelved-timer](https://github.com/JeffersonLab/shelved-timer) is a a Kafka Streams app used to expire messages from the shelved-alarms topic.   The shelved-timer app expires shelved messages with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.
 
 An [Operator Graphical User Interface to the Alarm System](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions (registered-alarms), and shelve active alarms.
 
