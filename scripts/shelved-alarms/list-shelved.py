@@ -38,6 +38,9 @@ def disp_msg(msg):
     key = msg.key().decode('utf-8')
     value = avro_serde.decode_message(msg.value())
 
+    if value['expiration'] != None:
+        value['expiration'] = time.ctime(value['expiration'] / 1000)
+
     ts = time.ctime(timestamp[1] / 1000)
 
     user = ''

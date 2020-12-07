@@ -4,15 +4,13 @@ import os
 import pwd
 import types
 import click
+import time
 
 # We can't use AvroProducer since it doesn't support string keys, see: https://github.com/confluentinc/confluent-kafka-python/issues/428
 from confluent_kafka import avro, Producer
 from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
 from avro.schema import Field
-
-from datetime import datetime
-from datetime import timedelta
 
 value_schema_str = """
 {
@@ -96,7 +94,7 @@ def cli(unset, expirationseconds, reason, name):
         if expirationseconds == None:
             timestampMillis = None
         else:
-            timestampSeconds = (datetime.now() + timedelta(seconds = expirationseconds)).timestamp() # .replace(tzinfo=timezone.utc)
+            timestampSeconds = time.time() + expirationseconds;
             timestampMillis = int(timestampSeconds * 1000);
 
         params.value = {"expiration": timestampMillis, "reason": reason}
