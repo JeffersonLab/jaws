@@ -1,8 +1,7 @@
 #!/bin/sh
 
-KAFKA_HOME=${KAFKA_HOME:=/kafka}
-KAFKA_BOOTSTRAP_SERVER=${KAFKA_BOOTSTRAP_SERVER:=kafka:9092}
+[ -z "$KAFKA_HOME" ] && echo "KAFKA_HOME environment required" && exit 1;
 
-cd -P $KAFKA_HOME
+[ -z "$BOOTSTRAP_SERVER" ] && echo "BOOTSTRAP_SERVER environment required" && exit 1;
 
-bin/kafka-topics.sh --describe --bootstrap-server $KAFKA_BOOTSTRAP_SERVER
+$KAFKA_HOME/bin/kafka-topics.sh --describe --bootstrap-server $BOOTSTRAP_SERVER

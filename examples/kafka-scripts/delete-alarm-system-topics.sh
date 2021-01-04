@@ -7,22 +7,17 @@
 cd -P $KAFKA_HOME
 
 bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER \
-             --create \
-             --topic registered-alarms \
-             --config cleanup.policy=compact
+             --delete \
+             --topic registered-alarms
 
 bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER \
-             --create \
-             --topic active-alarms \
-             --config cleanup.policy=compact
+             --delete \
+             --topic active-alarms
 
 bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER \
-             --create \
-             --topic shelved-alarms \
-             --config cleanup.policy=compact
+             --delete \
+             --topic shelved-alarms
 
 bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER \
-             --create \
-             --topic epics-channels \
-             --config cleanup.policy=compact
-
+             --delete \
+             --topic epics-channels
