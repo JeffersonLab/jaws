@@ -16,7 +16,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ## Overview
 The alarm system is comprised of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic.   Alarms are triggered active and also acknowledged by producing messages on the __active-alarms__ topic.     An alarm can be shelved to deemphasize the fact it is active by placing a message on the __shelved-alarms__ topic.
 
-Modules that extend the core including alarm sources, operator interfaces, and the alarm shelving service are separate projects.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
+Modules that extend the core including alarm sources, operator interfaces, and the shelved-timer are separate projects.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
 
 The [shelved-timer](https://github.com/JeffersonLab/shelved-timer) is a a Kafka Streams app used to expire messages from the shelved-alarms topic.   The shelved-timer app expires shelved messages with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.
 
