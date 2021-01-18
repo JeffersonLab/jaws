@@ -136,7 +136,7 @@ pip install -r requirements.txt
 ### Configure
 The following environment variables are required by the scripts:
 
-| Variable | Description |
+| Name | Description |
 |----------|---------|
 | BOOTSTRAP_SERVER | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
 | SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
