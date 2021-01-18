@@ -134,12 +134,13 @@ pip install -r requirements.txt
 *Note*: [Jefferson Lab Internal Proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
 
 ### Configure
-By default the scripts assume you are executing them on the same box as a standalone Kafka with and Schema Registry.  To modify the defaults set the following environment variables:
+The following environment variables are required by the scripts:
 
-| Variable | Default |
+| Variable | Description |
 |----------|---------|
-| BOOTSTRAP_SERVERS | `localhost:9092` |
-| SCHEMA_REGISTRY | `http://localhost:8081` |
+| BOOTSTRAP_SERVER | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
+| SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
+| KAFKA_HOME | Path to Kafka installation; example: `/opt/kafka` |
 
 ## See Also
  - [Developer Notes](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Developer-Notes)
