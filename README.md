@@ -141,6 +141,7 @@ The following environment variables are required by the scripts:
 | BOOTSTRAP_SERVER | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
 | SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
 | KAFKA_HOME | Path to Kafka installation; example: `/opt/kafka` |
+| CONFLUENT_HOME | Path to Confluent ([community edition](http://packages.confluent.io/archive/6.0/confluent-community-6.0.1.zip)) installation; example: `/opt/confluent-6.0.1` |
 
 ## See Also
  - [Developer Notes](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Developer-Notes)
