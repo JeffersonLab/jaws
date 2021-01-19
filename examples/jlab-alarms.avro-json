@@ -1,0 +1,2 @@
+alarm1={"producer": {"org.jlab.kafka.alarms.DirectCAAlarm": {"pv": "iocin1:heartbeat"}}, "location": "INJ", "category": "RF", "maxshelveduration": null, "latching": false, "docurl": "/", "edmpath": "/"}
+

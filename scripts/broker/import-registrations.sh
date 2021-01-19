@@ -6,11 +6,13 @@
 
 [ -z "$SCHEMA_REGISTRY" ] && echo "SCHEMA_REGISTRY environment required" && exit 1;
 
+CWD=$(readlink -f "$(dirname "$0")")
+
 $CONFLUENT_HOME/bin/kafka-avro-console-producer --bootstrap-server=$BOOTSTRAP_SERVER \
                                   --topic registered-alarms \
                                   --property "parse.key=true" \
                                   --property "key.separator==" \
                                   --property key.serializer=org.apache.kafka.common.serialization.StringSerializer \
                                   --property schema.registry.url=$SCHEMA_REGISTRY \
-                                  --property value.schema.id=1  < /opt/jlab-alarms.avro-json
+                                  --property value.schema.file=$CWD/../../schemas/registered-alarms-value.avsc < $CWD/../../examples/jlab-alarms.avro-json
 
