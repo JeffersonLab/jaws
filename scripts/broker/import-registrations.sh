@@ -10,8 +10,8 @@ CWD=$(readlink -f "$(dirname "$0")")
 
 $CONFLUENT_HOME/bin/kafka-avro-console-producer --bootstrap-server=$BOOTSTRAP_SERVER \
                                   --topic registered-alarms \
-                                  --property "parse.key=true" \
-                                  --property "key.separator==" \
+                                  --property parse.key=true \
+                                  --property key.separator== \
                                   --property key.serializer=org.apache.kafka.common.serialization.StringSerializer \
                                   --property schema.registry.url=$SCHEMA_REGISTRY \
                                   --property value.schema.file=$CWD/../../schemas/registered-alarms-value.avsc < $CWD/../../examples/jlab-alarms.avro-json
