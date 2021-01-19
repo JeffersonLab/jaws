@@ -143,5 +143,7 @@ The following environment variables are required by the scripts:
 | KAFKA_HOME | Path to Kafka installation; example: `/opt/kafka` |
 | CONFLUENT_HOME | Path to Confluent ([community edition](http://packages.confluent.io/archive/6.0/confluent-community-6.0.1.zip)) installation; example: `/opt/confluent-6.0.1` |
 
+**Note**: Confluent home is needed for scripts that operate on AVRO / Schema Registry, which Apache Kafka by itself doesn't support
+
 ## See Also
  - [Developer Notes](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Developer-Notes)
