@@ -14,9 +14,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 
 ## Overview
-The alarm system is comprised of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic.   Alarms are triggered active and also acknowledged by producing messages on the __active-alarms__ topic.     An alarm can be shelved to deemphasize the fact it is active by placing a message on the __shelved-alarms__ topic.
-
-Modules that extend the core including alarm sources, operator interfaces, and the shelved-timer are separate projects.  The alarm system is composed of the following services:
+The alarm system is comprised of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic.   Alarms are triggered active and also acknowledged by producing messages on the __active-alarms__ topic.     An alarm can be shelved to deemphasize the fact it is active by placing a message on the __shelved-alarms__ topic.  The alarm system is composed of the following services:
 - Sources
    - anything authorized to produce messages on active-alarms topic
    - [epics2kafka](https://github.com/JeffersonLab/epics2kafka) with [kafka-transform-epics](https://github.com/JeffersonLab/kafka-transform-epics)
@@ -30,7 +28,7 @@ Modules that extend the core including alarm sources, operator interfaces, and t
    - [Operator GUI](https://github.com/JeffersonLab/graphical-alarm-client) - a Python desktop app for operators to interface with the alarm system
 
 
-**Note**: The alarm system console also contains the scripts to setup/manage the Kafka topics and their schemas needed for the alarm system. 
+**Note**: The alarm system console also contains the scripts to setup/manage the Kafka topics and their schemas needed for the alarm system.  
 
 ## Quick Start with Compose 
 1. Grab project
