@@ -16,13 +16,21 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ## Overview
 The alarm system is comprised of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic.   Alarms are triggered active and also acknowledged by producing messages on the __active-alarms__ topic.     An alarm can be shelved to deemphasize the fact it is active by placing a message on the __shelved-alarms__ topic.
 
-Modules that extend the core including alarm sources, operator interfaces, and the shelved-timer are separate projects.  For example EPICS alarms could be handled by the additional service: [epics2kafka](https://github.com/JeffersonLab/epics2kafka).  Anything can produce messages on the active-alarms topic (with proper authorization).
+Modules that extend the core including alarm sources, operator interfaces, and the shelved-timer are separate projects.  The alarm system is composed of the following services:
+- Sources
+   - anything authorized to produce messages on active-alarms topic
+   - [epics2kafka](https://github.com/JeffersonLab/epics2kafka) with [kafka-transform-epics](https://github.com/JeffersonLab/kafka-transform-epics)
+- Middleware
+   - **Broker**: Kafka - distributed message system
+   - **Coordinator**: [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
+   - **Registry**: [Confluent Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
+   - **Utilities**: [shelved-timer](https://github.com/JeffersonLab/shelved-timer) - notifies clients of shelved alarm expiration
+- Clients   
+   - Alarm Console - defined in this project; Python CLI client
+   - [Operator GUI](https://github.com/JeffersonLab/graphical-alarm-client) - a Python desktop app for operators to interface with the alarm system
 
-The [shelved-timer](https://github.com/JeffersonLab/shelved-timer) is a a Kafka Streams app used to expire messages from the shelved-alarms topic.   The shelved-timer app expires shelved messages with tombstone records to notify clients that the shelved alarm duration is over.   This moves the burden of managing expiration timers off of every client and onto a single app.
 
-A [graphical-alarm-client](https://github.com/JeffersonLab/graphical-alarm-client) provides a convenient desktop app for operators to view active alarms, see alarm definitions (registered-alarms), and shelve active alarms.
-
-The alarm system console Docker image, included in this project, contains the scripts to manage the Kafka topics and their schemas needed for the alarm system. 
+**Note**: The alarm system console also contains the scripts to setup/manage the Kafka topics and their schemas needed for the alarm system. 
 
 ## Quick Start with Compose 
 1. Grab project
@@ -42,12 +50,6 @@ docker exec -it console /scripts/list-active.py --monitor
 ```
 docker exec console /scripts/set-active-alarming.py channel1
 ```
-The alarm system is composed of the following services:
-   - Kafka - distributed message system
-   - [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
-   - [Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
-   - Alarm Console - defined in this project; provides Python scripts to setup and interact with the alarm system
-
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
 ## Topics and Schemas
