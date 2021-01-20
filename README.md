@@ -15,15 +15,15 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 
 ## Overview
 The alarm system is comprised of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic.   Alarms are triggered active and also acknowledged by producing messages on the __active-alarms__ topic.     An alarm can be shelved to deemphasize the fact it is active by placing a message on the __shelved-alarms__ topic.  The alarm system is composed of the following services:
-- Sources
+- **Sources**
    - anything authorized to produce messages on active-alarms topic
    - [epics2kafka](https://github.com/JeffersonLab/epics2kafka) with [kafka-transform-epics](https://github.com/JeffersonLab/kafka-transform-epics)
-- Middleware
-   - **Broker**: Kafka - distributed message system
-   - **Coordinator**: [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
-   - **Registry**: [Confluent Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
-   - **Utilities**: [shelved-timer](https://github.com/JeffersonLab/shelved-timer) - notifies clients of shelved alarm expiration
-- Clients   
+- **Middleware**
+   - *Broker*: Kafka - distributed message system
+   - *Coordinator*: [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
+   - *Registry*: [Confluent Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
+   - *Utilities*: [shelved-timer](https://github.com/JeffersonLab/shelved-timer) - notifies clients of shelved alarm expiration
+- **Clients**   
    - Alarm Console - defined in this project; Python CLI client
    - [Operator GUI](https://github.com/JeffersonLab/graphical-alarm-client) - a Python desktop app for operators to interface with the alarm system
 
