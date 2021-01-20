@@ -22,7 +22,9 @@ The alarm system is comprised of three subsystems: registered-alarms, active-ala
    - *Broker*: Kafka - distributed message system
    - *Coordinator*: [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
    - *Registry*: [Confluent Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
-   - *Utilities*: [shelved-timer](https://github.com/JeffersonLab/shelved-timer) - notifies clients of shelved alarm expiration
+   - *Utilities*: 
+     - [shelved-timer](https://github.com/JeffersonLab/shelved-timer) - notifies clients of shelved alarm expiration
+     - [registrations2epics](https://github.com/JeffersonLab/registrations2epics) - alarm registrations inform epics2kafka what to monitor
 - **Clients**   
    - Alarm Console - defined in this project; Python CLI client
    - [Operator GUI](https://github.com/JeffersonLab/graphical-alarm-client) - a Python desktop app for operators to interface with the alarm system
