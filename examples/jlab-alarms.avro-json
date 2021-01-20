@@ -1,1 +1,2 @@
-alarm1={"producer": {"org.jlab.kafka.alarms.DirectCAAlarm": {"pv": "iocin1:heartbeat"}}, "location": "INJ", "category": "RF", "maxshelveduration": null, "latching": false, "docurl": "/", "edmpath": "/"}
+alarm1={"producer": {"org.jlab.kafka.alarms.DirectCAAlarm": {"pv": "channel1"}}, "location": "INJ", "category": "RF", "maxshelveduration": null, "latching": false, "docurl": "/", "edmpath": "/"}
+alarm2={"producer": {"org.jlab.kafka.alarms.DirectCAAlarm": {"pv": "channel2"}}, "location": "INJ", "category": "RF", "maxshelveduration": null, "latching": false, "docurl": "/", "edmpath": "/"}
