@@ -44,7 +44,8 @@
           "HA",
           "HB",
           "HC",
-          "HD"
+          "HD",
+          "UITF"
         ]
       }
     },
@@ -55,11 +56,14 @@
         "name": "AlarmCategory",
         "doc": "The alarm category, useful for consumers to filter out alarms of interest",
         "symbols": [
+          "Aperture",
+          "BCM",
+          "Dump",
           "Magnet",
-          "Vacuum",
-          "RF",
           "RADCON",
-          "Safety"
+          "RF",
+          "Safety",
+          "Vacuum"
         ]
       }
     },
