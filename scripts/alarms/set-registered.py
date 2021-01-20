@@ -11,83 +11,10 @@ from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
 from avro.schema import Field
 
-value_schema_str = """
-{
-   "namespace" : "org.jlab.kafka.alarms",
-   "name"      : "RegisteredAlarm",
-   "type"      : "record",
-   "fields"    : [
-     {
-       "name" : "producer",
-       "type" : [
-         {
-           "name"   : "DirectCAAlarm",
-           "type"   : "record",
-           "fields" : [
-             {
-               "name" : "pv",
-               "type" : "string",
-               "doc"  : "The name of the EPICS CA PV, which can be correlated with the key of the epics-channels topic"
-             }
-           ]
-         },
-         {
-           "name"   : "StreamRuleAlarm",
-           "type"   : "record",
-           "fields" : [
-             {
-               "name" : "jar",
-               "type" : "string",
-               "doc"  : "Name of the Java jar file containing the stream rule logic, stored in the stream rule engine rules directory"
-             }
-           ]
-         }
-       ],
-       "doc"  : "Indicates how this alarm is produced, useful for producers to monitor when new alarms are added/removed"
-     },
-     {
-       "name" : "location",
-       "type" : {
-           "name"    : "AlarmLocation",
-           "type"    : "enum",
-           "symbols" : ["INJ","NL","SL","HA","HB","HC","HD"],
-           "doc"     : "The alarm location" 
-       }
-     },
-     {
-       "name" : "category",
-       "type" : {
-           "name"    : "AlarmCategory",
-           "type"    : "enum",
-           "symbols" : ["Magnet","Vacuum","RF","RADCON","Safety"],
-           "doc"     : "The alarm category, useful for consumers to filter out alarms of interest"
-       }
-     },
-     {
-        "name"    : "maxshelveduration",
-        "type"    : ["null", "int"],
-        "doc"     : "Maximum amount of time an alarm is allowed to be shelved in seconds; zero means alarm cannot be shelved and null means no limit",
-        "default" : null
-     },
-     {
-        "name"    : "latching",
-        "type"    : "boolean",
-        "default" : false,
-        "doc"     : "Indicates whether this alarm latches when activated and can only be cleared after an explicit acknowledgement"
-     },
-     {
-       "name" : "docurl",
-       "type" : "string",
-       "doc"  : "The relative URL to documentation for this alarm from base path https://alarms.jlab.org/docs"
-     },
-     {
-       "name" : "edmpath",
-       "type" : "string",
-       "doc"  : "Relative path to ops fiefdom EDM screen most useful for this alarm from base path /cs/mccops/edm"
-     }
-  ]
-}
-"""
+scriptpath = os.path.dirname(os.path.realpath(__file__))
+
+with open(scriptpath + '/../../schemas/registered-alarms-value.avsc', 'r') as file:
+    value_schema_str = file.read()
 
 value_schema = avro.loads(value_schema_str)
 
