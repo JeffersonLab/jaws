@@ -12,30 +12,10 @@ from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
 from avro.schema import Field
 
-value_schema_str = """
-{
-   "namespace" : "org.jlab.kafka.alarms",
-   "name"      : "ShelvedAlarm",
-   "type"      : "record",
-   "fields"    : [
-     {
-         "name"        : "expiration",
-         "type"        : [
-           "null",
-           "long"
-         ],
-         "doc"         : "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this shelved alarm should expire, null for indefinite",
-         "logicalType" : "timestamp-millis",
-         "default"     : null
-     },
-     {
-         "name" : "reason",
-         "type" : "string",
-         "doc"  : "Reason this alarm is shelved"
-     }
-  ]
-}
-"""
+scriptpath = os.path.dirname(os.path.realpath(__file__))
+
+with open(scriptpath + '/../../schemas/shelved-alarms-value.avsc', 'r') as file:
+    value_schema_str = file.read()
 
 value_schema = avro.loads(value_schema_str)
 

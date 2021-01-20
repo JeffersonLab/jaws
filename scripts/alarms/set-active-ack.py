@@ -11,10 +11,12 @@ from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
 from avro.schema import Field
 
-with open('/schemas/active-alarms-key.avsc', 'r') as file:
+scriptpath = os.path.dirname(os.path.realpath(__file__))
+
+with open(scriptpath + '/../../schemas/active-alarms-key.avsc', 'r') as file:
     key_schema_str = file.read()
 
-with open('/schemas/active-alarms-value.avsc', 'r') as file:
+with open(scriptpath + '/../../schemas/active-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
 key_schema = avro.loads(key_schema_str)
