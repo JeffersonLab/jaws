@@ -36,11 +36,11 @@ docker-compose up
 ```
 3. Monitor active alarms
 ```
-docker exec -it console /scripts/active-alarms/list-active.py --monitor
+docker exec -it console /scripts/list-active.py --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec console /scripts/active-alarms/set-active-alarming.py channel1
+docker exec console /scripts/set-active-alarming.py channel1
 ```
 The alarm system is composed of the following services:
    - Kafka - distributed message system
