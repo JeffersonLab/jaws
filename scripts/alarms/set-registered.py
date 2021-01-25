@@ -55,7 +55,7 @@ def send() :
 @click.option('--unset', is_flag=True, help="Remove the alarm")
 @click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm, only needed if not using producerJar")
 @click.option('--producerjar', help="The name of the Java JAR file containing the stream rules powering this alarm, only needed if not using producerPv")
-@click.option('--location', type=click.Choice(['INJ', 'NL', 'SL', 'HA', 'HB', 'HC', 'HD','UITF','CHL','MCC']), help="The alarm location")
+@click.option('--location', type=click.Choice(['INJ', 'NL', 'SL','EA','WA','BSY', 'HA', 'HB', 'HC', 'HD','UITF','CHL','MCC']), help="The alarm location")
 @click.option('--category', type=click.Choice(['Aperture','BCM','CAMAC','Dump','Gun','IOC','Magnet','RADCON','RF','Safety','Vacuum']), help="The alarm category")
 @click.option('--maxshelveduration', type=click.INT, help="Maximum amount of time an alarm is allowed to be shelved in seconds; zero means alarm cannot be shelved and null means no limit")
 @click.option('--latching', is_flag=True, help="Indicate that the alarm latches and requires acknowledgement to clear")
