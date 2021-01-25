@@ -64,14 +64,15 @@
         "symbols": [
           "Aperture",
           "BCM",
+          "Box",
+          "BPM",
           "CAMAC",
+          "Crate",
           "Dump",
           "Gun",
           "IOC",
-          "Magnet",
           "RADCON",
           "RF",
-          "Safety",
           "Vacuum"
         ]
       }
