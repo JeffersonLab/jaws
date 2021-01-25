@@ -4,6 +4,7 @@ import os
 import types
 import click
 import time
+import json
 
 from confluent_kafka import avro, Consumer
 from confluent_kafka.avro import CachedSchemaRegistryClient
@@ -54,7 +55,12 @@ def disp_msg(msg):
         host = bytez.decode()
    
     if params.category is None or (value is not None and params.category == value['category']):
-        print(ts, '|', user, '|', producer, '|', host, '|', key, value)
+        v = json.dumps(value)
+
+        if params.nometa:
+            print(key + '=' + v)
+        else:
+            print(ts, '|', user, '|', producer, '|', host, '|', key + '=' + v)
 
 def list():
     ts = time.time()
@@ -92,14 +98,16 @@ def list():
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
+@click.option('--nometa', is_flag=True, help="Disable audit headers and timestamp")
 @click.option('--category', help="Only show registered in specified category")
 
-def cli(monitor, category):
+def cli(monitor, nometa, category):
     global params
 
     params = types.SimpleNamespace()
 
     params.monitor = monitor
+    params.nometa = nometa
     params.category = category
 
     list()
