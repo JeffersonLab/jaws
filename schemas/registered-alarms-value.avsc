@@ -48,9 +48,10 @@
           "HB",
           "HC",
           "HD",
-          "UITF",
           "CHL",
-          "MCC"
+          "MCC",
+          "LERF",
+          "UITF"
         ]
       }
     },
