@@ -45,7 +45,8 @@
           "HB",
           "HC",
           "HD",
-          "UITF"
+          "UITF",
+          "CHL"
         ]
       }
     },
@@ -60,6 +61,7 @@
           "BCM",
           "Dump",
           "Gun",
+          "IOC",
           "Magnet",
           "RADCON",
           "RF",
