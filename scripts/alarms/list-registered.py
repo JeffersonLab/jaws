@@ -52,8 +52,9 @@ def disp_msg(msg):
         producer = bytez.decode()
         bytez = lookup.get('host', b'')
         host = bytez.decode()
-
-    print(ts, '|', user, '|', producer, '|', host, '|', key, value)
+   
+    if params.category is None or (value is not None and params.category == value['category']):
+        print(ts, '|', user, '|', producer, '|', host, '|', key, value)
 
 def list():
     ts = time.time()
@@ -91,13 +92,15 @@ def list():
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
+@click.option('--category', help="Only show registered in specified category")
 
-def cli(monitor):
+def cli(monitor, category):
     global params
 
     params = types.SimpleNamespace()
 
     params.monitor = monitor
+    params.category = category
 
     list()
 
