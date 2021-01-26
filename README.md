@@ -6,10 +6,10 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [Quick Start with Compose](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-compose)
 - [Topics and Schemas](https://github.com/JeffersonLab/kafka-alarm-system#topics-and-schemas)
    - [Tombstones](https://github.com/JeffersonLab/kafka-alarm-system#tombstones)
-   - [Customize Alarms](https://github.com/JeffersonLab/kafka-alarm-system#customize-alarms)
-     - [Active Alarm Types](https://github.com/JeffersonLab/kafka-alarm-system#active-alarm-types)
    - [Acknowledgements](https://github.com/JeffersonLab/kafka-alarm-system#acknowledgements)
    - [Headers](https://github.com/JeffersonLab/kafka-alarm-system#headers)
+   - [Customize Alarms](https://github.com/JeffersonLab/kafka-alarm-system#customize-alarms)
+     - [Active Alarm Types](https://github.com/JeffersonLab/kafka-alarm-system#active-alarm-types)
 - [Scripts](https://github.com/JeffersonLab/kafka-alarm-system#scripts)
 - [See Also](https://github.com/JeffersonLab/kafka-alarm-system#see-also)
 ---
@@ -68,6 +68,25 @@ The alarm system relies on Kafka not only for notification of changes, but for [
 ### Tombstones
 To unset (remove) a record write a [tombstone](https://kafka.apache.org/documentation.html#compaction) record (null/None value).  This can be done with the provided scripts using the --unset option.  The tombstone approach is used to unregister, unshelve, unacknowledge, and unset active alarming.   
 
+### Acknowledgements
+The alarm system supports acknowledgements - alarms that move in and out of an alarming state too quickly for users to notice can be emphasized by registering them as "latching", so they require acknowledgment.  Since acknowledgements need to be tied to a specific instance of an alarming message alarm acknowledgements are placed on the same topic as alarming messages (active-alarms) to ensure messages are ordered (on a single partition).  Since they share the active-alarms topic, acks are also typed - for example EPICS acknowledgements include severity for timing purposes - an ack on a MINOR alarm does not interfere with a new MAJOR alarm that may happen before the MINOR ack is delivered (an untyped ack could inadvertantly acknowledge a more severe alarm than was intended by the user). 
+
+**Note**: Acknowledgements add attention to alarms that toggle active _quickly_, whereas shelving removes attention from alarms that go active _frequently_.
+
+### Headers
+The alarm system topics are expected to include audit information in Kafka message headers:
+
+| Header | Description |
+|--------|-------------|
+| user | The username of the account whom produced the message |
+| producer | The application name that produced the message |
+| host | The hostname where the message was produced |
+
+Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The alarm system uses the default producer provided timestamps (as opposed to broker provided), so timestamps may not be ordered.
+
+**Note**: There is no schema for message headers so content is not easily enforceable.  However, the topic management scripts provided include the audit headers listed.
+
+
 ### Customize Alarms
 The information registered with an alarm can be customized by modifying the [registered-alarms-value.asvc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
 
@@ -92,24 +111,6 @@ instead of:
 **Note**: EPICS active alarms and acknowledgements also have explicit NO_ALARM and NO_ACK enumerations values that are included to maintain a one-to-one mapping of EPICS field values.  This means clients must be prepared to handle EPICS message value containing tombstone and NO_ALARM (and even severity INVALID).   Generally, a tombstone will not be encountered for EPICS messages as a no record scenario happens only if an alarm has never been registered before and epics2kafka will use explicit NO_ALARM once registered. 
 
 **Note**: Schema references are not used at this time since the number of types is small and because the [Confluent Python API does not support it](https://github.com/confluentinc/confluent-kafka-python/issues/974).   In future versions of the active-alarms-value schema references may be used instead of embedding all type schemas inside the one file.
-
-### Acknowledgements
-The alarm system supports acknowledgements - alarms that move in and out of an alarming state too quickly for users to notice can be emphasized by registering them as "latching", so they require acknowledgment.  Since acknowledgements need to be tied to a specific instance of an alarming message alarm acknowledgements are placed on the same topic as alarming messages (active-alarms) to ensure messages are ordered (on a single partition).  Since they share the active-alarms topic, acks are also typed - for example EPICS acknowledgements include severity for timing purposes - an ack on a MINOR alarm does not interfere with a new MAJOR alarm that may happen before the MINOR ack is delivered (an untyped ack could inadvertantly acknowledge a more severe alarm than was intended by the user). 
-
-**Note**: Acknowledgements add attention to alarms that toggle active _quickly_, whereas shelving removes attention from alarms that go active _frequently_.
-
-### Headers
-The alarm system topics are expected to include audit information in Kafka message headers:
-
-| Header | Description |
-|--------|-------------|
-| user | The username of the account whom produced the message |
-| producer | The application name that produced the message |
-| host | The hostname where the message was produced |
-
-Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The alarm system uses the default producer provided timestamps (as opposed to broker provided), so timestamps may not be ordered.
-
-**Note**: There is no schema for message headers so content is not easily enforceable.  However, the topic management scripts provided include the audit headers listed.
 
 ## Scripts
 
