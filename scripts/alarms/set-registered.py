@@ -18,6 +18,9 @@ with open(scriptpath + '/../../schemas/registered-alarms-value.avsc', 'r') as fi
 
 value_schema = avro.loads(value_schema_str)
 
+categories = value_schema.fields[2].type.symbols
+locations = value_schema.fields[1].type.symbols
+
 def delivery_report(err, msg):
     """ Called once for each message produced to indicate delivery result.
         Triggered by poll() or flush(). """
