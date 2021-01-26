@@ -6,6 +6,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [Quick Start with Compose](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-compose)
 - [Topics and Schemas](https://github.com/JeffersonLab/kafka-alarm-system#topics-and-schemas)
    - [Tombstones](https://github.com/JeffersonLab/kafka-alarm-system#tombstones)
+   - [Customize Alarms](https://github.com/JeffersonLab/kafka-alarm-system#customize-alarms)
    - [Active Alarm Types](https://github.com/JeffersonLab/kafka-alarm-system#active-alarm-types)
    - [Acknowledgements](https://github.com/JeffersonLab/kafka-alarm-system#acknowledgements)
    - [Headers](https://github.com/JeffersonLab/kafka-alarm-system#headers)
@@ -67,10 +68,11 @@ The alarm system relies on Kafka not only for notification of changes, but for [
 ### Tombstones
 To unset (remove) a record write a [tombstone](https://kafka.apache.org/documentation.html#compaction) record (null/None value).  This can be done with the provided scripts using the --unset option.  The tombstone approach is used to unregister, unshelve, unacknowledge, and unset active alarming.   
 
-**Note**: EPICS active alarms and acknowledgements also have explicit NO_ALARM and NO_ACK enumerations values that are included to maintain a one-to-one mapping of EPICS field values.  This means clients must be prepared to handle EPICS message value containing tombstone and NO_ALARM (and even severity INVALID).   Generally, a tombstone will not be encountered for EPICS messages as a no record scenario happens only if an alarm has never been registered before and epics2kafka will use explicit NO_ALARM once registered. 
+### Customize Alarms
+The information registered with an alarm can be customized by modifying the [registered-alarms-value.asvc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
 
-### Active Alarm Types
-Since different alarm producers may have producer specific alarm data the active alarm schema is actually an extendable union of schemas.   Generally the basic alarming or acknowledgement messages should be used for simplicity, but sometimes extra info is required.  For example, EPICS alarms have severity and status fields.
+#### Active Alarm Types
+Since different alarm producers may have producer specific alarm data the active alarm schema is actually an extendable union of schemas.   Generally the basic alarming or acknowledgement messages should be used for simplicity, but sometimes extra info is required.  For example, EPICS alarms have severity and status fields.  New Active Alarm Types can be defined by creating new AVRO schema.
 
 **Note**: It is difficult to have a single (non-union) active-alarm schema that represents all possible alarm sources and has a fixed set of fields because that requires translation from the original fields to the unified fields, and decisions about (1) what are the set of unified fields and (2) how to map data to them, may result in some information being lost in translation.   Therefore, a union of schemas is used to preserve original fields.    If desired, an opinionated custom translation layer could be added to make these decisions and consolidate the various types - for example using a Kafka Streams app.
 
@@ -87,7 +89,10 @@ instead of:
 ```
 {}
 ```
-**Note**: Schema references are not used at this time since the number of types is small.   In future versions of the active-alarms-value schema references may be used instead of embedding all type schemas inside the one file.
+**Note**: EPICS active alarms and acknowledgements also have explicit NO_ALARM and NO_ACK enumerations values that are included to maintain a one-to-one mapping of EPICS field values.  This means clients must be prepared to handle EPICS message value containing tombstone and NO_ALARM (and even severity INVALID).   Generally, a tombstone will not be encountered for EPICS messages as a no record scenario happens only if an alarm has never been registered before and epics2kafka will use explicit NO_ALARM once registered. 
+
+**Note**: Schema references are not used at this time since the number of types is small and because the [Confluent Python API does not support it](https://github.com/confluentinc/confluent-kafka-python/issues/974).   In future versions of the active-alarms-value schema references may be used instead of embedding all type schemas inside the one file.
+
 ### Acknowledgements
 The alarm system supports acknowledgements - alarms that move in and out of an alarming state too quickly for users to notice can be emphasized by registering them as "latching", so they require acknowledgment.  Since acknowledgements need to be tied to a specific instance of an alarming message alarm acknowledgements are placed on the same topic as alarming messages (active-alarms) to ensure messages are ordered (on a single partition).  Since they share the active-alarms topic, acks are also typed - for example EPICS acknowledgements include severity for timing purposes - an ack on a MINOR alarm does not interfere with a new MAJOR alarm that may happen before the MINOR ack is delivered (an untyped ack could inadvertantly acknowledge a more severe alarm than was intended by the user). 
 
