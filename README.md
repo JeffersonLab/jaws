@@ -7,7 +7,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [Topics and Schemas](https://github.com/JeffersonLab/kafka-alarm-system#topics-and-schemas)
    - [Tombstones](https://github.com/JeffersonLab/kafka-alarm-system#tombstones)
    - [Customize Alarms](https://github.com/JeffersonLab/kafka-alarm-system#customize-alarms)
-   - [Active Alarm Types](https://github.com/JeffersonLab/kafka-alarm-system#active-alarm-types)
+     - [Active Alarm Types](https://github.com/JeffersonLab/kafka-alarm-system#active-alarm-types)
    - [Acknowledgements](https://github.com/JeffersonLab/kafka-alarm-system#acknowledgements)
    - [Headers](https://github.com/JeffersonLab/kafka-alarm-system#headers)
 - [Scripts](https://github.com/JeffersonLab/kafka-alarm-system#scripts)
