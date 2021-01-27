@@ -1,4 +1,4 @@
-# kafka-alarm-system [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/kafka-alarm-system?sort=semver)](https://hub.docker.com/r/slominskir/kafka-alarm-system)
+# kafka-alarm-system [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/kafka-alarm-system?sort=semver&label=DockerHub)](https://hub.docker.com/r/slominskir/kafka-alarm-system)
 An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project defines topic schemas, ties together the message pipeline services that make up the core alarm system in a docker-compose file, and provides Python scripts for configuring and interacting with the system.  
 
 ---
