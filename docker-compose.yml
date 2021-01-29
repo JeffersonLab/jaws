@@ -1,16 +1,16 @@
 ---
-version: '2'
+version: '3.8'
 
 services:
   zookeeper:
-    image: debezium/zookeeper:1.3
+    image: debezium/zookeeper:1.4.0.Final
     hostname: zookeeper
     container_name: zookeeper
     ports:
       - "2181:2181"
 
   kafka:
-    image: debezium/kafka:1.3
+    image: debezium/kafka:1.4.0.Final
     hostname: kafka
     container_name: kafka
     depends_on:
@@ -26,7 +26,7 @@ services:
       - ./scripts/broker:/scripts
 
   registry:
-    image: confluentinc/cp-schema-registry:5.5.0
+    image: confluentinc/cp-schema-registry:6.0.1
     hostname: registry
     container_name: registry
     depends_on:
