@@ -1,0 +1,110 @@
+---
+version: '3.8'
+
+services:
+  zookeeper:
+    image: debezium/zookeeper:1.4.0.Final
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: debezium/kafka:1.4.0.Final
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_HOME: "/kafka"
+      BOOTSTRAP_SERVER: "kafka:9092"
+      ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,shelved-alarms:1:1:compact'
+    volumes:
+      - ./scripts/broker:/scripts
+
+  registry:
+    image: confluentinc/cp-schema-registry:6.0.1
+    hostname: registry
+    container_name: registry
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - 8081:8081
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
+      SCHEMA_REGISTRY_HOST_NAME: registry
+    volumes:
+      - ./scripts/registry:/scripts
+
+  console:
+    image: slominskir/kafka-alarm-system:1.1.0
+    tty: true
+    stdin_open: true
+    hostname: console
+    container_name: console
+    depends_on:
+      - zookeeper
+      - kafka
+      - registry
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
+      ALARM_DEFINITIONS: "channel1|channel1|INJ|RF|/|/,channel2|channel2|INJ|RF|/|/,channel3|channel3|INJ|RF|/|/"
+
+  softioc:
+    image: slominskir/softioc:1.1.0
+    tty: true
+    stdin_open: true
+    hostname: softioc
+    container_name: softioc
+    ports:
+      - "5064:5064/tcp"
+      - "5065:5065/tcp"
+      - "5064:5064/udp"
+      - "5065:5065/udp"
+    volumes:
+      - ./softioc-db:/db
+
+  epics2kafka-alarms:
+    image: slominskir/epics2kafka-alarms:1.0.0
+    hostname: epics2kafka-alarms
+    container_name: epics2kafka-alarms
+    ports:
+      - 8083:8083
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      CONFIG_STORAGE_TOPIC: connect-configs
+      OFFSET_STORAGE_TOPIC: connect-offsets
+      STATUS_STORAGE_TOPIC: connect-status
+    volumes:
+      - ./connect-config:/config
+
+  registrations2epics:
+    image: slominskir/registrations2epics:1.1.1
+    hostname: registrations2epics
+    container_name: registrations2epics
+    depends_on:
+      - zookeeper
+      - kafka
+      - registry
+      - console
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
+
+  timer:
+    image: slominskir/shelved-timer:1.0.0
+    hostname: timer
+    container_name: timer
+    depends_on:
+      - zookeeper
+      - kafka
+      - registry
+      - console
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"

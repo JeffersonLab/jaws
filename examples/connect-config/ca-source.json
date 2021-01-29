@@ -1,0 +1,20 @@
+{
+  "name" : "ca-source",
+  "config" : {
+    "connector.class" : "org.jlab.kafka.connect.CASourceConnector",
+    "tasks.max" : 1,
+    "monitor.addr.list": "softioc",
+    "command.bootstrap.servers": "kafka://kafka:9092",
+    "key.converter": "io.confluent.connect.avro.AvroConverter",
+    "key.converter.schema.registry.url": "http://registry:8081",
+    "key.converter.enhanced.avro.schema.support":  true,
+    "key.converter.connect.meta.data": false,
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://registry:8081",
+    "value.converter.enhanced.avro.schema.support":  true,
+    "value.converter.connect.meta.data": false,
+    "transforms": "alarmsKey,alarmsValue",
+    "transforms.alarmsKey.type": "org.jlab.kafka.connect.transforms.EpicsToAlarm$Key",
+    "transforms.alarmsValue.type": "org.jlab.kafka.connect.transforms.EpicsToAlarm$Value"
+  }
+}
