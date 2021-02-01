@@ -22,8 +22,6 @@ services:
       BOOTSTRAP_SERVER: "kafka:9092"
       ZOOKEEPER_CONNECT: 'zookeeper:2181'
       CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,shelved-alarms:1:1:compact'
-    volumes:
-      - ./scripts/broker:/scripts
 
   registry:
     image: confluentinc/cp-schema-registry:6.0.1
@@ -37,8 +35,6 @@ services:
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: registry
-    volumes:
-      - ./scripts/registry:/scripts
 
   console:
     build:
@@ -59,5 +55,5 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
       ALARM_DEFINITIONS: "channel1|channel1|INJ|RF|/|/,channel2|channel2|INJ|RF|/|/,channel3|channel3|INJ|RF|/|/"
     volumes:
-      - ./scripts/alarms:/scripts
+      - ./scripts:/scripts
       - ./schemas:/schemas
