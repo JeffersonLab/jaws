@@ -1,0 +1,12 @@
+{
+    "type": "record",
+    "name": "DirectCAAlarm",
+    "namespace" : "org.jlab.kafka.alarms",
+    "fields": [
+        {
+            "name": "pv",
+            "type": "string",
+            "doc": "The name of the EPICS CA PV, which can be correlated with the key of the epics-channels topic"
+        }
+    ]
+}

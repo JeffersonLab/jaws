@@ -1,0 +1,18 @@
+{
+    "type"      : "record",
+    "name"      : "AckEPICS",
+    "namespace" : "org.jlab.kafka.alarms",
+    "doc"       : "EPICS acknowledgement state",
+    "fields"    : [
+        {
+            "name"    : "ack",
+            "type"    : {
+                "type"      : "enum",
+                "name"      : "EPICSAcknowledgementEnum",
+                "doc"       : "Enumeration of possible EPICS acknowledgement states",
+                "symbols"   : ["NO_ACK","MINOR_ACK", "MAJOR_ACK"]
+            },
+            "doc"     : "Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement"
+        }
+    ]
+}
