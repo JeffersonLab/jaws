@@ -57,3 +57,4 @@ services:
     volumes:
       - ./scripts:/scripts
       - ./schemas:/schemas
+      - ./examples/alarm-registrations:/tmp/alarm-registrations
