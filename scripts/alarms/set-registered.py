@@ -4,6 +4,7 @@ import os
 import pwd
 import types
 import click
+import json
 
 # We can't use AvroProducer since it doesn't support string keys, see: https://github.com/confluentinc/confluent-kafka-python/issues/428
 from confluent_kafka import avro, Producer
@@ -54,7 +55,33 @@ def send() :
     p.produce(topic=topic, value=val_payload, key=params.key, headers=hdrs)
     p.flush()
 
+def doImport(file) :
+   print("Loading file", file)
+   handle = open(file, 'r')
+   lines = handle.readlines()
+
+   for line in lines:
+       tokens = line.split("=")
+       key = tokens[0]
+       value = tokens[1]
+       v = json.loads(value)
+       print("{}={}".format(key, v))
+
+       # Trying to work around union serialization issues: https://github.com/confluentinc/confluent-kafka-python/pull/785
+       # Note that kafka-avro-console-consumer provided by Confluent requires proper JSON AVRO encoding https://avro.apache.org/docs/current/spec.html#json_encoding
+       if 'org.jlab.kafka.alarms.DirectCAAlarm' in v['producer']:
+           v['producer'] = v['producer']['org.jlab.kafka.alarms.DirectCAAlarm']
+       elif 'org.jlab.kafka.alarms.StreamRuleAlarm' in v['producer']:
+           v['producer'] = v['producer']['org.jlab.kafka.alarms.StreamRuleAlarm']
+
+       val_payload = serialize_avro(topic, value_schema, v, is_key=False)
+       p.produce(topic=topic, value=val_payload, key=key, headers=hdrs)
+
+   p.flush()
+
+
 @click.command()
+@click.option('--file', is_flag=True, help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the registered-alarms-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
 @click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm, only needed if not using producerJar")
 @click.option('--producerjar', help="The name of the Java JAR file containing the stream rules powering this alarm, only needed if not using producerPv")
@@ -66,31 +93,34 @@ def send() :
 @click.option('--edmpath', help="Relative path to OPS fiefdom EDM screen from /cs/mccops/edm")
 @click.argument('name')
 
-def cli(unset, producerpv, producerjar, location, category, maxshelvedduration, latching, docurl, edmpath, name):
+def cli(file, unset, producerpv, producerjar, location, category, maxshelvedduration, latching, docurl, edmpath, name):
     global params
 
     params = types.SimpleNamespace()
 
     params.key = name
 
-    if unset:
-        params.value = None
+    if(file):
+        doImport(name)
     else:
-        if producerpv == None and producerjar == None:
-            raise click.ClickException("Must specify one of --producerpv or --producerjar")
-
-        if producerpv:
-          producer = {"pv": producerpv}
+        if unset:
+            params.value = None
         else:
-          producer = {"jar" : producerjar}
+            if producerpv == None and producerjar == None:
+                raise click.ClickException("Must specify one of --producerpv or --producerjar")
 
-        if location == None or category == None or docurl == None or edmpath == None:
-            raise click.ClickException(
+            if producerpv:
+                producer = {"pv": producerpv}
+            else:
+                producer = {"jar" : producerjar}
+
+            if location == None or category == None or docurl == None or edmpath == None:
+                raise click.ClickException(
                     "Must specify options --location, --category, --docurl, --edmpath")
 
-        params.value = {"producer": producer, "location": location, "category": category, "maxshelvedduration": maxshelvedduration, "latching": latching, "docurl": docurl, "edmpath": edmpath}
+            params.value = {"producer": producer, "location": location, "category": category, "maxshelvedduration": maxshelvedduration, "latching": latching, "docurl": docurl, "edmpath": edmpath}
 
-    send()
+        send()
 
 cli()
 
