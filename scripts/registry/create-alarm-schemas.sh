@@ -18,7 +18,7 @@ data="{\"schema\": \" $data \"}"
 
 curl -s -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
             --data "$data" \
-            $SCHEMA_REGISTRY/subjects/registered-alarms-key/versions
+            $SCHEMA_REGISTRY/subjects/active-alarms-key/versions
 
 
 # Load AVRO schema file
