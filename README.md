@@ -45,11 +45,11 @@ docker-compose up
 ```
 3. Monitor active alarms
 ```
-docker exec -it console /scripts/list-active.py --monitor
+docker exec -it console /scripts/client/list-active.py --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec console /scripts/set-active-alarming.py channel1
+docker exec console /scripts/client/set-active-alarming.py channel1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
@@ -148,10 +148,6 @@ The following environment variables are required by the scripts:
 |----------|---------|
 | BOOTSTRAP_SERVER | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
 | SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
-| KAFKA_HOME | Path to Kafka installation; example: `/opt/kafka` |
-| CONFLUENT_HOME | Path to Confluent ([community edition](http://packages.confluent.io/archive/6.0/confluent-community-6.0.1.zip)) installation; example: `/opt/confluent-6.0.1` |
-
-**Note**: Confluent home is needed for scripts that operate on AVRO / Schema Registry, which Apache Kafka by itself doesn't support
 
 ## See Also
  - [Developer Notes](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Developer-Notes)
