@@ -6,18 +6,34 @@ import click
 import time
 import json
 
-from confluent_kafka import avro, Consumer
-from confluent_kafka.avro import CachedSchemaRegistryClient
-from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
-from confluent_kafka.avro.serializer import SerializerError
+from confluent_kafka import DeserializingConsumer
+from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry.avro import AvroDeserializer
+from confluent_kafka.serialization import StringDeserializer
 from confluent_kafka import OFFSET_BEGINNING
 
+scriptpath = os.path.dirname(os.path.realpath(__file__))
+
+with open(scriptpath + '/../../schemas/registered-alarms-value.avsc', 'r') as file:
+    value_schema_str = file.read()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry = CachedSchemaRegistryClient(conf)
 
-avro_serde = AvroSerde(schema_registry)
+sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
+schema_registry_client = SchemaRegistryClient(sr_conf)
+
+avro_deserializer = AvroDeserializer(value_schema_str,
+                                     schema_registry_client)
+string_deserializer = StringDeserializer('utf_8')
+
+ts = time.time()
+
+consumer_conf = {'bootstrap.servers': bootstrap_servers,
+                 'key.deserializer': string_deserializer,
+                 'value.deserializer': avro_deserializer,
+                 'group.id': 'list-registered.py' + str(ts),
+                 'auto.offset.reset': "earliest"}
+
 
 empty = False
 
@@ -36,8 +52,8 @@ def my_on_assign(consumer, partitions):
 def disp_msg(msg):
     timestamp = msg.timestamp()
     headers = msg.headers()
-    key = msg.key().decode('utf-8')
-    value = avro_serde.decode_message(msg.value())
+    key = msg.key()
+    value = msg.value()
 
     ts = time.ctime(timestamp[1] / 1000)
 
@@ -63,11 +79,7 @@ def disp_msg(msg):
             print(ts, '|', user, '|', producer, '|', host, '|', key + '=' + v)
 
 def list():
-    ts = time.time()
-
-    c = Consumer({
-        'bootstrap.servers': bootstrap_servers,
-        'group.id': 'list-registered.py' + str(ts)})
+    c = DeserializingConsumer(consumer_conf)
 
     c.subscribe(['registered-alarms'], on_assign=my_on_assign)
 

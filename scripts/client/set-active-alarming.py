@@ -5,11 +5,9 @@ import pwd
 import types
 import click
 
-# We can't use AvroProducer since it doesn't support string keys, see: https://github.com/confluentinc/confluent-kafka-python/issues/428
-from confluent_kafka import avro, Producer
-from confluent_kafka.avro import CachedSchemaRegistryClient
-from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
-from avro.schema import Field
+from confluent_kafka import SerializingProducer
+from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry.avro import AvroSerializer
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 
@@ -18,9 +16,6 @@ with open(scriptpath + '/../../schemas/active-alarms-key.avsc', 'r') as file:
 
 with open(scriptpath + '/../../schemas/active-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
-
-key_schema = avro.loads(key_schema_str)
-value_schema = avro.loads(value_schema_str)
 
 def delivery_report(err, msg):
     """ Called once for each message produced to indicate delivery result.
@@ -32,15 +27,19 @@ def delivery_report(err, msg):
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
-conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry = CachedSchemaRegistryClient(conf)
+sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
+schema_registry_client = SchemaRegistryClient(sr_conf)
 
-avro_serde = AvroSerde(schema_registry)
-serialize_avro = avro_serde.encode_record_with_schema
+avro_key_serializer = AvroSerializer(key_schema_str,
+                                     schema_registry_client)
 
-p = Producer({
-    'bootstrap.servers': bootstrap_servers,
-    'on_delivery': delivery_report})
+avro_value_serializer = AvroSerializer(value_schema_str,
+                                       schema_registry_client)
+
+producer_conf = {'bootstrap.servers': bootstrap_servers,
+                 'key.serializer': avro_key_serializer,
+                 'value.serializer': avro_value_serializer}
+producer = SerializingProducer(producer_conf)
 
 topic = 'active-alarms'
 
@@ -50,12 +49,10 @@ def send() :
     if params.value is None:
         val_payload = None
     else:
-        val_payload = serialize_avro(topic, value_schema, params.value, is_key=False)
+        val_payload = params.value
 
-    key_payload = serialize_avro(topic, key_schema, params.key, is_key=True)
-
-    p.produce(topic=topic, value=val_payload, key=key_payload, headers=hdrs)
-    p.flush()
+    producer.produce(topic=topic, value=val_payload, key=params.key, headers=hdrs, on_delivery=delivery_report)
+    producer.flush()
 
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear an alarm, missing to set active")

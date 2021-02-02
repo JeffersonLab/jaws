@@ -5,18 +5,38 @@ import types
 import click
 import time
 
-from confluent_kafka import avro, Consumer
-from confluent_kafka.avro import CachedSchemaRegistryClient
-from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
-from confluent_kafka.avro.serializer import SerializerError
+from confluent_kafka import DeserializingConsumer
+from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry.avro import AvroDeserializer
+from confluent_kafka.serialization import SerializationError
 from confluent_kafka import OFFSET_BEGINNING
 
+scriptpath = os.path.dirname(os.path.realpath(__file__))
+
+with open(scriptpath + '/../../schemas/active-alarms-key.avsc', 'r') as file:
+    key_schema_str = file.read()
+
+with open(scriptpath + '/../../schemas/active-alarms-value.avsc', 'r') as file:
+    value_schema_str = file.read()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry = CachedSchemaRegistryClient(conf)
 
-avro_serde = AvroSerde(schema_registry)
+sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
+schema_registry_client = SchemaRegistryClient(sr_conf)
+
+avro_key_deserializer = AvroDeserializer(key_schema_str,
+                                         schema_registry_client)
+
+avro_value_deserializer = AvroDeserializer(value_schema_str,
+                                     schema_registry_client)
+
+ts = time.time()
+
+consumer_conf = {'bootstrap.servers': bootstrap_servers,
+                 'key.deserializer': avro_key_deserializer,
+                 'value.deserializer': avro_value_deserializer,
+                 'group.id': 'list-active.py' + str(ts),
+                 'auto.offset.reset': "earliest"}
 
 empty = False
 
@@ -35,8 +55,8 @@ def my_on_assign(consumer, partitions):
 def disp_msg(msg):
     timestamp = msg.timestamp()
     headers = msg.headers()
-    key = avro_serde.decode_message(msg.key())
-    value = avro_serde.decode_message(msg.value())
+    key = msg.key()
+    value = msg.value()
 
     ts = time.ctime(timestamp[1] / 1000)
 
@@ -56,11 +76,7 @@ def disp_msg(msg):
     print(ts, '|', user, '|', producer, '|', host, '|', key, '=', value)
 
 def list():
-    ts = time.time()
-
-    c = Consumer({
-        'bootstrap.servers': bootstrap_servers,
-        'group.id': 'list-active.py' + str(ts)})
+    c = DeserializingConsumer(consumer_conf)
 
     c.subscribe(['active-alarms'], on_assign=my_on_assign)
 
@@ -68,7 +84,7 @@ def list():
         try:
             msg = c.poll(1.0)
 
-        except SerializerError as e:
+        except SerializationError as e:
             print("Message deserialization failed for {}: {}".format(msg, e))
             break
 
