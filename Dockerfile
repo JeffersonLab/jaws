@@ -5,7 +5,7 @@ ARG CUSTOM_CRT_URL
 RUN apk add --no-cache librdkafka git bash curl jq \
     && git clone https://github.com/JeffersonLab/kafka-alarm-system \
     && cd ./kafka-alarm-system \
-    && cp -r scripts/alarms /scripts \
+    && cp -r scripts /scripts \
     && cp -r schemas /schemas \
     && cd ../.. \
     && chmod -R +x /scripts/* \
