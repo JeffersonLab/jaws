@@ -6,7 +6,7 @@ SCRIPT_DIR=`dirname "$(readlink -f "$0")"`
 
 PROJECT_DIR=$SCRIPT_DIR/..
 
-while read path;
+while read path || [ -n "$path" ];
 do
 name=$(basename $path)
 echo Deleting $name
