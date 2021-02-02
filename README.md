@@ -119,15 +119,10 @@ instead of:
  To see all options use the --help option.
 
 ### Docker
-A docker image containing scripts can be built from the Dockerfile included in the project.  To build within a network using man-in-the-middle network scanning (self-signed certificate injection) you can provide an optional build argument pointing to the custom CA certificate file (pip will fail to download dependencies if certificates can't be verified).   For example:
-```
-docker build -t console . --build-arg CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
-```
-Grab Image from [DockerHub](https://hub.docker.com/r/slominskir/kafka-alarm-system):
 ```
 docker pull slominskir/kafka-alarm-system
 ```
-
+Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/kafka-alarm-system)
 ### Python Environment
 Scripts tested with Python 3.7
 
