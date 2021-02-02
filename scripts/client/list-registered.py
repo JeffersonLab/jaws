@@ -9,7 +9,7 @@ import json
 from confluent_kafka import DeserializingConsumer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
-from confluent_kafka.serialization import StringDeserializer
+from confluent_kafka.serialization import StringDeserializer, SerializationError
 from confluent_kafka import OFFSET_BEGINNING
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
@@ -87,7 +87,7 @@ def list():
         try:
             msg = c.poll(1.0)
 
-        except SerializerError as e:
+        except SerializationError as e:
             print("Message deserialization failed for {}: {}".format(msg, e))
             break
 
