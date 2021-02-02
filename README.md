@@ -11,6 +11,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
    - [Customize Alarms](https://github.com/JeffersonLab/kafka-alarm-system#customize-alarms)
      - [Active Alarm Types](https://github.com/JeffersonLab/kafka-alarm-system#active-alarm-types)
 - [Scripts](https://github.com/JeffersonLab/kafka-alarm-system#scripts)
+- [Docker](https://github.com/JeffersonLab/kafka-alarm-system#docker)
 - [See Also](https://github.com/JeffersonLab/kafka-alarm-system#see-also)
 ---
 
@@ -118,11 +119,6 @@ instead of:
 
  To see all options use the --help option.
 
-### Docker
-```
-docker pull slominskir/kafka-alarm-system
-```
-Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/kafka-alarm-system)
 ### Python Environment
 Scripts tested with Python 3.7
 
@@ -143,6 +139,12 @@ The following environment variables are required by the scripts:
 |----------|---------|
 | BOOTSTRAP_SERVER | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
 | SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
+
+## Docker
+```
+docker pull slominskir/kafka-alarm-system
+```
+Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/kafka-alarm-system)
 
 ## See Also
  - [Developer Notes](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Developer-Notes)
