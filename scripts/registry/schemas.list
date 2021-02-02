@@ -1,1 +1,4 @@
+schemas/active-alarms-key
 schemas/active-alarms-value
+schemas/registered-alarms-value
+schemas/shelved-alarms-value
