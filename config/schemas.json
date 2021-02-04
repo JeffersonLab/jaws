@@ -1,0 +1,6 @@
+[
+  {"file": "schemas/active-alarms-value.avsc", "references": []},
+  {"file": "schemas/registered-alarms-value.avsc", "references": []},
+  {"file": "schemas/shelved-alarms-value.avsc", "references": []},
+  {"file": "schemas/active-alarms-key.avsc", "references": []}
+]
