@@ -1,14 +1,19 @@
 {
   "type": "record",
   "name": "RegisteredAlarm",
-  "namespace": "org.jlab.kafka.alarms",
+  "namespace": "org.jlab.alarms",
   "fields": [
     {
       "name": "producer",
       "type": [
         {
           "type": "record",
-          "name": "DirectCAAlarm",
+          "name": "SimpleProducer",
+          "fields": []
+        },
+        {
+          "type": "record",
+          "name": "EPICSProducer",
           "fields": [
             {
               "name": "pv",
@@ -19,7 +24,7 @@
         },
         {
           "type": "record",
-          "name": "StreamRuleAlarm",
+          "name": "StreamRuleProducer",
           "fields": [
             {
               "name": "jar",
@@ -135,12 +140,12 @@
     {
       "name": "docurl",
       "type": "string",
-      "doc": "The relative URL to documentation for this alarm from base path https://alarms.jlab.org/docs"
+      "doc": "The URL to documentation for this alarm"
     },
     {
-      "name": "edmpath",
+      "name": "screenpath",
       "type": "string",
-      "doc": "Relative path to ops fiefdom EDM screen most useful for this alarm from base path /cs/mccops/edm"
+      "doc": "The path the alarm screen display"
     }
   ]
 }
