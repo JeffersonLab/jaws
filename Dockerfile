@@ -7,6 +7,7 @@ RUN apk add --no-cache librdkafka git bash curl jq \
     && cd ./kafka-alarm-system \
     && cp -r scripts /scripts \
     && cp -r schemas /schemas \
+    && cp -r plugins /plugins \
     && cd ../.. \
     && chmod -R +x /scripts/* \
     && cp ./kafka-alarm-system/docker-entrypoint.sh / \
