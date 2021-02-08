@@ -12,11 +12,12 @@ from confluent_kafka.avro.serializer.message_serializer import MessageSerializer
 from avro.schema import Field
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
+projectpath = scriptpath + '/../../../'
 
-with open(scriptpath + '/../../schemas/active-alarms-key.avsc', 'r') as file:
+with open(projectpath + '/schemas/active-alarms-key.avsc', 'r') as file:
     key_schema_str = file.read()
 
-with open(scriptpath + '/../../schemas/active-alarms-value.avsc', 'r') as file:
+with open(projectpath + '/schemas/active-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
 key_schema = avro.loads(key_schema_str)
@@ -44,7 +45,7 @@ p = Producer({
 
 topic = 'active-alarms'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active-alarming-epics.py'),('host',os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-alarming-epics.py'),('host',os.uname().nodename)]
 
 def send() :
     if params.value is None:
