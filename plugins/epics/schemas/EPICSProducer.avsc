@@ -1,7 +1,7 @@
 {
     "type": "record",
-    "name": "DirectCAAlarm",
-    "namespace" : "org.jlab.kafka.alarms",
+    "name": "EPICSProducer",
+    "namespace" : "org.jlab.alarms",
     "fields": [
         {
             "name": "pv",

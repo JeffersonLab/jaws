@@ -1,7 +1,7 @@
 {
     "type"      : "record",
-    "name"      : "AlarmingEPICS",
-    "namespace" : "org.jlab.kafka.alarms",
+    "name"      : "EPICSAlarming",
+    "namespace" : "org.jlab.alarms",
     "doc"       : "EPICS alarming state",
     "fields"    : [
         {

@@ -1,7 +1,7 @@
 {
     "type"      : "record",
-    "name"      : "AckEPICS",
-    "namespace" : "org.jlab.kafka.alarms",
+    "name"      : "EPICSAck",
+    "namespace" : "org.jlab.alarms",
     "doc"       : "EPICS acknowledgement state",
     "fields"    : [
         {
