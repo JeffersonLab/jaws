@@ -35,7 +35,7 @@ def process(record):
 
     s = register(record['file'], record['subject'], references)
 
-conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schemas.json')
+conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schema-registry.json')
 
 with open(conf, 'r') as f:
     str = f.read()
