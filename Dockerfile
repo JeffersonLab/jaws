@@ -2,8 +2,9 @@ FROM python:3.7-alpine3.12
 
 ARG CUSTOM_CRT_URL
 
-RUN apk add --no-cache librdkafka git bash curl jq \
-    && git clone https://github.com/JeffersonLab/kafka-alarm-system \
+RUN apk add --no-cache librdkafka git bash curl jq
+
+RUN git clone https://github.com/JeffersonLab/kafka-alarm-system \
     && cd ./kafka-alarm-system \
     && cp -r scripts /scripts \
     && cp -r config /config \
