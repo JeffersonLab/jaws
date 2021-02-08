@@ -34,7 +34,7 @@ avro_key_serializer = AvroSerializer(key_schema_str,
                                      schema_registry_client)
 
 avro_value_serializer = AvroSerializer(value_schema_str,
-                                       schema_registry_client)
+                                 schema_registry_client)
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': avro_key_serializer,
@@ -43,7 +43,7 @@ producer = SerializingProducer(producer_conf)
 
 topic = 'active-alarms'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active-alarming.py'),('host',os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-ack.py'),('host',os.uname().nodename)]
 
 def send() :
     if params.value is None:
@@ -55,7 +55,7 @@ def send() :
     producer.flush()
 
 @click.command()
-@click.option('--unset', is_flag=True, help="present to clear an alarm, missing to set active")
+@click.option('--unset', is_flag=True, help="present to clear, missing to ack")
 @click.argument('name')
 
 def cli(unset, name):
@@ -63,12 +63,12 @@ def cli(unset, name):
 
     params = types.SimpleNamespace()
 
-    params.key = {"name": name, "type": "Alarming"}
+    params.key = {"name": name, "type": "Ack"}
 
     if unset:
-      params.value = None
+        params.value = None
     else:
-      params.value = {"msg": {}}
+        params.value = {"msg": {}}
 
     send()
 
