@@ -1,7 +1,7 @@
 {
   "type": "record",
   "name": "ShelvedAlarm",
-  "namespace": "org.jlab.kafka.alarms",
+  "namespace": "org.jlab.alarms",
   "fields": [
     {
       "name": "expiration",
