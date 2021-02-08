@@ -10,11 +10,9 @@ projectpath = scriptpath + '/../../'
 sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
 
-def register(file, references=[]):
+def register(file, subject, references=[]):
     with open(file, 'r') as f:
         schema_str = f.read()
-
-    subject = os.path.splitext(os.path.basename(file))[0]
 
     unregistered_schema = Schema(schema_str, 'AVRO', references)
 
@@ -35,7 +33,7 @@ def process(record):
     for ref in record['references']:
         references.append(SchemaReference(ref['name'], ref['subject'], ref['version']))
 
-    s = register(record['file'], references)
+    s = register(record['file'], record['subject'], references)
 
 conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schemas.json')
 
