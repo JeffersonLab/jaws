@@ -1,7 +1,7 @@
 {
   "type"      : "record",
   "name"      : "ActiveAlarmValue",
-  "namespace" : "org.jlab.kafka.alarms",
+  "namespace" : "org.jlab.alarms",
   "doc"       : "Alarming and Acknowledgements state",
   "fields"    : [
     {
@@ -9,19 +9,19 @@
       "type" : [
         {
           "type"      : "record",
-          "name"      : "Alarming",
-          "doc"       : "Alarming state for a basic alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.",
+          "name"      : "SimpleAlarming",
+          "doc"       : "Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.",
           "fields"    : []
         },
         {
           "type"      : "record",
-          "name"      : "Ack",
-          "doc"       : "A basic acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields",
+          "name"      : "SimpleAck",
+          "doc"       : "A simple acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields",
           "fields"    : []
         },
         {
           "type"      : "record",
-          "name"      : "AlarmingEPICS",
+          "name"      : "EPICSAlarming",
           "doc"       : "EPICS alarming state",
           "fields"    : [
             {
@@ -48,7 +48,7 @@
         },
         {
           "type"      : "record",
-          "name"      : "AckEPICS",
+          "name"      : "EPICSAck",
           "doc"       : "EPICS acknowledgement state",
           "fields"    : [
             {
