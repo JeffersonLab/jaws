@@ -58,4 +58,5 @@ services:
       - ./scripts:/scripts
       - ./schemas:/schemas
       - ./config:/config
+      - ./plugins:/plugins
       - ./examples/alarm-registrations:/tmp/alarm-registrations
