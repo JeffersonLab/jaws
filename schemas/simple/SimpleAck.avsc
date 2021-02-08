@@ -1,0 +1,7 @@
+{
+    "type"      : "record",
+    "name"      : "SimpleAck",
+    "namespace" : "org.jlab.alarms",
+    "doc"       : "A simple acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields",
+    "fields"    : []
+}
