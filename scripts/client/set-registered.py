@@ -34,7 +34,7 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 avro_serializer = AvroSerializer(value_schema_str,
                                  schema_registry_client)
 
-value_schema = avro.schema.parse(value_schema_str)
+value_schema = avro.schema.Parse(value_schema_str)
 
 categories = value_schema.fields[2].type.symbols
 locations = value_schema.fields[1].type.symbols
