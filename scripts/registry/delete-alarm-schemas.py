@@ -11,7 +11,9 @@ sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
 
 def process(record):
-    client.delete_subject(record['subject'])
+    list = client.delete_subject(record['subject'])
+
+    print('Successfully deleted {}; versions: {}'.format(record['subject'], list))
 
 conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schemas.json')
 

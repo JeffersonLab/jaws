@@ -18,7 +18,7 @@ def register(file, subject, references=[]):
 
     id = client.register_schema(subject, unregistered_schema)
 
-    print('Successfully registered id: {}', id)
+    print('Successfully registered {} with id: {}'.format(subject, id))
 
     registered_schema = client.get_latest_version(subject)
 
