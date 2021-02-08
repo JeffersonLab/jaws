@@ -12,11 +12,12 @@ from confluent_kafka.serialization import SerializationError
 from confluent_kafka import OFFSET_BEGINNING
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
+projectpath = scriptpath + '/../../'
 
-with open(scriptpath + '/../../schemas/active-alarms-key.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/active-alarms-key.avsc', 'r') as file:
     key_schema_str = file.read()
 
-with open(scriptpath + '/../../schemas/active-alarms-value.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/active-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')

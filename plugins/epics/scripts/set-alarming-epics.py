@@ -14,10 +14,10 @@ from avro.schema import Field
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../../'
 
-with open(projectpath + '/schemas/active-alarms-key.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/active-alarms-key.avsc', 'r') as file:
     key_schema_str = file.read()
 
-with open(projectpath + '/schemas/active-alarms-value.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/active-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
 key_schema = avro.loads(key_schema_str)

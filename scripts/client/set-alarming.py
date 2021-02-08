@@ -10,11 +10,12 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroSerializer
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
+projectpath = scriptpath + '/../../'
 
-with open(scriptpath + '/../../schemas/active-alarms-key.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/active-alarms-key.avsc', 'r') as file:
     key_schema_str = file.read()
 
-with open(scriptpath + '/../../schemas/active-alarms-value.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/active-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
 def delivery_report(err, msg):
