@@ -89,7 +89,7 @@ Additionally, the built-in timestamp provided in all Kafka messages is used to p
 
 
 ### Customize Alarms
-The information registered with an alarm can be customized by modifying the [registered-alarms-value.asvc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
+The information registered with an alarm can be customized by modifying the [registered-alarms-value.asvc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/config/subject-schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
 
 #### Active Alarm Types
 Since different alarm producers may have producer specific alarm data the active alarm schema is actually an extendable union of schemas.   Generally the basic alarming or acknowledgement messages should be used for simplicity, but sometimes extra info is required.  For example, EPICS alarms have severity and status fields.  New Active Alarm Types can be defined by creating new AVRO schema.
