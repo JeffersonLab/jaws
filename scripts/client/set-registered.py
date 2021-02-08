@@ -72,10 +72,12 @@ def doImport(file) :
 
        # Trying to work around union serialization issues: https://github.com/confluentinc/confluent-kafka-python/pull/785
        # Note that kafka-avro-console-consumer provided by Confluent requires proper JSON AVRO encoding https://avro.apache.org/docs/current/spec.html#json_encoding
-       if 'org.jlab.kafka.alarms.DirectCAAlarm' in v['producer']:
-           v['producer'] = v['producer']['org.jlab.kafka.alarms.DirectCAAlarm']
-       elif 'org.jlab.kafka.alarms.StreamRuleAlarm' in v['producer']:
-           v['producer'] = v['producer']['org.jlab.kafka.alarms.StreamRuleAlarm']
+       if 'org.jlab.alarms.EPICSProducer' in v['producer']:
+           v['producer'] = v['producer']['org.jlab.alarms.EPICSProducer']
+       elif 'org.jlab.alarms.StreamRuleProducer' in v['producer']:
+           v['producer'] = v['producer']['org.jlab.alarms.StreamRuleProducer']
+       else:
+           v['producer'] = v['producer']['org.jlab.alarms.SimpleProducer']
 
        val_payload = serialize_avro(topic, value_schema, v, is_key=False)
        p.produce(topic=topic, value=val_payload, key=key, headers=hdrs)
@@ -92,11 +94,11 @@ def doImport(file) :
 @click.option('--category', type=click.Choice(categories), help="The alarm category")
 @click.option('--maxshelvedduration', type=click.INT, help="Maximum amount of time an alarm is allowed to be shelved in seconds; zero means alarm cannot be shelved and null means no limit")
 @click.option('--latching', is_flag=True, help="Indicate that the alarm latches and requires acknowledgement to clear")
-@click.option('--docurl', help="Relative path to documentation from https://alarms.jlab.org/doc")
-@click.option('--edmpath', help="Relative path to OPS fiefdom EDM screen from /cs/mccops/edm")
+@click.option('--docurl', help="The URL to documentation for this alarm")
+@click.option('--screenpath', help="The path the alarm screen display")
 @click.argument('name')
 
-def cli(file, unset, producerpv, producerjar, location, category, maxshelvedduration, latching, docurl, edmpath, name):
+def cli(file, unset, producerpv, producerjar, location, category, maxshelvedduration, latching, docurl, screenpath, name):
     global params
 
     params = types.SimpleNamespace()
@@ -117,11 +119,11 @@ def cli(file, unset, producerpv, producerjar, location, category, maxshelveddura
             else:
                 producer = {"jar" : producerjar}
 
-            if location == None or category == None or docurl == None or edmpath == None:
+            if location == None or category == None or docurl == None or screenpath == None:
                 raise click.ClickException(
-                    "Must specify options --location, --category, --docurl, --edmpath")
+                    "Must specify options --location, --category, --docurl, --screenpath")
 
-            params.value = {"producer": producer, "location": location, "category": category, "maxshelvedduration": maxshelvedduration, "latching": latching, "docurl": docurl, "edmpath": edmpath}
+            params.value = {"producer": producer, "location": location, "category": category, "maxshelvedduration": maxshelvedduration, "latching": latching, "docurl": docurl, "screenpath": screenpath}
 
         send()
 
