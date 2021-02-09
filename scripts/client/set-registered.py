@@ -88,6 +88,7 @@ def doImport(file) :
 @click.command()
 @click.option('--file', is_flag=True, help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the registered-alarms-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
+@click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")
 @click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm, only needed if not using producerJar")
 @click.option('--producerjar', help="The name of the Java JAR file containing the stream rules powering this alarm, only needed if not using producerPv")
 @click.option('--location', type=click.Choice(locations), help="The alarm location")
@@ -98,7 +99,7 @@ def doImport(file) :
 @click.option('--screenpath', help="The path the alarm screen display")
 @click.argument('name')
 
-def cli(file, unset, producerpv, producerjar, location, category, maxshelvedduration, latching, docurl, screenpath, name):
+def cli(file, unset, producersimple, producerpv, producerjar, location, category, maxshelvedduration, latching, docurl, screenpath, name):
     global params
 
     params = types.SimpleNamespace()
@@ -111,10 +112,12 @@ def cli(file, unset, producerpv, producerjar, location, category, maxshelveddura
         if unset:
             params.value = None
         else:
-            if producerpv == None and producerjar == None:
-                raise click.ClickException("Must specify one of --producerpv or --producerjar")
+            if producersimple == False and producerpv == None and producerjar == None:
+                raise click.ClickException("Must specify one of --producersimple, --producerpv, --producerjar")
 
-            if producerpv:
+            if producersimple:
+                producer = {}
+            elif producerpv:
                 producer = {"pv": producerpv}
             else:
                 producer = {"jar" : producerjar}
