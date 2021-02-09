@@ -37,7 +37,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: registry
 
   console:
-    image: slominskir/kafka-alarm-system:1.1.0
+    image: slominskir/kafka-alarm-system:1.3.0
     tty: true
     stdin_open: true
     hostname: console
@@ -66,7 +66,7 @@ services:
       - ./softioc-db:/db
 
   epics2kafka-alarms:
-    image: slominskir/epics2kafka-alarms:1.0.0
+    image: slominskir/epics2kafka-alarms:1.1.0
     hostname: epics2kafka-alarms
     container_name: epics2kafka-alarms
     ports:
@@ -80,7 +80,7 @@ services:
       - ./connect-config:/config
 
   registrations2epics:
-    image: slominskir/registrations2epics:1.1.1
+    image: slominskir/registrations2epics:1.2.0
     hostname: registrations2epics
     container_name: registrations2epics
     depends_on:
@@ -93,7 +93,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   timer:
-    image: slominskir/shelved-timer:1.0.0
+    image: slominskir/shelved-timer:1.1.0
     hostname: timer
     container_name: timer
     depends_on:
