@@ -68,7 +68,7 @@ def cli(sevr, stat, name):
 
     params = types.SimpleNamespace()
 
-    params.key = {"name": name, "type": "AlarmingEPICS"}
+    params.key = {"name": name, "type": "EPICSAlarming"}
 
     if sevr == None:
         raise click.ClickException(
