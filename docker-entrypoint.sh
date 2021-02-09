@@ -28,7 +28,7 @@ else
       docurl="${def[4]}"
       screenpath="${def[5]}"
       echo "Creating alarm definition ${name} ${pv} ${location}" "${category}" "${docurl}" "${screenpath}"
-      /scripts/client/set-registered.py "${name}" --producerpv "${pv}" --location "${location}" --category "${category}" --docurl "${docurl}" --sceenpath "${screenpath}"
+      /scripts/client/set-registered.py "${name}" --producerpv "${pv}" --location "${location}" --category "${category}" --docurl "${docurl}" --screenpath "${screenpath}"
     done
 fi
 
