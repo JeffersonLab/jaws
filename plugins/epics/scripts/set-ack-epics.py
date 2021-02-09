@@ -67,7 +67,7 @@ def cli(ack, name):
 
     params = types.SimpleNamespace()
 
-    params.key = {"name": name, "type": "AckEPICS"}
+    params.key = {"name": name, "type": "EPICSAck"}
 
     if ack == None:
         raise click.ClickException(
