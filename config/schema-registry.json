@@ -1,6 +1,6 @@
 [
-  {"file": "schemas/active-alarms-value.avsc", "subject": "active-alarms-value", "references": []},
-  {"file": "schemas/registered-alarms-value.avsc", "subject": "registered-alarms-value", "references": []},
-  {"file": "schemas/shelved-alarms-value.avsc", "subject": "shelved-alarms-value", "references": []},
-  {"file": "schemas/active-alarms-key.avsc", "subject": "active-alarms-key", "references": []}
+  {"file": "config/subject-schemas/active-alarms-value.avsc", "subject": "active-alarms-value", "references": []},
+  {"file": "config/subject-schemas/registered-alarms-value.avsc", "subject": "registered-alarms-value", "references": []},
+  {"file": "config/subject-schemas/shelved-alarms-value.avsc", "subject": "shelved-alarms-value", "references": []},
+  {"file": "config/subject-schemas/active-alarms-key.avsc", "subject": "active-alarms-key", "references": []}
 ]
