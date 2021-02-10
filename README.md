@@ -50,7 +50,7 @@ docker exec -it console /scripts/client/list-active.py --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec console /scripts/client/set-active-alarming.py channel1
+docker exec console /scripts/client/set-alarming.py channel1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
