@@ -32,8 +32,7 @@ ts = time.time()
 consumer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.deserializer': string_deserializer,
                  'value.deserializer': avro_deserializer,
-                 'group.id': 'list-registered.py' + str(ts),
-                 'auto.offset.reset': "earliest"}
+                 'group.id': 'list-registered.py' + str(ts)}
 
 
 empty = False
