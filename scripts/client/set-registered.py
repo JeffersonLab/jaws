@@ -79,10 +79,9 @@ def doImport(file) :
        else:
            v['producer'] = v['producer']['org.jlab.alarms.SimpleProducer']
 
-       val_payload = serialize_avro(topic, value_schema, v, is_key=False)
-       p.produce(topic=topic, value=val_payload, key=key, headers=hdrs)
+       producer.produce(topic=topic, value=v, key=key, headers=hdrs)
 
-   p.flush()
+   producer.flush()
 
 
 @click.command()
