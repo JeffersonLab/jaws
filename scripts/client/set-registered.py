@@ -64,7 +64,7 @@ def doImport(file) :
    lines = handle.readlines()
 
    for line in lines:
-       tokens = line.split("=")
+       tokens = line.split("=", 1)
        key = tokens[0]
        value = tokens[1]
        v = json.loads(value)
