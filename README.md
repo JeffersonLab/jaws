@@ -26,7 +26,7 @@ The alarm system is composed of three subsystems: registered-alarms, active-alar
    - *Registry*: [Confluent Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
    - *Utilities*: 
      - [shelved-timer](https://github.com/JeffersonLab/shelved-timer) - notifies clients of shelved alarm expiration
-     - [alarms-filter](https://github.com/JeffersonLab/alarms-filter) - provides shared filtered active-alarms topics
+     - [alarms-filter](https://github.com/JeffersonLab/alarms-filter) - provides shared filtered active-alarms topics (removes disabled alarms from view)
      - plugin: [registrations2epics](https://github.com/JeffersonLab/registrations2epics) - alarm registrations inform epics2kafka what to monitor
 - **Clients**   
    - Alarm Console - defined in this project; Python CLI client
