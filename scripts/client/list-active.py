@@ -78,7 +78,7 @@ def disp_msg(msg):
 def list():
     c = DeserializingConsumer(consumer_conf)
 
-    c.subscribe(['active-alarms'], on_assign=my_on_assign)
+    c.subscribe([params.topic], on_assign=my_on_assign)
 
     while True:
         try:
@@ -107,13 +107,15 @@ def list():
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
+@click.option('--topic', default='active-alarms', help="Topic to read from (can be used to switch between filtered views)")
 
-def cli(monitor):
+def cli(monitor, topic):
     global params
 
     params = types.SimpleNamespace()
 
     params.monitor = monitor
+    params.topic = topic
 
     list()
 
