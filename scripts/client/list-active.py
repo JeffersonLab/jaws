@@ -107,7 +107,7 @@ def list():
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
-@click.option('--topic', default='active-alarms', help="Topic to read from (can be used to switch between filtered views)")
+@click.option('--topic', default='active-alarms', help="Topic to read from (used to switch between filtered views)")
 
 def cli(monitor, topic):
     global params
