@@ -36,8 +36,8 @@ The alarm system is composed of three subsystems: registered-alarms, active-alar
      - [alarms-filter](https://github.com/JeffersonLab/alarms-filter) - provides shared filtered active-alarms topics (suppresses alarms)
      - plugin: [registrations2epics](https://github.com/JeffersonLab/registrations2epics) - alarm registrations inform epics2kafka what to monitor
 - **Clients**   
-   - Admin Console - defined in this project; Python CLI client
-   - [Operator GUI](https://github.com/JeffersonLab/graphical-alarm-client) - a Python desktop app for operators to interface with the alarm system
+   - Admin Command Line Interface (CLI) - Python scripts included in this project to manage the alarm system
+   - [Operator Graphical User Interface (GUI)](https://github.com/JeffersonLab/graphical-alarm-client) - Python desktop app for operators to interface with the alarm system
 
 
 **Note**: The alarm system console also contains the scripts to setup/manage the Kafka topics and their schemas needed for the alarm system.  
