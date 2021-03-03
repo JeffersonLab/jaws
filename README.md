@@ -1,4 +1,9 @@
-# kafka-alarm-system [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/kafka-alarm-system?sort=semver&label=DockerHub)](https://hub.docker.com/r/slominskir/kafka-alarm-system)
+<p>
+<a href="#"><img align="right" width="200" height="150" src="https://raw.githubusercontent.com/JeffersonLab/kafka-alarm-system/master/logo.png"/></a>     
+</p>
+
+
+# JLab Alarm Warning System (JAWS) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/kafka-alarm-system?sort=semver&label=DockerHub)](https://hub.docker.com/r/slominskir/kafka-alarm-system)
 An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project defines topic schemas, ties together the message pipeline services that make up the core alarm system in a docker-compose file, and provides Python scripts for configuring and interacting with the system.  
 
 ---
