@@ -6,7 +6,7 @@
 # JLab Alarm Warning System (JAWS) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/kafka-alarm-system?sort=semver&label=DockerHub)](https://hub.docker.com/r/slominskir/kafka-alarm-system)
 > "Don't get bit!"
 
-An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project defines topic schemas, ties together the message pipeline services that make up the core alarm system in a docker-compose file, and provides Python scripts for configuring and interacting with the system.  
+An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project defines topic schemas, ties together the message pipeline services that make up the core alarm system in a docker-compose file, and provides Python scripts for configuring and interacting with the system.  JAWS attempts to comply with [ANSI/ISA 81.2-2016](https://www.isa.org/products/ansi-isa-18-2-2016-management-of-alarm-systems-for) where appropriate.
 
 ---
 - [Overview](https://github.com/JeffersonLab/kafka-alarm-system#overview)
