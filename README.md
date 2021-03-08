@@ -9,17 +9,17 @@
 An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project defines topic schemas, ties together the message pipeline services that make up the core alarm system in a docker-compose file, and provides Python scripts for configuring and interacting with the system.  JAWS attempts to comply with [ANSI/ISA 18.2-2016](https://www.isa.org/products/ansi-isa-18-2-2016-management-of-alarm-systems-for) where appropriate.
 
 ---
-- [Overview](https://github.com/JeffersonLab/kafka-alarm-system#overview)
-- [Quick Start with Compose](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-compose)
-- [Topics and Schemas](https://github.com/JeffersonLab/kafka-alarm-system#topics-and-schemas)
-   - [Tombstones](https://github.com/JeffersonLab/kafka-alarm-system#tombstones)
-   - [Acknowledgements](https://github.com/JeffersonLab/kafka-alarm-system#acknowledgements)
-   - [Headers](https://github.com/JeffersonLab/kafka-alarm-system#headers)
-   - [Customize Alarms](https://github.com/JeffersonLab/kafka-alarm-system#customize-alarms)
-     - [Active Alarm Types](https://github.com/JeffersonLab/kafka-alarm-system#active-alarm-types)
-- [Scripts](https://github.com/JeffersonLab/kafka-alarm-system#scripts)
-- [Docker](https://github.com/JeffersonLab/kafka-alarm-system#docker)
-- [See Also](https://github.com/JeffersonLab/kafka-alarm-system#see-also)
+- [Overview](https://github.com/JeffersonLab/jaws#overview)
+- [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
+- [Topics and Schemas](https://github.com/JeffersonLab/jaws#topics-and-schemas)
+   - [Tombstones](https://github.com/JeffersonLab/jaws#tombstones)
+   - [Acknowledgements](https://github.com/JeffersonLab/jaws#acknowledgements)
+   - [Headers](https://github.com/JeffersonLab/jaws#headers)
+   - [Customize Alarms](https://github.com/JeffersonLab/jaws#customize-alarms)
+     - [Active Alarm Types](https://github.com/JeffersonLab/jaws#active-alarm-types)
+- [Scripts](https://github.com/JeffersonLab/jaws#scripts)
+- [Docker](https://github.com/JeffersonLab/jaws#docker)
+- [See Also](https://github.com/JeffersonLab/jaws#see-also)
 ---
 
 ## Overview
@@ -97,14 +97,14 @@ Additionally, the built-in timestamp provided in all Kafka messages is used to p
 
 
 ### Customize Alarms
-The information registered with an alarm can be customized by modifying the [registered-alarms-value](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/config/subject-schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
+The information registered with an alarm can be customized by modifying the [registered-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
 
 #### Active Alarm Types
 Since different alarm producers may have producer specific alarm data the active alarm schema is actually an extendable union of schemas.   Generally the basic alarming or acknowledgement messages should be used for simplicity, but sometimes extra info is required.  For example, EPICS alarms have severity and status fields.  New Active Alarm Types can be defined by creating new AVRO schema.
 
 **Note**: It is difficult to have a single (non-union) active-alarm schema that represents all possible alarm sources and has a fixed set of fields because that requires translation from the original fields to the unified fields, and decisions about (1) what are the set of unified fields and (2) how to map data to them, may result in some information being lost in translation.   Therefore, a union of schemas is used to preserve original fields.    If desired, an opinionated custom translation layer could be added to make these decisions and consolidate the various types - for example using a Kafka Streams app.
 
-**Note**: The schema for [active-alarms-value](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/config/subject-schemas/active-alarms-value.avsc) contains a single field _msg_, which is a union of records.  The _msg_ field appears unnecessary, and as an alternative the entire value could have been a union. However, a nested union is less problematic than a union at the AVRO root ([confluent blog](https://www.confluent.io/blog/multiple-event-types-in-the-same-kafka-topic/)).   If a union was used at the root then (1) the schema must be pre-registered with the registry instead of being created on-the-fly by clients, (2) the AVRO serializer must have additional configuration:
+**Note**: The schema for [active-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-value.avsc) contains a single field _msg_, which is a union of records.  The _msg_ field appears unnecessary, and as an alternative the entire value could have been a union. However, a nested union is less problematic than a union at the AVRO root ([confluent blog](https://www.confluent.io/blog/multiple-event-types-in-the-same-kafka-topic/)).   If a union was used at the root then (1) the schema must be pre-registered with the registry instead of being created on-the-fly by clients, (2) the AVRO serializer must have additional configuration:
 ```
 auto.register.schemas=false
 use.latest.version=true
@@ -123,7 +123,7 @@ instead of:
 
 ## Scripts
 
-[Scripts Reference](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Scripts-Reference)
+[Scripts Reference](https://github.com/JeffersonLab/jaws/wiki/Scripts-Reference)
 
  To see all options use the --help option.
 
@@ -155,4 +155,4 @@ docker pull slominskir/kafka-alarm-system
 Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/kafka-alarm-system)
 
 ## See Also
- - [Developer Notes](https://github.com/JeffersonLab/kafka-alarm-system/wiki/Developer-Notes)
+ - [Developer Notes](https://github.com/JeffersonLab/jaws/wiki/Developer-Notes)
