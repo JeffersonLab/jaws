@@ -45,8 +45,8 @@ The alarm system is composed of three subsystems: registered-alarms, active-alar
 ## Quick Start with Compose 
 1. Grab project
 ```
-git clone https://github.com/JeffersonLab/kafka-alarm-system
-cd kafka-alarm-system
+git clone https://github.com/JeffersonLab/jaws
+cd jaws
 ```
 2. Launch Docker
 ```
@@ -54,11 +54,11 @@ docker-compose up
 ```
 3. Monitor active alarms
 ```
-docker exec -it console /scripts/client/list-active.py --monitor
+docker exec -it jaws /scripts/client/list-active.py --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec console /scripts/client/set-alarming.py channel1
+docker exec jaws /scripts/client/set-alarming.py channel1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
