@@ -36,7 +36,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: registry
 
-  console:
+  jaws:
     build:
       context: .
       dockerfile: Dockerfile
@@ -44,8 +44,8 @@ services:
         - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
     tty: true
     stdin_open: true
-    hostname: console
-    container_name: console
+    hostname: jaws
+    container_name: jaws
     depends_on:
       - zookeeper
       - kafka
