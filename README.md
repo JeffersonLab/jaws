@@ -150,9 +150,9 @@ The following environment variables are required by the scripts:
 
 ## Docker
 ```
-docker pull slominskir/kafka-alarm-system
+docker pull slominskir/jaws
 ```
-Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/kafka-alarm-system)
+Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/jaws)
 
 ## See Also
  - [Developer Notes](https://github.com/JeffersonLab/jaws/wiki/Developer-Notes)
