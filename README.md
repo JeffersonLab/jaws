@@ -40,7 +40,10 @@ The alarm system is composed of three subsystems: registered-alarms, active-alar
    - [Operator Graphical User Interface (GUI)](https://github.com/JeffersonLab/graphical-alarm-client) - Python desktop app for operators to interface with the alarm system
 
 
-**Note**: The alarm system console also contains the scripts to setup/manage the Kafka topics and their schemas needed for the alarm system.  
+**Note**: The admin CLI scritps are used to:
+   1. Setup/manage the Kafka topics
+   2. Setup/manage AVRO schemas in the registry
+   3. Produce and consume alarm system messages
 
 ## Quick Start with Compose 
 1. Grab project
