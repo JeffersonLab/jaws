@@ -6,8 +6,9 @@ import types
 import click
 import time
 
+import avro.schema
+
 from confluent_kafka import SerializingProducer
-from confluent_kafka.serialization import StringSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroSerializer
 
@@ -39,6 +40,10 @@ key_serializer = AvroSerializer(key_schema_str,
 value_serializer = AvroSerializer(value_schema_str,
                                  schema_registry_client)
 
+value_schema = avro.schema.Parse(value_schema_str)
+
+reasons = value_schema.fields[0].type.schemas[2].fields[1].type.symbols
+
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': key_serializer,
                  'value.serializer': value_serializer}
@@ -60,15 +65,16 @@ def send() :
 @click.command()
 @click.option('--unset', is_flag=True, help="Remove the suppression")
 @click.option('--expirationseconds', type=int, help="The number of seconds until the shelved status expires, None for indefinite")
-@click.option('--reason', help="The explanation for why this alarm has been shelved")
+@click.option('--reason', type=click.Choice(reasons), help="The explanation for why this alarm has been shelved")
+@click.option('--comments', help="Operator explanation for why suppressed")
 @click.argument('name')
 
-def cli(unset, expirationseconds, reason, name):
+def cli(unset, expirationseconds, reason, comments, name):
     global params
 
     params = types.SimpleNamespace()
 
-    params.key = name
+    params.key = {"name": name, "type": "Shelved"}
 
     if unset:
         params.value = None
@@ -82,7 +88,9 @@ def cli(unset, expirationseconds, reason, name):
             timestampSeconds = time.time() + expirationseconds;
             timestampMillis = int(timestampSeconds * 1000);
 
-        params.value = {"expiration": timestampMillis, "reason": reason}
+        params.value = {"msg": {"org.jlab.alarms.ShelvedAlarm": {"reason": reason, "comments": comments, "expiration": timestampMillis}}}
+
+        print(params.value)
 
     send()
 

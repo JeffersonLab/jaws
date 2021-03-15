@@ -8,7 +8,7 @@ import time
 from confluent_kafka import DeserializingConsumer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
-from confluent_kafka.serialization import StringDeserializer, SerializationError
+from confluent_kafka.serialization import SerializationError
 from confluent_kafka import OFFSET_BEGINNING
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
@@ -59,8 +59,10 @@ def disp_msg(msg):
     key = msg.key()
     value = msg.value()
 
-    if value != None and value['expiration'] != None:
-        value['expiration'] = time.ctime(value['expiration'] / 1000)
+    payload = value['msg']
+
+    if payload != None and 'expiration' in payload:
+        payload['expiration'] = time.ctime(payload['expiration'] / 1000)
 
     ts = time.ctime(timestamp[1] / 1000)
 
