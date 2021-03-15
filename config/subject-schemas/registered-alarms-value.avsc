@@ -123,6 +123,21 @@
       }
     },
     {
+          "name": "priority",
+          "type": {
+                "type": "enum",
+                "name": "AlarmPriority",
+                "doc": "The alarm priority, useful for operators to know which alarms to handle first",
+                "symbols": [
+                    "P1 - CRITICAL",
+                    "P2 - MAJOR",
+                    "P3 - MINOR",
+                    "P4 - INCIDENTAL",
+        ]
+      }
+          "doc": "The alarm priority"
+    },
+    {
           "name": "rationale",
           "type": "string",
           "doc": "Markdown formatted text describing the reason this alarm is necessary",
