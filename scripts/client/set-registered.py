@@ -92,13 +92,16 @@ def doImport(file) :
 @click.option('--producerjar', help="The name of the Java JAR file containing the stream rules powering this alarm, only needed if not using producerPv")
 @click.option('--location', type=click.Choice(locations), help="The alarm location")
 @click.option('--category', type=click.Choice(categories), help="The alarm category")
-@click.option('--maxshelvedduration', type=click.INT, help="Maximum amount of time an alarm is allowed to be shelved in seconds; zero means alarm cannot be shelved and null means no limit")
 @click.option('--latching', is_flag=True, help="Indicate that the alarm latches and requires acknowledgement to clear")
-@click.option('--docurl', help="The URL to documentation for this alarm")
 @click.option('--screenpath', help="The path the alarm screen display")
+@click.option('--pointofcontactfirstname', help="The point of contact first name")
+@click.option('--pointofcontactlastname', help="The point of contact last name")
+@click.option('--pointofcontactemail', help="The point of contact email")
+@click.option('--rationale', help="The alarm rationale")
+@click.option('--correctiveaction', help="The corrective action")
 @click.argument('name')
 
-def cli(file, unset, producersimple, producerpv, producerjar, location, category, maxshelvedduration, latching, docurl, screenpath, name):
+def cli(file, unset, producersimple, producerpv, producerjar, location, category, latching, screenpath, pointofcontactfirstname, pointofcontactlastname, pointofcontactemail, rationale, correctiveaction, name):
     global params
 
     params = types.SimpleNamespace()
@@ -121,11 +124,11 @@ def cli(file, unset, producersimple, producerpv, producerjar, location, category
             else:
                 producer = {"jar" : producerjar}
 
-            if location == None or category == None or docurl == None or screenpath == None:
+            if location == None or category == None or screenpath == None:
                 raise click.ClickException(
-                    "Must specify options --location, --category, --docurl, --screenpath")
+                    "Must specify options --location, --category, --screenpath")
 
-            params.value = {"producer": producer, "location": location, "category": category, "maxshelvedduration": maxshelvedduration, "latching": latching, "docurl": docurl, "screenpath": screenpath}
+            params.value = {"producer": producer, "location": location, "category": category, "latching": latching, "screenpath": screenpath, "pointofcontactfirstname": pointofcontactfirstname, "pointofcontactlastname": pointofcontactlastname, "pointofcontactemail": pointofcontactemail, "rationale": rationale, "correctiveaction": correctiveaction}
 
         send()
 
