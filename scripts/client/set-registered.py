@@ -88,8 +88,8 @@ def doImport(file) :
 @click.option('--file', is_flag=True, help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the registered-alarms-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
 @click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")
-@click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm, only needed if not using producerJar")
-@click.option('--producerjar', help="The name of the Java JAR file containing the stream rules powering this alarm, only needed if not using producerPv")
+@click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm")
+@click.option('--producerexpression', help="The CALC expression used to generate this alarm")
 @click.option('--location', type=click.Choice(locations), help="The alarm location")
 @click.option('--category', type=click.Choice(categories), help="The alarm category")
 @click.option('--latching', is_flag=True, help="Indicate that the alarm latches and requires acknowledgement to clear")
@@ -101,7 +101,7 @@ def doImport(file) :
 @click.option('--correctiveaction', help="The corrective action")
 @click.argument('name')
 
-def cli(file, unset, producersimple, producerpv, producerjar, location, category, latching, screenpath, pointofcontactfirstname, pointofcontactlastname, pointofcontactemail, rationale, correctiveaction, name):
+def cli(file, unset, producersimple, producerpv, producerexpression, location, category, latching, screenpath, pointofcontactfirstname, pointofcontactlastname, pointofcontactemail, rationale, correctiveaction, name):
     global params
 
     params = types.SimpleNamespace()
@@ -122,7 +122,7 @@ def cli(file, unset, producersimple, producerpv, producerjar, location, category
             elif producerpv:
                 producer = {"pv": producerpv}
             else:
-                producer = {"jar" : producerjar}
+                producer = {"expression" : producerexpression}
 
             if location == None or category == None or screenpath == None:
                 raise click.ClickException(
