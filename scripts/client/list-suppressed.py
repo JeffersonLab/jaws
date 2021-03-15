@@ -61,7 +61,7 @@ def disp_msg(msg):
 
     payload = value['msg']
 
-    if payload != None and 'expiration' in payload:
+    if payload != None and 'expiration' in payload and payload['expiration'] != None:
         payload['expiration'] = time.ctime(payload['expiration'] / 1000)
 
     ts = time.ctime(timestamp[1] / 1000)

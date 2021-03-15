@@ -49,7 +49,7 @@
                         },
                         {
                             "name": "comments",
-                            "type": "string",
+                            "type": ["null", "string"],
                             "doc": "Operator explanation"
                         }
                     ]

@@ -88,7 +88,7 @@ def cli(unset, expirationseconds, reason, comments, name):
             timestampSeconds = time.time() + expirationseconds;
             timestampMillis = int(timestampSeconds * 1000);
 
-        params.value = {"msg": {"org.jlab.alarms.ShelvedAlarm": {"reason": reason, "comments": comments, "expiration": timestampMillis}}}
+        params.value = {"msg": {"reason": reason, "comments": comments, "expiration": timestampMillis}}
 
         print(params.value)
 
