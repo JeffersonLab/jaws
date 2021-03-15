@@ -114,8 +114,8 @@ def cli(file, unset, producersimple, producerpv, producerexpression, location, c
         if unset:
             params.value = None
         else:
-            if producersimple == False and producerpv == None and producerjar == None:
-                raise click.ClickException("Must specify one of --producersimple, --producerpv, --producerjar")
+            if producersimple == False and producerpv == None and producerexpression == None:
+                raise click.ClickException("Must specify one of --producersimple, --producerpv, --producerexpression")
 
             if producersimple:
                 producer = {}
