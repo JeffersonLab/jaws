@@ -1,0 +1,48 @@
+[
+{
+          "type"      : "record",
+          "name"      : "DisabledAlarm",
+          "namespace" : "org.jlab.alarms",
+          "doc"       : "A disabled alarm message value",
+          "fields"    : []
+},
+{
+          "type"      : "record",
+          "name"      : "FilteredAlarm",
+          "namespace" : "org.jlab.alarms",
+          "doc"       : "A filtered alarm message value",
+          "fields"    : []
+},
+{
+  "type": "record",
+  "name": "ShelvedAlarm",
+  "namespace": "org.jlab.alarms",
+  "fields": [
+    {
+      "name": "expiration",
+      "type": [
+        "null",
+        "long"
+      ],
+      "doc": "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this shelved alarm should expire, null for indefinite",
+      "logicalType": "timestamp-millis",
+      "default": null
+    },
+    {
+      "name": "reason",
+      "type": {
+              "type"      : "enum",
+              "name"      : "ShelvedAlarmReason",
+              "doc"       : "Enumeration of possible reasons",
+              "symbols"   : ["Stale Alarm","Chattering/Fleeting Alarm","Other"]
+      },
+      "doc": "Reason this alarm is shelved"
+    },
+    {
+        "name": "comments",
+        "type": "string",
+        "doc": "Operator explanation"
+    }
+  ]
+}
+]

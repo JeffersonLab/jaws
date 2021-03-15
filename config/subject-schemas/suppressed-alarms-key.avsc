@@ -1,0 +1,22 @@
+{
+  "type": "record",
+  "name": "SuppressedAlarmKey",
+  "namespace": "org.jlab.alarms",
+  "fields"    : [
+    {
+      "name" : "name",
+      "type" : "string",
+      "doc"  : "The unique name of the alarm"
+    },
+    {
+      "name" : "type",
+      "type" : {
+        "type"      : "enum",
+        "name"      : "SuppressedAlarmType",
+        "doc"       : "Enumeration of possible message types",
+        "symbols"   : ["Disabled","Filtered","Masked","Delayed","Shelved"]
+      },
+      "doc"  : "The type of suppression"
+    }
+  ]
+}
