@@ -123,13 +123,29 @@
       }
     },
     {
-      "name": "maxshelvedduration",
-      "type": [
-        "null",
-        "int"
-      ],
-      "doc": "Maximum amount of time an alarm is allowed to be shelved in seconds; zero means alarm cannot be shelved and null means no limit",
-      "default": null
+          "name": "rationale",
+          "type": "string",
+          "doc": "Markdown formatted text describing the reason this alarm is necessary",
+    },
+    {
+          "name": "correctiveaction",
+          "type": "string",
+          "doc": "Markdown formatted text describing the corrective action to take when the alarm becomes active",
+    },
+    {
+          "name": "pointofcontactfirstname",
+          "type": "string",
+          "doc": "First name of point of contact",
+    },
+    {
+          "name": "pointofcontactlastname",
+          "type": "string",
+          "doc": "Last name of point of contact",
+    },
+    {
+          "name": "pointofcontactemail",
+          "type": "string",
+          "doc": "email address of point of contact",
     },
     {
       "name": "latching",
@@ -138,9 +154,15 @@
       "default": false
     },
     {
-      "name": "docurl",
+      "name": "filterable",
+      "type": "boolean",
+      "doc": "Indicates whether this alarm can be filtered out of view (typically done when a portion of the machine is turned off).  Some alarms must always be monitored, regardless of program.",
+      "default": true
+    },
+    {
+      "name": "maskedby",
       "type": "string",
-      "doc": "The URL to documentation for this alarm"
+      "doc": "The name of the parent alarm, which if active, masks this alarm (flood suppression via logical hierarchy)"
     },
     {
       "name": "screenpath",
