@@ -14,7 +14,10 @@ from confluent_kafka.schema_registry.avro import AvroSerializer
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
 
-with open(projectpath + '/config/subject-schemas/shelved-alarms-value.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/suppressed-alarms-key.avsc', 'r') as file:
+    key_schema_str = file.read()
+
+with open(projectpath + '/config/subject-schemas/suppressed-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
 def delivery_report(err, msg):
@@ -30,17 +33,20 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-avro_serializer = AvroSerializer(value_schema_str,
+key_serializer = AvroSerializer(key_schema_str,
+                                  schema_registry_client)
+
+value_serializer = AvroSerializer(value_schema_str,
                                  schema_registry_client)
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
-                 'key.serializer': StringSerializer('utf_8'),
-                 'value.serializer': avro_serializer}
+                 'key.serializer': key_serializer,
+                 'value.serializer': value_serializer}
 producer = SerializingProducer(producer_conf)
 
-topic = 'shelved-alarms'
+topic = 'suppressed-alarms'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-shelved.py'),('host',os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-suppressed.py'),('host',os.uname().nodename)]
 
 def send() :
     if params.value is None:
@@ -52,7 +58,7 @@ def send() :
     producer.flush()
 
 @click.command()
-@click.option('--unset', is_flag=True, help="Remove the alarm")
+@click.option('--unset', is_flag=True, help="Remove the suppression")
 @click.option('--expirationseconds', type=int, help="The number of seconds until the shelved status expires, None for indefinite")
 @click.option('--reason', help="The explanation for why this alarm has been shelved")
 @click.argument('name')

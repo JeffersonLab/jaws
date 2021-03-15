@@ -14,7 +14,10 @@ from confluent_kafka import OFFSET_BEGINNING
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
 
-with open(projectpath + '/config/subject-schemas/shelved-alarms-value.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/suppressed-alarms-key.avsc', 'r') as file:
+    key_schema_str = file.read()
+
+with open(projectpath + '/config/subject-schemas/suppressed-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
@@ -22,16 +25,18 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-avro_deserializer = AvroDeserializer(value_schema_str,
+key_deserializer = AvroDeserializer(key_schema_str,
+                                      schema_registry_client)
+
+value_deserializer = AvroDeserializer(value_schema_str,
                                      schema_registry_client)
-string_deserializer = StringDeserializer('utf_8')
 
 ts = time.time()
 
 consumer_conf = {'bootstrap.servers': bootstrap_servers,
-                 'key.deserializer': string_deserializer,
-                 'value.deserializer': avro_deserializer,
-                 'group.id': 'list-shelved.py' + str(ts)}
+                 'key.deserializer': key_deserializer,
+                 'value.deserializer': value_deserializer,
+                 'group.id': 'list-suppressed.py' + str(ts)}
 
 
 empty = False
@@ -77,7 +82,7 @@ def disp_msg(msg):
 def list():
     c = DeserializingConsumer(consumer_conf)
 
-    c.subscribe(['shelved-alarms'], on_assign=my_on_assign)
+    c.subscribe(['suppressed-alarms'], on_assign=my_on_assign)
 
     while True:
         try:
