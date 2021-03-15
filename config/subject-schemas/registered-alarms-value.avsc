@@ -135,6 +135,7 @@
                     "P4_INCIDENTAL"
                 ]
             },
+            "default": "P3_MINOR",
             "doc": "The alarm priority"
         },
         {
@@ -176,7 +177,7 @@
         },
         {
             "name": "maskedby",
-            "type": "string",
+            "type": ["null", "string"],
             "doc": "The name of the parent alarm, which if active, masks this alarm (flood suppression via logical hierarchy)"
         },
         {

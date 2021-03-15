@@ -37,8 +37,9 @@ avro_serializer = AvroSerializer(value_schema_str,
 
 value_schema = avro.schema.Parse(value_schema_str)
 
-categories = value_schema.fields[2].type.symbols
 locations = value_schema.fields[1].type.symbols
+categories = value_schema.fields[2].type.symbols
+priorities = value_schema.fields[3].type.symbols
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': StringSerializer('utf_8'),
@@ -92,16 +93,19 @@ def doImport(file) :
 @click.option('--producerexpression', help="The CALC expression used to generate this alarm")
 @click.option('--location', type=click.Choice(locations), help="The alarm location")
 @click.option('--category', type=click.Choice(categories), help="The alarm category")
+@click.option('--priority', type=click.Choice(priorities), help="The alarm priority")
+@click.option('--filterable', is_flag=True, default=True, help="True if alarm can be filtered out of view")
 @click.option('--latching', is_flag=True, help="Indicate that the alarm latches and requires acknowledgement to clear")
 @click.option('--screenpath', help="The path the alarm screen display")
-@click.option('--pointofcontactfirstname', help="The point of contact first name")
-@click.option('--pointofcontactlastname', help="The point of contact last name")
-@click.option('--pointofcontactemail', help="The point of contact email")
-@click.option('--rationale', help="The alarm rationale")
-@click.option('--correctiveaction', help="The corrective action")
+@click.option('--pointofcontactfirstname', default="", help="The point of contact first name")
+@click.option('--pointofcontactlastname', default="", help="The point of contact last name")
+@click.option('--pointofcontactemail', default="", help="The point of contact email")
+@click.option('--rationale', default="", help="The alarm rationale")
+@click.option('--correctiveaction', default="", help="The corrective action")
+@click.option('--maskedby', help="The optional parent alarm that masks this one")
 @click.argument('name')
 
-def cli(file, unset, producersimple, producerpv, producerexpression, location, category, latching, screenpath, pointofcontactfirstname, pointofcontactlastname, pointofcontactemail, rationale, correctiveaction, name):
+def cli(file, unset, producersimple, producerpv, producerexpression, location, category, priority, filterable, latching, screenpath, pointofcontactfirstname, pointofcontactlastname, pointofcontactemail, rationale, correctiveaction, maskedby, name):
     global params
 
     params = types.SimpleNamespace()
@@ -128,7 +132,12 @@ def cli(file, unset, producersimple, producerpv, producerexpression, location, c
                 raise click.ClickException(
                     "Must specify options --location, --category, --screenpath")
 
-            params.value = {"producer": producer, "location": location, "category": category, "latching": latching, "screenpath": screenpath, "pointofcontactfirstname": pointofcontactfirstname, "pointofcontactlastname": pointofcontactlastname, "pointofcontactemail": pointofcontactemail, "rationale": rationale, "correctiveaction": correctiveaction}
+            params.value = {"producer": producer, "location": location, "category": category, "filterable": filterable, "latching": latching, "screenpath": screenpath, "pointofcontactfirstname": pointofcontactfirstname, "pointofcontactlastname": pointofcontactlastname, "pointofcontactemail": pointofcontactemail, "rationale": rationale, "correctiveaction": correctiveaction, "maskedby": maskedby}
+
+            if priority is not None:
+                params.value["priority"] = priority
+
+            print('Message: {}'.format(params.value))
 
         send()
 
