@@ -11,13 +11,44 @@
                     "type": "record",
                     "name": "DisabledAlarm",
                     "doc": "A disabled alarm message value",
-                    "fields": []
+                    "fields": [
+                        {
+                            "name": "comments",
+                            "type": ["null", "string"],
+                            "doc": "Operator explanation"
+                        }
+                    ]
                 },
                 {
                     "type": "record",
                     "name": "FilteredAlarm",
                     "doc": "A filtered alarm message value",
+                    "fields": [
+                        {
+                            "name": "Filter name",
+                            "type": "string",
+                            "doc": "The name of the filter suppressing this alarm"
+                        }
+                    ]
+                },
+                {
+                    "type": "record",
+                    "name": "MaskedAlarm",
+                    "doc": "A masked alarm message value",
                     "fields": []
+                },
+                {
+                    "type": "record",
+                    "name": "DelayedAlarm",
+                    "doc": "A delayed alarm message value",
+                    "fields": [
+                        {
+                            "name": "expiration",
+                            "type": "long"
+                            "doc": "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this delayed alarm should expire",
+                            "logicalType": "timestamp-millis"
+                        },
+                    ]
                 },
                 {
                     "type": "record",
