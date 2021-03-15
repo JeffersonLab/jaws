@@ -129,38 +129,38 @@
                 "name": "AlarmPriority",
                 "doc": "The alarm priority, useful for operators to know which alarms to handle first",
                 "symbols": [
-                    "P1 - CRITICAL",
-                    "P2 - MAJOR",
-                    "P3 - MINOR",
-                    "P4 - INCIDENTAL",
-        ]
-      }
+                    "P1_CRITICAL",
+                    "P2_MAJOR",
+                    "P3_MINOR",
+                    "P4_INCIDENTAL"
+                ]
+          },
           "doc": "The alarm priority"
     },
     {
           "name": "rationale",
           "type": "string",
-          "doc": "Markdown formatted text describing the reason this alarm is necessary",
+          "doc": "Markdown formatted text describing the reason this alarm is necessary"
     },
     {
           "name": "correctiveaction",
           "type": "string",
-          "doc": "Markdown formatted text describing the corrective action to take when the alarm becomes active",
+          "doc": "Markdown formatted text describing the corrective action to take when the alarm becomes active"
     },
     {
           "name": "pointofcontactfirstname",
           "type": "string",
-          "doc": "First name of point of contact",
+          "doc": "First name of point of contact"
     },
     {
           "name": "pointofcontactlastname",
           "type": "string",
-          "doc": "Last name of point of contact",
+          "doc": "Last name of point of contact"
     },
     {
           "name": "pointofcontactemail",
           "type": "string",
-          "doc": "email address of point of contact",
+          "doc": "email address of point of contact"
     },
     {
       "name": "latching",
