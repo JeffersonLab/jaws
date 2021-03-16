@@ -8,8 +8,13 @@ while [ $(curl -s -o /dev/null -w %{http_code} http://registry:8081/schemas/type
   sleep 5
 done
 
+echo "---------------------------------------"
+echo "Step 2: Adding Schemas to the registry "
+echo "---------------------------------------"
+/scripts/registry/create-alarm-schemas.py
+
 echo "--------------------------------"
-echo "Step 2: Configuring alarm topic "
+echo "Step 3: Configuring alarm topic "
 echo "--------------------------------"
 if [[ -z "${ALARM_DEFINITIONS}" ]]; then
   echo "No alarm definitions specified"
