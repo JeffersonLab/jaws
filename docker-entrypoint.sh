@@ -13,9 +13,9 @@ echo "Step 2: Adding Schemas to the registry "
 echo "---------------------------------------"
 /scripts/registry/create-alarm-schemas.py
 
-echo "--------------------------------"
-echo "Step 3: Configuring alarm topic "
-echo "--------------------------------"
+echo "----------------------------------------------------------------"
+echo "Step 3: Adding alarm definitions to the registered-alarms topic "
+echo "----------------------------------------------------------------"
 if [[ -z "${ALARM_DEFINITIONS}" ]]; then
   echo "No alarm definitions specified"
 else
