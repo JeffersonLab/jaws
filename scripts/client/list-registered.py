@@ -53,6 +53,42 @@ def my_on_assign(consumer, partitions):
             empty = True
     consumer.assign(partitions)
 
+def disp_row(msg):
+    row = get_row(msg)
+    if(row is not None):
+        print(row) # TODO: format with a row template!
+
+def get_row(msg):
+    timestamp = msg.timestamp()
+    headers = msg.headers()
+    key = msg.key()
+    value = msg.value()
+
+    row = [key, value["producer"], value["location"], value["category"], value["priority"], value["rationale"], value["correctiveaction"], value["pointofcontactfirstname"], value["pointofcontactlastname"], value["pointofcontactemail"], value["latching"], value["filterable"], value["maskedby"], value["screenpath"]]
+
+    ts = time.ctime(timestamp[1] / 1000)
+
+    user = ''
+    producer = ''
+    host = ''
+
+    if headers is not None:
+        lookup = dict(headers)
+        bytez = lookup.get('user', b'')
+        user = bytez.decode()
+        bytez = lookup.get('producer', b'')
+        producer = bytez.decode()
+        bytez = lookup.get('host', b'')
+        host = bytez.decode()
+
+    if params.category is None or (value is not None and params.category == value['category']):
+        if not params.nometa:
+            row = [ts, user, host, producer] + row
+    else:
+        row = None
+
+    return row
+
 def disp_table():
 
     head=["Alarm Name", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action", "P.O.C. Firstname", "P.O.C. Lastname", "P.O.C. email", "Latching", "Filterable", "Masked By", "Screen Path"]
@@ -62,33 +98,9 @@ def disp_table():
         head = ["Timestamp", "User", "Host", "Produced By"] + head
 
     for msg in registered.values():
-        timestamp = msg.timestamp()
-        headers = msg.headers()
-        key = msg.key()
-        value = msg.value()
-
-        row = [key, value["producer"], value["location"], value["category"], value["priority"], value["rationale"], value["correctiveaction"], value["pointofcontactfirstname"], value["pointofcontactlastname"], value["pointofcontactemail"], value["latching"], value["filterable"], value["maskedby"], value["screenpath"]]
-
-        ts = time.ctime(timestamp[1] / 1000)
-
-        user = ''
-        producer = ''
-        host = ''
-
-        if headers is not None:
-            lookup = dict(headers)
-            bytez = lookup.get('user', b'')
-            user = bytez.decode()
-            bytez = lookup.get('producer', b'')
-            producer = bytez.decode()
-            bytez = lookup.get('host', b'')
-            host = bytez.decode()
-
-        if params.category is None or (value is not None and params.category == value['category']):
-            if params.nometa:
-                table.append(row)
-            else:
-                table.append([ts, user, host, producer] + row)
+        row = get_row(msg)
+        if(row is not None):
+            table.append(row)
 
     print(tabulate(table, head))
 
@@ -115,7 +127,7 @@ def list():
             print("Message deserialization failed for {}: {}".format(msg, e))
             break
 
-        if (not params.monitor) and empty:
+        if empty:
             break
 
         if msg is None:
@@ -130,15 +142,33 @@ def list():
         else:
             registered[msg.key()] = msg
 
-        if (not params.monitor) and msg.offset() + 1 == high:
+        if msg.offset() + 1 == high:
             break
-
-    c.close()
 
     if params.export:
         export()
     else:
         disp_table()
+
+    if params.monitor:
+        while True:
+            try:
+                msg = c.poll(1.0)
+
+            except SerializationError as e:
+                print("Message deserialization failed for {}: {}".format(msg, e))
+                break
+
+            if msg is None:
+                continue
+
+            if msg.error():
+                print("AvroConsumer error: {}".format(msg.error()))
+                continue
+
+            disp_row(msg)
+
+    c.close()
 
 
 @click.command()
