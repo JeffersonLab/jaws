@@ -174,7 +174,7 @@ def list():
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
-@click.option('--export', is_flag=True, help="Dump records in AVRO JSON format such that they can be imported by set-registered.py")
+@click.option('--export', is_flag=True, help="Dump records in AVRO JSON format such that they can be imported by set-registered.py; implies --nometa")
 @click.option('--category', help="Only show registered alarms in the specified category")
 
 def cli(monitor, nometa, export, category):
