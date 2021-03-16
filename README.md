@@ -102,7 +102,8 @@ Additionally, the built-in timestamp provided in all Kafka messages is used to p
 ### Suppressed Alarms
 An alarm can be suppressed via multiple means simultaneously, but suppression precedence determines the effective suppression state:
 
-**Alarm Suppression States**
+**Alarm Suppression States**     
+
 | Precedence | Name | Duration | Definition |
 |---|---|---|---|
 | 1 | Disabled | Indefinite | A broken alarm can be flagged as out-of-service |
