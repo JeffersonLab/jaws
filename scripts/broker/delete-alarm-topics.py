@@ -9,7 +9,7 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 a = AdminClient({'bootstrap.servers': bootstrap_servers})
 
-topics = ['registered-alarms', 'active-alarms', 'shelved-alarms']
+topics = ['registered-alarms', 'active-alarms', 'suppressed-alarms']
 
 fs = a.delete_topics(topics, operation_timeout=15)
 

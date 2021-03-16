@@ -9,7 +9,7 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 a = AdminClient({'bootstrap.servers': bootstrap_servers})
 
-topics = ['registered-alarms', 'active-alarms', 'shelved-alarms']
+topics = ['registered-alarms', 'active-alarms', 'suppressed-alarms']
 
 new_topics = [NewTopic(topic, num_partitions=1, replication_factor=1, config={"cleanup.policy": "compact"}) for topic in topics]
 

@@ -15,7 +15,7 @@ def print_config(config, depth):
 
 resources = [ConfigResource('topic', 'registered-alarms'),
              ConfigResource('topic', 'active-alarms'),
-             ConfigResource('topic', 'shelved-alarms')]
+             ConfigResource('topic', 'suppressed-alarms')]
 
 fs = a.describe_configs(resources)
 
