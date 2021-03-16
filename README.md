@@ -98,6 +98,17 @@ Additionally, the built-in timestamp provided in all Kafka messages is used to p
 
 **Note**: There is no schema for message headers so content is not easily enforceable.  However, the topic management scripts provided include the audit headers listed.
 
+### Suppressed Alarms
+An alarm can be suppressed via multiple means simultaneously, but suppression precedence determines the effective suppression state:
+
+**Alarm Suppression States**
+| Precedence | Name | Duration | Definition |
+|---|---|---|---|
+| 1 | Disabled | Indefinite | A broken alarm can be flagged as out-of-service |
+| 2 | Filtered | Indefinite | An alarm can be "suppressed by design" - generally a group of alarms are filtered out when not needed for the current machine program  |
+| 3 | Masked | Only while parent alarm is active | An alarm can be suppressed by a parent alarm to minimize confusion during an alarm flood and build an alarm hierarchy |
+| 4 | Delayed | Short with expiration | An alarm with an on-delay is temporarily suppressed to minimize fleeting/chattering |  
+| 5 | Shelved | Short with expiration | A nuisance alarm can be temporarily shelved with a short expiration date |
 
 ### Customize Alarms
 The information registered with an alarm can be customized by modifying the [registered-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
