@@ -6,6 +6,8 @@ import click
 import time
 import json
 
+from tabulate import tabulate
+
 from confluent_kafka import DeserializingConsumer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
@@ -35,6 +37,8 @@ consumer_conf = {'bootstrap.servers': bootstrap_servers,
                  'group.id': 'list-registered.py' + str(ts)}
 
 
+registered = {}
+
 empty = False
 
 def my_on_assign(consumer, partitions):
@@ -49,34 +53,54 @@ def my_on_assign(consumer, partitions):
             empty = True
     consumer.assign(partitions)
 
-def disp_msg(msg):
-    timestamp = msg.timestamp()
-    headers = msg.headers()
-    key = msg.key()
-    value = msg.value()
+def disp_table():
 
-    ts = time.ctime(timestamp[1] / 1000)
+    head=["Alarm Name", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action", "P.O.C. Firstname", "P.O.C. Lastname", "P.O.C. email", "Latching", "Filterable", "Masked By", "Screen Path"]
+    table = []
 
-    user = ''
-    producer = ''
-    host = ''
+    if not params.nometa:
+        head = ["Timestamp", "User", "Host", "Produced By"] + head
 
-    if headers is not None:
-        lookup = dict(headers)
-        bytez = lookup.get('user', b'')
-        user = bytez.decode()
-        bytez = lookup.get('producer', b'')
-        producer = bytez.decode()
-        bytez = lookup.get('host', b'')
-        host = bytez.decode()
+    for msg in registered.values():
+        timestamp = msg.timestamp()
+        headers = msg.headers()
+        key = msg.key()
+        value = msg.value()
+
+        row = [key, value["producer"], value["location"], value["category"], value["priority"], value["rationale"], value["correctiveaction"], value["pointofcontactfirstname"], value["pointofcontactlastname"], value["pointofcontactemail"], value["latching"], value["filterable"], value["maskedby"], value["screenpath"]]
+
+        ts = time.ctime(timestamp[1] / 1000)
+
+        user = ''
+        producer = ''
+        host = ''
+
+        if headers is not None:
+            lookup = dict(headers)
+            bytez = lookup.get('user', b'')
+            user = bytez.decode()
+            bytez = lookup.get('producer', b'')
+            producer = bytez.decode()
+            bytez = lookup.get('host', b'')
+            host = bytez.decode()
+
+        if params.category is None or (value is not None and params.category == value['category']):
+            if params.nometa:
+                table.append(row)
+            else:
+                table.append([ts, user, host, producer] + row)
+
+    print(tabulate(table, head))
+
+
+def export():
+    for msg in registered.values():
+        key = msg.key()
+        value = msg.value()
    
-    if params.category is None or (value is not None and params.category == value['category']):
-        v = json.dumps(value)
-
-        if params.nometa:
+        if params.category is None or (value is not None and params.category == value['category']):
+            v = json.dumps(value)
             print(key + '=' + v)
-        else:
-            print(ts, '|', user, '|', producer, '|', host, '|', key + '=' + v)
 
 def list():
     c = DeserializingConsumer(consumer_conf)
@@ -101,25 +125,36 @@ def list():
             print("AvroConsumer error: {}".format(msg.error()))
             continue
 
-        disp_msg(msg)
+        if msg.value() is None:
+            del registered[msg.key()]
+        else:
+            registered[msg.key()] = msg
 
         if (not params.monitor) and msg.offset() + 1 == high:
             break
 
     c.close()
 
+    if params.export:
+        export()
+    else:
+        disp_table()
+
+
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
+@click.option('--export', is_flag=True, help="Dump records in AVRO JSON format such that they can be imported by set-registered.py")
 @click.option('--category', help="Only show registered alarms in the specified category")
 
-def cli(monitor, nometa, category):
+def cli(monitor, nometa, export, category):
     global params
 
     params = types.SimpleNamespace()
 
     params.monitor = monitor
     params.nometa = nometa
+    params.export = export
     params.category = category
 
     list()
