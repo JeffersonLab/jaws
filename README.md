@@ -23,7 +23,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 
 ## Overview
-The alarm system is composed of three subsystems: registered-alarms, active-alarms, and shelved-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic (the master alarm database).   Alarms are triggered active and also acknowledged by producing messages on the __active-alarms__ topic.     An alarm can be shelved to deemphasize the fact it is active by placing a message on the __shelved-alarms__ topic.  The alarm system is composed of the following services:
+The alarm system is composed of three subsystems: registered-alarms, active-alarms, and suppressed-alarms.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the __registered-alarms__ topic (the master alarm database).   Alarms are triggered active and also acknowledged by producing messages on the __active-alarms__ topic.     An alarm can be suppressed to deemphasize the fact it is active by placing a message on the __suppressed-alarms__ topic.  The alarm system is composed of the following services:
 - **Sources**
    - anything authorized to produce messages on the active-alarms topic
       - plugin: [epics2kafka-alarms](https://github.com/JeffersonLab/epics2kafka-alarms)
@@ -73,7 +73,7 @@ The alarm system state is stored in three Kafka topics.   Topic schemas are stor
 |-------|-------------|------------|--------------|---------|
 | registered-alarms | Set of all possible alarm metadata (descriptions). | String: alarm name | AVRO: [registered-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/registered-alarms-value.avsc) | set-registered.py, list-registered.py |
 | active-alarms | Set of alarms currently active (alarming). | AVRO: [active-alarms-key](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-key.avsc) | AVRO: [active-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-value.avsc) | set-alarming.py, set-ack.py, list-active.py |
-| shelved-alarms | Set of alarms that have been shelved. | String: alarm name | AVRO: [shelved-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/shelved-alarms-value.avsc) | set-shelved.py, list-shelved.py |
+| suppressed-alarms | Set of alarms that have been suppressed. | String: alarm name | AVRO: [suppressed-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/suppressed-alarms-value.avsc) | set-suppressed.py, list-suppresed.py |
 
 The alarm system relies on Kafka not only for notification of changes, but for [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) - everything is stored in Kafka and the entire state of the system is built by replaying messages.   All topics have compaction enabled to remove old messages that would be overwritten on replay.  Compaction is not very aggressive though so some candidates for deletion are often lingering when clients connect so they must be prepared to handle the ordered messages on replay as ones later in the stream with the same key overwrite ones earlier.  To modify a record simply set a new one with the same key. 
 
