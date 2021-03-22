@@ -14,10 +14,10 @@ from confluent_kafka import OFFSET_BEGINNING
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
 
-with open(projectpath + '/config/subject-schemas/suppressed-alarms-key.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/overridden-alarms-key.avsc', 'r') as file:
     key_schema_str = file.read()
 
-with open(projectpath + '/config/subject-schemas/suppressed-alarms-value.avsc', 'r') as file:
+with open(projectpath + '/config/subject-schemas/overridden-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
@@ -36,7 +36,7 @@ ts = time.time()
 consumer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.deserializer': key_deserializer,
                  'value.deserializer': value_deserializer,
-                 'group.id': 'list-suppressed.py' + str(ts)}
+                 'group.id': 'list-overridden.py' + str(ts)}
 
 
 empty = False
@@ -59,7 +59,10 @@ def disp_msg(msg):
     key = msg.key()
     value = msg.value()
 
-    payload = value['msg']
+    if value == None:
+        payload = None
+    else:
+        payload = value['msg']
 
     if payload != None and 'expiration' in payload and payload['expiration'] != None:
         payload['expiration'] = time.ctime(payload['expiration'] / 1000)
@@ -84,7 +87,7 @@ def disp_msg(msg):
 def list():
     c = DeserializingConsumer(consumer_conf)
 
-    c.subscribe(['suppressed-alarms'], on_assign=my_on_assign)
+    c.subscribe(['overridden-alarms'], on_assign=my_on_assign)
 
     while True:
         try:

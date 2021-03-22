@@ -1,6 +1,6 @@
 {
     "type": "record",
-    "name": "SuppressedAlarmKey",
+    "name": "OverriddenAlarmKey",
     "namespace": "org.jlab.alarms",
     "fields": [
         {
@@ -12,17 +12,19 @@
             "name": "type",
             "type": {
                 "type": "enum",
-                "name": "SuppressedAlarmType",
+                "name": "OverriddenAlarmType",
                 "doc": "Enumeration of possible message types",
                 "symbols": [
                     "Disabled",
                     "Filtered",
                     "Masked",
-                    "Delayed",
-                    "Shelved"
+                    "OnDelayed",
+                    "OffDelayed",
+                    "Shelved",
+                    "Latched"
                 ]
             },
-            "doc": "The type of suppression"
+            "doc": "The type of override"
         }
     ]
 }

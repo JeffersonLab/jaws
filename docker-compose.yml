@@ -21,7 +21,7 @@ services:
       KAFKA_HOME: "/kafka"
       BOOTSTRAP_SERVER: "kafka:9092"
       ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,suppressed-alarms:1:1:compact'
+      CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,overridden-alarms:1:1:compact'
 
   registry:
     image: confluentinc/cp-schema-registry:6.0.1

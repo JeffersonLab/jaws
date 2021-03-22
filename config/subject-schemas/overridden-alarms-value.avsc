@@ -1,6 +1,6 @@
 {
     "type": "record",
-    "name": "SuppressedAlarmValue",
+    "name": "OverriddenAlarmValue",
     "namespace": "org.jlab.alarms",
     "doc": "Wraps the union of suppressed alarm values",
     "fields": [
@@ -33,14 +33,33 @@
                 },
                 {
                     "type": "record",
+                    "name": "LatchedAlarm",
+                    "doc": "A latched alarm message value",
+                    "fields": []
+                },
+                {
+                    "type": "record",
                     "name": "MaskedAlarm",
                     "doc": "A masked alarm message value",
                     "fields": []
                 },
                 {
                     "type": "record",
-                    "name": "DelayedAlarm",
-                    "doc": "A delayed alarm message value",
+                    "name": "OnDelayedAlarm",
+                    "doc": "An on-delayed alarm message value",
+                    "fields": [
+                        {
+                            "name": "expiration",
+                            "type": "long",
+                            "doc": "Unix timestamp of milliseconds since Epoch of Jan 1. 1970 - Timestamp denotes when this delayed alarm should expire",
+                            "logicalType": "timestamp-millis"
+                        }
+                    ]
+                },
+                {
+                    "type": "record",
+                    "name": "OffDelayedAlarm",
+                    "doc": "An off-delayed alarm message value",
                     "fields": [
                         {
                             "name": "expiration",
@@ -54,6 +73,12 @@
                     "type": "record",
                     "name": "ShelvedAlarm",
                     "fields": [
+                        {
+                            "name": "oneshot",
+                            "type": "boolean",
+                            "doc": "Indicates whether this shelved alarm unshelves when active; otherwise considered a continuous shelve and clears only upon expiration or manual operator intervention",
+                            "default": false
+                        },
                         {
                             "name": "expiration",
                             "type": "long",
