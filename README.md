@@ -13,11 +13,11 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
 - [Topics and Schemas](https://github.com/JeffersonLab/jaws#topics-and-schemas)
    - [Tombstones](https://github.com/JeffersonLab/jaws#tombstones)
-   - [Acknowledgements](https://github.com/JeffersonLab/jaws#acknowledgements)
    - [Headers](https://github.com/JeffersonLab/jaws#headers)
-   - [Suppressed Alarms](https://github.com/JeffersonLab/jaws#suppressed-alarms)
    - [Customize Alarms](https://github.com/JeffersonLab/jaws#customize-alarms)
-     - [Active Alarm Types](https://github.com/JeffersonLab/jaws#active-alarm-types)
+- [Overrides]
+   - [Incited Alarms](https://github.com/JeffersonLab/jaws#incited-alarms)
+   - [Suppressed Alarms](https://github.com/JeffersonLab/jaws#suppressed-alarms)
 - [Scripts](https://github.com/JeffersonLab/jaws#scripts)
 - [Docker](https://github.com/JeffersonLab/jaws#docker)
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
@@ -81,11 +81,6 @@ The alarm system relies on Kafka not only for notification of changes, but for [
 ### Tombstones
 To unset (remove) a record write a [tombstone](https://kafka.apache.org/documentation.html#compaction) record (null/None value).  This can be done with the provided scripts using the --unset option.  The tombstone approach is used to unregister, unsuppress, unacknowledge, and unset active alarming.   
 
-### Acknowledgements
-The alarm system supports acknowledgements - alarms that move in and out of an alarming state too quickly for users to notice can be emphasized by registering them as "latching", so they require acknowledgment.  Since acknowledgements need to be tied to a specific instance of an alarming message alarm acknowledgements are placed on the same topic as alarming messages (active-alarms) to ensure messages are ordered (on a single partition).  Since they share the active-alarms topic, acks are also typed - for example EPICS acknowledgements include severity for timing purposes - an ack on a MINOR alarm does not interfere with a new MAJOR alarm that may happen before the MINOR ack is delivered (an untyped ack could inadvertantly acknowledge a more severe alarm than was intended by the user). 
-
-**Note**: Acknowledgements add attention to alarms that toggle active _quickly_, whereas shelving removes attention from alarms that go active _frequently_.
-
 ### Headers
 The alarm system topics are expected to include audit information in Kafka message headers:
 
@@ -99,6 +94,52 @@ Additionally, the built-in timestamp provided in all Kafka messages is used to p
 
 **Note**: There is no schema for message headers so content is not easily enforceable.  However, the topic management scripts provided include the audit headers listed.
 
+### Schema Peculiarities
+
+#### AVRO Unions
+For AVRO Unions we avoid placing this structure at the root.  Instead we use a single field _msg_, which is a union of records.  The _msg_ field appears unnecessary, and as an alternative the entire value could have been a union. However, a nested union is less problematic than a union at the AVRO root ([confluent blog](https://www.confluent.io/blog/multiple-event-types-in-the-same-kafka-topic/)).   If a union was used at the root then (1) the schema must be pre-registered with the registry instead of being created on-the-fly by clients, (2) the AVRO serializer must have additional configuration:
+```
+auto.register.schemas=false
+use.latest.version=true
+```
+This may appear especially odd with messages that have no fields.   For example the value is:
+```
+{"msg":{}}
+```
+instead of:
+```
+{}
+```
+#### Schema References
+Schema references are not used at this time since the number of types is small, but mainly because the [Confluent Python API does not support it](https://github.com/confluentinc/confluent-kafka-python/issues/974).   In future versions schema references may be used instead of embedding multiple type schemas inside files.
+
+### Customize Alarms
+The information registered with an alarm can be customized by modifying the [registered-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
+
+Overrides can be customized by modifiying the [overridden-alarms-key](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/overridden-alarms-key.avsc) and [overridden-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/overridden-alarms-value.avsc) schemas.  For example, to add or remove override options.
+
+Generally alarm producers should simply indicate that an alarm is active or not.   However, not all producers work this way - some are a tangled mess (like EPICS, which indicates priority and type at the time of activation notification - a single EPICS PV therefore maps to multiple alarms).   It is possible to modify the [active-alarms-key](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-key.avsc) and [active-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-value.avsc) schemas to be anything you want.  You can even make the schema a union of producer specific schemas (we did this initially).  However, we've ultimtely decided at JLab to use a simpler approach and use an active-alarms schema with key alarm name and value contains an optional String extra info field.  In the case of EPICS we have a Kafka Streams app that maps the on-the-fly active messages containing priority and type to specific registered alarms (in the works!).
+
+## Overrides
+
+Operator Initiated
+  - Disable and  Undisable
+  - Shelve and Unshelve 
+  - Filter and Unfilter 
+  - Unlatch (acknowledge)
+
+Automated
+ - On-Delay and Un-On-Delay
+ - Off-Delay† and Un-Off-Delay
+ - Latch† (unacknowledged)
+ - Mask and Unmask
+ - Unshelve (timer expiration or one-shot active encountered)
+
+_† Incited alarm override (Others are suppressed override)_
+
+### Incited Alarms
+The alarm system supports two types of alarm incitement: latching and off-delays.   Latching is for alarms that move in and out of an alarming state too quickly for users to notice and can be emphasized by registering them as "latching", so they require acknowledgment.  Off delays extend the effective active state of an alarm and is configured in the registered-alarms topic.
+
 ### Suppressed Alarms
 An alarm can be suppressed via multiple means simultaneously, but suppression precedence determines the effective suppression state:
 
@@ -111,31 +152,6 @@ An alarm can be suppressed via multiple means simultaneously, but suppression pr
 | 3 | Masked | Only while parent alarm is active | An alarm can be suppressed by a parent alarm to minimize confusion during an alarm flood and build an alarm hierarchy |
 | 4 | Delayed | Short with expiration | An alarm with an on-delay is temporarily suppressed to minimize fleeting/chattering |  
 | 5 | Shelved | Short with expiration | A nuisance alarm can be temporarily shelved with a short expiration date |
-
-### Customize Alarms
-The information registered with an alarm can be customized by modifying the [registered-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
-
-#### Active Alarm Types
-Since different alarm producers may have producer specific alarm data the active alarm schema is actually an extendable union of schemas.   Generally the basic alarming or acknowledgement messages should be used for simplicity, but sometimes extra info is required.  For example, EPICS alarms have severity and status fields.  New Active Alarm Types can be defined by creating new AVRO schema.
-
-**Note**: It is difficult to have a single (non-union) active-alarm schema that represents all possible alarm sources and has a fixed set of fields because that requires translation from the original fields to the unified fields, and decisions about (1) what are the set of unified fields and (2) how to map data to them, may result in some information being lost in translation.   Therefore, a union of schemas is used to preserve original fields.    If desired, an opinionated custom translation layer could be added to make these decisions and consolidate the various types - for example using a Kafka Streams app.
-
-**Note**: The schema for [active-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-value.avsc) contains a single field _msg_, which is a union of records.  The _msg_ field appears unnecessary, and as an alternative the entire value could have been a union. However, a nested union is less problematic than a union at the AVRO root ([confluent blog](https://www.confluent.io/blog/multiple-event-types-in-the-same-kafka-topic/)).   If a union was used at the root then (1) the schema must be pre-registered with the registry instead of being created on-the-fly by clients, (2) the AVRO serializer must have additional configuration:
-```
-auto.register.schemas=false
-use.latest.version=true
-```
-This may appear especially odd with the basic alarming and ack types as they have no fields.   For example the value for each is:
-```
-{"msg":{}}
-```
-instead of:
-```
-{}
-```
-**Note**: EPICS active alarms and acknowledgements also have explicit NO_ALARM and NO_ACK enumerations values that are included to maintain a one-to-one mapping of EPICS field values.  This means clients must be prepared to handle EPICS message value containing tombstone and NO_ALARM (and even severity INVALID).   Generally, a tombstone will not be encountered for EPICS messages as a no record scenario happens only if an alarm has never been registered before and epics2kafka will use explicit NO_ALARM once registered. 
-
-**Note**: Schema references are not used at this time since the number of types is small and because the [Confluent Python API does not support it](https://github.com/confluentinc/confluent-kafka-python/issues/974).   In future versions of the active-alarms-value schema references may be used instead of embedding all type schemas inside the one file.
 
 ## Scripts
 
