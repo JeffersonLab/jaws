@@ -122,6 +122,8 @@ Generally alarm producers should simply indicate that an alarm is active or not.
 
 ## Overrides
 
+![Active Alarm Message Flow](https://github.com/JeffersonLab/jaws/raw/master/docs/ActiveAlarmFlowDiagram.png?raw=true "Active Alarm Message Flow")
+
 Operator Initiated
   - Disable and  Undisable
   - Shelve and Unshelve 
