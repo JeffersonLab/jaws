@@ -15,7 +15,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
    - [Tombstones](https://github.com/JeffersonLab/jaws#tombstones)
    - [Headers](https://github.com/JeffersonLab/jaws#headers)
    - [Customize Alarms](https://github.com/JeffersonLab/jaws#customize-alarms)
-- [Overrides]
+- [Overrides](https://github.com/JeffersonLab/jaws#overrides)
    - [Incited Alarms](https://github.com/JeffersonLab/jaws#incited-alarms)
    - [Suppressed Alarms](https://github.com/JeffersonLab/jaws#suppressed-alarms)
 - [Scripts](https://github.com/JeffersonLab/jaws#scripts)
