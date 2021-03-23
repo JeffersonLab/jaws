@@ -37,6 +37,9 @@ The alarm system is composed of three subsystems: _registered-alarms_, _active-a
      - [alarm-auto-override-processor](https://github.com/JeffersonLab/shelved-timer) - Applys and maintains automated overrides based on configuration without manual operator intervention
      - [alarm-filter-processor](https://github.com/JeffersonLab/alarms-filter) - Applys and maintains filter commands in the generation of alarm overrides
      - plugin: [registrations2epics](https://github.com/JeffersonLab/registrations2epics) - alarm registrations inform epics2kafka what to monitor
+   - *JAWS APIs*
+     - [jaws-libj (Java)](https://github.com/JeffersonLab/jaws-libj)
+     - [jaws-libp (Python)](https://github.com/JeffersonLab/jaws-libp)  
 - **Clients**   
    - Admin Command Line Interface (CLI) - Python scripts included in this project to manage the alarm system
    - [Operator Graphical User Interface (GUI)](https://github.com/JeffersonLab/graphical-alarm-client) - Python desktop app for operators to interface with the alarm system
