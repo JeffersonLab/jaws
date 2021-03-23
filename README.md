@@ -67,7 +67,7 @@ docker exec -it jaws /scripts/client/list-active.py --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec jaws /scripts/client/set-alarming.py alarm1
+docker exec jaws /scripts/client/set-active.py alarm1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
