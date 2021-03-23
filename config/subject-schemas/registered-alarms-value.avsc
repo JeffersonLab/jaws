@@ -1,6 +1,7 @@
 {
     "type": "record",
     "name": "RegisteredAlarm",
+    "doc" : "Master alarm database record",
     "namespace": "org.jlab.jaws.entity",
     "fields": [
         {
@@ -9,7 +10,8 @@
                 {
                     "type": "record",
                     "name": "SimpleProducer",
-                    "fields": []
+                    "fields": [],
+                    "doc": "Alarm producer which has no specific source"
                 },
                 {
                     "type": "record",
@@ -20,7 +22,8 @@
                             "type": "string",
                             "doc": "The name of the EPICS CA PV, which can be correlated with the key of the epics-channels topic"
                         }
-                    ]
+                    ],
+                    "doc": "Alarm producer which sources alarms from EPICS"
                 },
                 {
                     "type": "record",
@@ -31,7 +34,8 @@
                             "type": "string",
                             "doc": "The CALC expression used to generate alarms"
                         }
-                    ]
+                    ],
+                    "doc": "Alarm producer which uses CALC-like expressions"
                 }
             ],
             "doc": "Indicates how this alarm is produced, useful for producers to monitor when new alarms are added/removed"
@@ -41,7 +45,7 @@
             "type": {
                 "type": "enum",
                 "name": "AlarmLocation",
-                "doc": "The alarm location",
+                "doc": "Enumeration of possible locations",
                 "symbols": [
                     "S1D",
                     "S2D",
@@ -98,7 +102,7 @@
             "type": {
                 "type": "enum",
                 "name": "AlarmCategory",
-                "doc": "The alarm category, useful for consumers to filter out alarms of interest",
+                "doc": "Enumeration of possible categories; useful for consumers to filter out alarms of interest",
                 "symbols": [
                     "Aperture",
                     "BCM",
@@ -127,7 +131,7 @@
             "type": {
                 "type": "enum",
                 "name": "AlarmPriority",
-                "doc": "The alarm priority, useful for operators to know which alarms to handle first",
+                "doc": "Enumeration of possible priorities; useful for operators to know which alarms to handle first",
                 "symbols": [
                     "P1_CRITICAL",
                     "P2_MAJOR",
