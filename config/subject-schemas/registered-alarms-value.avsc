@@ -1,7 +1,7 @@
 {
     "type": "record",
     "name": "RegisteredAlarm",
-    "namespace": "org.jlab.alarms",
+    "namespace": "org.jlab.jaws.entity",
     "fields": [
         {
             "name": "producer",

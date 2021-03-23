@@ -1,8 +1,8 @@
 {
   "type"      : "record",
-  "name"      : "ActiveAlarmValue",
-  "namespace" : "org.jlab.alarms",
-  "doc"       : "Alarming and Acknowledgements state",
+  "name"      : "ActiveAlarm",
+  "namespace" : "org.jlab.jaws.entity",
+  "doc"       : "An active alarm",
   "fields"    : [
     {
       "name" : "msg",
@@ -15,9 +15,15 @@
         },
         {
           "type"      : "record",
-          "name"      : "SimpleAck",
-          "doc"       : "A simple acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields",
-          "fields"    : []
+          "name"      : "NoteAlarming",
+          "doc"       : "Alarming state for an alarm with an extra information string.",
+          "fields"    : [
+            {
+              "name": "note",
+              "type": "string",
+              "doc": "The extra information about this active alarm"
+            }
+          ]
         },
         {
           "type"      : "record",
@@ -45,26 +51,9 @@
               "doc"  : "Alarming status (EPICS .STAT field)"
             }
           ]
-        },
-        {
-          "type"      : "record",
-          "name"      : "EPICSAck",
-          "doc"       : "EPICS acknowledgement state",
-          "fields"    : [
-            {
-              "name"    : "ack",
-              "type"    : {
-                "type"      : "enum",
-                "name"      : "EPICSAcknowledgementEnum",
-                "doc"       : "Enumeration of possible EPICS acknowledgement states",
-                "symbols"   : ["NO_ACK","MINOR_ACK", "MAJOR_ACK"]
-              },
-              "doc"     : "Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement"
-            }
-          ]
         }
       ],
-      "doc" : "Two types of messages are allowed: Alarming and Acknowledgement; There can be multiple flavors of each type for different alarm producers; modeled as a nested union to avoid complications of union at root of schema."
+      "doc" : "Union of active alarm implementations"
     }
   ]
 }
