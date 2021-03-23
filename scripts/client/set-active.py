@@ -61,7 +61,7 @@ def cli(unset, name):
 
     params = types.SimpleNamespace()
 
-    params.key = {"name": name, "type": "SimpleAlarming"}
+    params.key = name
 
     if unset:
       params.value = None
