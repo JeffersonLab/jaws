@@ -123,7 +123,13 @@ The information registered with an alarm can be customized by modifying the [reg
 
 Overrides can be customized by modifiying the [overridden-alarms-key](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/overridden-alarms-key.avsc) and [overridden-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/overridden-alarms-value.avsc) schemas.  For example, to add or remove override options.
 
-Generally alarm producers should simply indicate that an alarm is active or not.   However, not all producers work this way - some are a tangled mess (like EPICS, which indicates priority and type at the time of activation notification - a single EPICS PV therefore maps to multiple alarms).   It is possible to modify the [active-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-value.avsc) schemas to be anything you want.  The schema is currently a union of producer specific schemas.  At JLab we we're working towards a simpler approach where the value contains an optional String extra info field.  In the case of EPICS we have a Kafka Streams app that maps the on-the-fly active messages containing priority to specific registered alarms and stash the dubiously valued STAT field as a note  (in the works!).
+Generally alarm producers should simply indicate that an alarm is active or not.   However, not all producers work this way - some are a tangled mess (like EPICS, which indicates priority and type at the time of activation notification - a single EPICS PV therefore maps to multiple alarms).   It is possible to modify the [active-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-value.avsc) schemas to be anything you want.  The schema is currently a union of schemas for flexibility:
+
+ - **SimpleAlarming**: Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields. 
+ - **NoteAlarming**: Alarming state for an alarm with an extra information string. 
+ - **EPICSAlarming**: Alarming state for an EPICS alarm with STAT and SEVR fields.
+
+At JLab we we're expermimenting with various strategies such as translating EPICSAlarming records (raw EPICS records) into NoteAlarming records using a Kafka Streams app that maps the on-the-fly active messages containing SEVR to one of two specific registered alarms (PV Name + MAJOR, PV Name + MINOR) and then stashing the dubiously valued STAT field as a note.
 
 ## Overrides
 
