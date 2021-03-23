@@ -32,7 +32,8 @@ The alarm system is composed of three subsystems: registered-alarms, active-alar
    - *Broker*: Kafka - distributed message system
    - *Coordinator*: [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
    - *Registry*: [Confluent Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
-   - *Utilities*: 
+   - *Stream Processors*: 
+     - [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor) - Process alarm state given registered-alarms, active-alarms, and overridden-alarms and output to alarm-state topic 
      - [shelved-timer](https://github.com/JeffersonLab/shelved-timer) - notifies clients of shelved alarm expiration
      - [alarms-filter](https://github.com/JeffersonLab/alarms-filter) - provides shared filtered active-alarms topics (suppresses alarms)
      - plugin: [registrations2epics](https://github.com/JeffersonLab/registrations2epics) - alarm registrations inform epics2kafka what to monitor
