@@ -8,14 +8,11 @@ import time
 from confluent_kafka import DeserializingConsumer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
-from confluent_kafka.serialization import SerializationError
+from confluent_kafka.serialization import StringDeserializer, SerializationError
 from confluent_kafka import OFFSET_BEGINNING
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
-
-with open(projectpath + '/config/subject-schemas/active-alarms-key.avsc', 'r') as file:
-    key_schema_str = file.read()
 
 with open(projectpath + '/config/subject-schemas/active-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
@@ -25,17 +22,16 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-avro_key_deserializer = AvroDeserializer(key_schema_str,
-                                         schema_registry_client)
+key_deserializer = StringDeserializer()
 
-avro_value_deserializer = AvroDeserializer(value_schema_str,
+value_deserializer = AvroDeserializer(value_schema_str,
                                      schema_registry_client)
 
 ts = time.time()
 
 consumer_conf = {'bootstrap.servers': bootstrap_servers,
-                 'key.deserializer': avro_key_deserializer,
-                 'value.deserializer': avro_value_deserializer,
+                 'key.deserializer': key_deserializer,
+                 'value.deserializer': value_deserializer,
                  'group.id': 'list-active.py' + str(ts)}
 
 empty = False
