@@ -9,7 +9,6 @@ import click
 from confluent_kafka import avro, Producer
 from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer.message_serializer import MessageSerializer as AvroSerde
-from avro.schema import Field
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../../'
@@ -45,7 +44,7 @@ p = Producer({
 
 topic = 'active-alarms'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-alarming-epics.py'),('host',os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active-epics.py'),('host',os.uname().nodename)]
 
 def send() :
     if params.value is None:

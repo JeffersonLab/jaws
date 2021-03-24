@@ -8,5 +8,6 @@
             "type": "string",
             "doc": "The name of the EPICS CA PV, which can be correlated with the key of the epics-channels topic"
         }
-    ]
+    ],
+    "doc": "Alarm producer which sources alarms from EPICS"
 }
