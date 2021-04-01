@@ -168,8 +168,10 @@ Multiple overrides are possible simultaneously and precedence determines effecti
 | 3 | Masked | Only while parent alarm is active | An alarm can be suppressed by a parent alarm to minimize confusion during an alarm flood and build an alarm hierarchy |
 | 4 | OnDelayed | Short with expiration | An alarm with an on-delay is temporarily suppressed to minimize fleeting/chattering |  
 | 5 | Shelved | Short with expiration | A nuisance alarm can be temporarily shelved with a short expiration date |
-| 6 | OffDelayed | Short with expiration | An alarm with an off-delay is temporarily incited to minimize fleeting/chattering |
-| 7 | Latched | Until Operator Ack | A fleeting alarm (one that toggles between active and not active too quickly) can be configured to require acknowledgement by operators - the alarm is latched once active and won't clear to Normal (or Active) until acknowledged |
+| 6 | OffDelayed† | Short with expiration | An alarm with an off-delay is temporarily incited to minimize fleeting/chattering |
+| 7 | Latched† | Until Operator Ack | A fleeting alarm (one that toggles between active and not active too quickly) can be configured to require acknowledgement by operators - the alarm is latched once active and won't clear to Normal (or Active) until acknowledged |
+
+_† Incited alarm override (Others are suppressed override)_
 
 ## Alarm States
 The effective alarm state is computed by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor), which consumes the registered-alarms, active-alarms, and overridden-alarms topics and outputs to the alarm-state topic the effective alarm state.  The effective alarm state takes into consideration override precedence, one shot vs continuous shelving, and active vs inactive combinations with overridden considerations.  The alarm states in precedence order:
