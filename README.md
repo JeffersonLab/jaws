@@ -133,6 +133,11 @@ Generally alarm producers should simply indicate that an alarm is active or not.
 At JLab we we're expermimenting with various strategies such as translating EPICSAlarming records (raw EPICS records) into NoteAlarming records using a Kafka Streams app that maps the on-the-fly active messages containing SEVR to one of two specific registered alarms (PV Name + MAJOR, PV Name + MINOR) and then stashing the dubiously valued STAT field as a note.
 
 ## Overrides
+An alarm can be in two basic states: 
+  - "Active": Timely operator action required (actively alarming)
+  - "Normal": No operator action required
+
+In an ideal world alarm producers are sophisticaed and aware of the machine program and nuisance alarms are non-existant.  Nuisance alarms are alarms which are in the Active state incorrectly - there really isn't any operator action required despite the alarm producer indicating there is.   In practice, nuisance alarms are very common and quickly undermine the value of an alarm system.   Overrides are one way for operators to deal with nuisance alarms by adding a layer of indirection from alarm producers and allowing effective alarm state to differ from actual alarm state.
 
 ![Active Alarm Message Flow](https://github.com/JeffersonLab/jaws/raw/master/docs/ActiveAlarmFlowDiagram.png?raw=true "Active Alarm Message Flow")
 
