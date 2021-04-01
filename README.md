@@ -156,15 +156,38 @@ The alarm system supports two types of alarm incitement: latching and off-delays
 ### Suppressed Alarms
 An alarm can be suppressed via multiple means simultaneously, but suppression precedence determines the effective suppression state:
 
-**Alarm Suppression States**     
+### Override Precedence     
 
 | Precedence | Name | Duration | Definition |
 |---|---|---|---|
 | 1 | Disabled | Indefinite | A broken alarm can be flagged as out-of-service |
 | 2 | Filtered | Indefinite | An alarm can be "suppressed by design" - generally a group of alarms are filtered out when not needed for the current machine program  |
 | 3 | Masked | Only while parent alarm is active | An alarm can be suppressed by a parent alarm to minimize confusion during an alarm flood and build an alarm hierarchy |
-| 4 | Delayed | Short with expiration | An alarm with an on-delay is temporarily suppressed to minimize fleeting/chattering |  
+| 4 | OnDelayed | Short with expiration | An alarm with an on-delay is temporarily suppressed to minimize fleeting/chattering |  
 | 5 | Shelved | Short with expiration | A nuisance alarm can be temporarily shelved with a short expiration date |
+| 6 | OffDelayed | Short with expiration | An alarm with an off-delay is temporarily incited to minimize fleeting/chattering |
+| 7 | Latched | Until Operator Ack | A fleeting alarm (one that toggles between active and not active too quickly) can be configured to require acknowledgement by operators - the alarm is latched once active and won't clear to Normal (or Active) until acknowledged |
+
+### Alarm States
+The effective alarm state is computed by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor), which consumes the registered-alarms, active-alarms, and overridden-alarms topics and outputs to the alarm-state topic the effective alarm state.  The effective alarm states take into consideration override precedence, one shot vs continuous shelving, and active vs inactive while overridden considerations.  The alarm states in precedence order:
+
+| Precedence | State                     | Active | Effectively | Note                                                    |
+|------------|---------------------------|--------|------------ |---------------------------------------------------------|
+|            | Normal                    | No     | Normal      |                                                         |
+|            | Active                    | Yes    | Active      | Timely operator action is required                      |
+|            | Latched                   | Yes    | Active      | Requires operator acknowledgement (incited)             |
+|            | InactiveLatched           | No     | Active      | Requires operator acknowledgement (incited)             |
+|            | OffDelayed                | No     | Active      | Treated as active until delay expires (incited)         |
+|            | ContinuousShelved         | Yes    | Inactive    | Treated as inactive until delay expires (suppressed)    |
+|            | InactiveContinuousShelved | No     | Inactive    | Treated as inactive until shelving expires (suppressed) |
+|            | OneShotShelved            | Yes    | Inactive    | Treated as inactive until it actually becomes inactive OR shelving expires (suppressed) |
+|            | OnDelayed                 | Yes    | Inactive    | Treated as inactive until delay expires OR actually becomes inactive (suppressed) |
+|            | Masked                    | Yes    | Inactive    | Treated as inactive until the alarm or parent alarm actually becomes inactive (suppressed) |
+|            | Filtered                  | Yes    | Inactive    | Treated as inactive until the filter is removed OR the alarm actually becomes inactive (suppressed) |            |            | InactiveFiltered          | No     | Inactive    | Treated as inactive until the filter is removed (suppressed) |
+|            | Disabled                  | Yes    | Inactive    | Treated as inactive until disable removed (suppressed) |
+|            | InactiveDisabled          | No     | Inactive    | Treated as inactive until disable removed (suppressed) |
+
+**Note**: Registration isn't really used to determine state at this time; just ensures an initial set of "Normal" alarms are recorded.
 
 ## Scripts
 
