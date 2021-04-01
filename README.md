@@ -154,9 +154,11 @@ _† Incited alarm override (Others are suppressed override)_
 The alarm system supports two types of alarm incitement: latching and off-delays.   Latching is for alarms that move in and out of an alarming state too quickly for operators to notice and can be emphasized by registering them as "latching", so they require acknowledgment.  The Automated Override Processor adds a latch record to the overridden-alarms topic each time an alarm becomes active.  An operator must then unlatch the alarm by producing an acknowledement message on the overridden-alarms topic.  Off delays extend the effective active state of an alarm and is configured in the registered-alarms topic.  the Automated Override Processor monitors the active-alarms topic and adds an off-delay to the overriden-alarms topic once the alarm first becomes active and removed automatically once expired. 
 
 ### Suppressed Alarms
-An alarm can be suppressed via multiple means simultaneously, but suppression precedence determines the effective suppression state:
+An alarm can be suppressed, which means should be treated as inactive regardless if actually active or not.
 
 ### Override Precedence     
+
+Multiple overrides are possible simultaneously and precedence determines effective override state, which is factored into effective alarm state.
 
 | Precedence | Name | Duration | Definition |
 |---|---|---|---|
@@ -173,19 +175,21 @@ The effective alarm state is computed by the [alarm-state-processor](https://git
 
 | Precedence | State                     | Active | Effectively | Note                                                    |
 |------------|---------------------------|--------|------------ |---------------------------------------------------------|
-|            | Normal                    | No     | Normal      |                                                         |
-|            | Active                    | Yes    | Active      | Timely operator action is required                      |
-|            | Latched                   | Yes    | Active      | Requires operator acknowledgement (incited)             |
-|            | InactiveLatched           | No     | Active      | Requires operator acknowledgement (incited)             |
-|            | OffDelayed                | No     | Active      | Treated as active until delay expires (incited)         |
-|            | ContinuousShelved         | Yes    | Inactive    | Treated as inactive until delay expires (suppressed)    |
-|            | InactiveContinuousShelved | No     | Inactive    | Treated as inactive until shelving expires (suppressed) |
-|            | OneShotShelved            | Yes    | Inactive    | Treated as inactive until it actually becomes inactive OR shelving expires (suppressed) |
-|            | OnDelayed                 | Yes    | Inactive    | Treated as inactive until delay expires OR actually becomes inactive (suppressed) |
-|            | Masked                    | Yes    | Inactive    | Treated as inactive until the alarm or parent alarm actually becomes inactive (suppressed) |
-|            | Filtered                  | Yes    | Inactive    | Treated as inactive until the filter is removed OR the alarm actually becomes inactive (suppressed) |            |            | InactiveFiltered          | No     | Inactive    | Treated as inactive until the filter is removed (suppressed) |
-|            | Disabled                  | Yes    | Inactive    | Treated as inactive until disable removed (suppressed) |
-|            | InactiveDisabled          | No     | Inactive    | Treated as inactive until disable removed (suppressed) |
+| 1          | InactiveDisabled          | No     | Inactive    | Treated as inactive until disable removed (suppressed)  |
+| 2          | Disabled                  | Yes    | Inactive    | Treated as inactive until disable removed (suppressed)  |
+| 3          | InactiveFiltered          | No     | Inactive    | Treated as inactive until the filter is removed (suppressed) |
+| 4          | Filtered                  | Yes    | Inactive    | Treated as inactive until the filter is removed OR the alarm actually becomes inactive (suppressed) |
+| 5          | Masked                    | Yes    | Inactive    | Treated as inactive until the alarm or parent alarm actually becomes inactive (suppressed) |
+| 6          | OnDelayed                 | Yes    | Inactive    | Treated as inactive until delay expires OR actually becomes inactive (suppressed) |
+| 7          | OneShotShelved            | Yes    | Inactive    | Treated as inactive until it actually becomes inactive OR shelving expires (suppressed) |
+| 8          | InactiveContinuousShelved | No     | Inactive    | Treated as inactive until shelving expires (suppressed) |
+| 9          | ContinuousShelved         | Yes    | Inactive    | Treated as inactive until delay expires (suppressed)    |
+| 10         | OffDelayed                | No     | Active      | Treated as active until delay expires (incited)         |
+| 11         | InactiveLatched           | No     | Active      | Requires operator acknowledgement (incited)             |
+| 12         | Latched                   | Yes    | Active      | Requires operator acknowledgement (incited)             |
+| 13         | Active                    | Yes    | Active      | Timely operator action is required                      |
+| 14         | Normal                    | No     | Normal      |                                                         |    
+
 
 **Note**: Registration isn't really used to determine state at this time; just ensures an initial set of "Normal" alarms are recorded.
 
