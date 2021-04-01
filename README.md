@@ -155,7 +155,7 @@ _† Incited alarm override (Others are suppressed override)_
 The alarm system supports two types of alarm incitement: latching and off-delays.   Latching is for alarms that move in and out of an alarming state too quickly for operators to notice and can be emphasized by registering them as "latching", so they require acknowledgment.  The Automated Override Processor adds a latch record to the overridden-alarms topic each time an alarm becomes active.  An operator must then unlatch the alarm by producing an acknowledement message on the overridden-alarms topic.  Off delays extend the effective active state of an alarm and is configured in the registered-alarms topic.  the Automated Override Processor monitors the active-alarms topic and adds an off-delay to the overriden-alarms topic once the alarm first becomes active and removed automatically once expired. 
 
 ### Suppressed Alarms
-An alarm can be suppressed, which means should be treated as inactive regardless if actually active or not.
+An alarm can be suppressed, which means should be treated as Normal (no action required) regardless if actually active or not.
 
 ### Override Precedence     
 
