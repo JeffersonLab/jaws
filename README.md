@@ -18,6 +18,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [Overrides](https://github.com/JeffersonLab/jaws#overrides)
    - [Incited Alarms](https://github.com/JeffersonLab/jaws#incited-alarms)
    - [Suppressed Alarms](https://github.com/JeffersonLab/jaws#suppressed-alarms)
+- [Alarm States](https://github.com/JeffersonLab/jaws#alarm-states) 
 - [Scripts](https://github.com/JeffersonLab/jaws#scripts)
 - [Docker](https://github.com/JeffersonLab/jaws#docker)
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
@@ -170,25 +171,25 @@ Multiple overrides are possible simultaneously and precedence determines effecti
 | 6 | OffDelayed | Short with expiration | An alarm with an off-delay is temporarily incited to minimize fleeting/chattering |
 | 7 | Latched | Until Operator Ack | A fleeting alarm (one that toggles between active and not active too quickly) can be configured to require acknowledgement by operators - the alarm is latched once active and won't clear to Normal (or Active) until acknowledged |
 
-### Alarm States
+## Alarm States
 The effective alarm state is computed by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor), which consumes the registered-alarms, active-alarms, and overridden-alarms topics and outputs to the alarm-state topic the effective alarm state.  The effective alarm state takes into consideration override precedence, one shot vs continuous shelving, and active vs inactive combinations with overridden considerations.  The alarm states in precedence order:
 
 | Precedence | State                     | Active | Effectively | Note                                                    |
 |------------|---------------------------|--------|------------ |---------------------------------------------------------|
-| 1          | InactiveDisabled          | No     | Inactive    | Treated as inactive until disable removed (suppressed)  |
-| 2          | Disabled                  | Yes    | Inactive    | Treated as inactive until disable removed (suppressed)  |
-| 3          | InactiveFiltered          | No     | Inactive    | Treated as inactive until the filter is removed (suppressed) |
-| 4          | Filtered                  | Yes    | Inactive    | Treated as inactive until the filter is removed OR the alarm actually becomes inactive (suppressed) |
-| 5          | Masked                    | Yes    | Inactive    | Treated as inactive until the alarm or parent alarm actually becomes inactive (suppressed) |
-| 6          | OnDelayed                 | Yes    | Inactive    | Treated as inactive until delay expires OR actually becomes inactive (suppressed) |
-| 7          | OneShotShelved            | Yes    | Inactive    | Treated as inactive until it actually becomes inactive OR shelving expires (suppressed) |
-| 8          | InactiveContinuousShelved | No     | Inactive    | Treated as inactive until shelving expires (suppressed) |
-| 9          | ContinuousShelved         | Yes    | Inactive    | Treated as inactive until delay expires (suppressed)    |
+| 1          | InactiveDisabled          | No     | Normal      | Treated as inactive until disable removed (suppressed)  |
+| 2          | Disabled                  | Yes    | Normal      | Treated as inactive until disable removed (suppressed)  |
+| 3          | InactiveFiltered          | No     | Normal      | Treated as inactive until the filter is removed (suppressed) |
+| 4          | Filtered                  | Yes    | Normal      | Treated as inactive until the filter is removed OR the alarm actually becomes inactive (suppressed) |
+| 5          | Masked                    | Yes    | Normal      | Treated as inactive until the alarm or parent alarm actually becomes inactive (suppressed) |
+| 6          | OnDelayed                 | Yes    | Normal      | Treated as inactive until delay expires OR actually becomes inactive (suppressed) |
+| 7          | OneShotShelved            | Yes    | Normal      | Treated as inactive until it actually becomes inactive OR shelving expires (suppressed) |
+| 8          | InactiveContinuousShelved | No     | Normal      | Treated as inactive until shelving expires (suppressed) |
+| 9          | ContinuousShelved         | Yes    | Normal      | Treated as inactive until delay expires (suppressed)    |
 | 10         | OffDelayed                | No     | Active      | Treated as active until delay expires (incited)         |
 | 11         | InactiveLatched           | No     | Active      | Requires operator acknowledgement (incited)             |
 | 12         | Latched                   | Yes    | Active      | Requires operator acknowledgement (incited)             |
 | 13         | Active                    | Yes    | Active      | Timely operator action is required                      |
-| 14         | Normal                    | No     | Normal      |                                                         |    
+| 14         | Normal                    | No     | Normal      | Does not require operator attention                                                        |    
 
 
 **Note**: Registration isn't really used to determine state at this time; just ensures an initial set of "Normal" alarms are recorded.
