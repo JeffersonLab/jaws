@@ -198,6 +198,7 @@ The effective alarm state is computed by the [alarm-state-processor](https://git
 | 13         | Active                    | Yes    | Active      | Timely operator action is required                   |
 | 14         | Normal                    | No     | Normal      | Does not require operator action                     |    
 
+**Note**: Some states are mutually exclusive such as the override states with "Normal" prefix cannot occur at the same times as their Active counterparts (For example, an alarm can not be both NormalDisabled and Disabled at the same time, but an alarm can be both Disabled and Filtered).  The Precedence is arbitrary in these mutually exclusive cases.  The way our override schema is keyed it is also impossible for an alarm to be both One shot and continuous shelved simultaneously (they're also mutually exclusive states).
 
 **Note**: Registration isn't really used to determine state at this time; just ensures an initial set of "Normal" alarms are recorded.
 
