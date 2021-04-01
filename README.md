@@ -176,20 +176,20 @@ The effective alarm state is computed by the [alarm-state-processor](https://git
 
 | Precedence | State                     | Active | Effectively | Note                                                    |
 |------------|---------------------------|--------|------------ |---------------------------------------------------------|
-| 1          | InactiveDisabled          | No     | Normal      | Treated as inactive until disable removed (suppressed)  |
-| 2          | Disabled                  | Yes    | Normal      | Treated as inactive until disable removed (suppressed)  |
-| 3          | InactiveFiltered          | No     | Normal      | Treated as inactive until the filter is removed (suppressed) |
-| 4          | Filtered                  | Yes    | Normal      | Treated as inactive until the filter is removed OR the alarm actually becomes inactive (suppressed) |
-| 5          | Masked                    | Yes    | Normal      | Treated as inactive until the alarm or parent alarm actually becomes inactive (suppressed) |
-| 6          | OnDelayed                 | Yes    | Normal      | Treated as inactive until delay expires OR actually becomes inactive (suppressed) |
-| 7          | OneShotShelved            | Yes    | Normal      | Treated as inactive until it actually becomes inactive OR shelving expires (suppressed) |
-| 8          | InactiveContinuousShelved | No     | Normal      | Treated as inactive until shelving expires (suppressed) |
-| 9          | ContinuousShelved         | Yes    | Normal      | Treated as inactive until delay expires (suppressed)    |
-| 10         | OffDelayed                | No     | Active      | Treated as active until delay expires (incited)         |
-| 11         | InactiveLatched           | No     | Active      | Requires operator acknowledgement (incited)             |
-| 12         | Latched                   | Yes    | Active      | Requires operator acknowledgement (incited)             |
-| 13         | Active                    | Yes    | Active      | Timely operator action is required                      |
-| 14         | Normal                    | No     | Normal      | Does not require operator attention                                                        |    
+| 1          | NormalDisabled            | No     | Normal      | Until disable removed (suppressed)                      |
+| 2          | Disabled                  | Yes    | Normal      | Until disable removed (suppressed)                      |
+| 3          | NormalFiltered            | No     | Normal      | Until the filter is removed (suppressed)                |
+| 4          | Filtered                  | Yes    | Normal      | Until the filter is removed OR the alarm actually becomes inactive (suppressed) |
+| 5          | Masked                    | Yes    | Normal      | Until the alarm or parent alarm actually becomes inactive (suppressed) |
+| 6          | OnDelayed                 | Yes    | Normal      | Until delay expires OR actually becomes inactive (suppressed)          |
+| 7          | OneShotShelved            | Yes    | Normal      | Until it actually becomes inactive OR shelving expires (suppressed)    |
+| 8          | NormalContinuousShelved   | No     | Normal      | Until shelving expires (suppressed)                                    |
+| 9          | ContinuousShelved         | Yes    | Normal      | Until delay expires (suppressed)                     |
+| 10         | OffDelayed                | No     | Active      | Until delay expires (incited)                        |
+| 11         | NormalLatched             | No     | Active      | Until operator acknowledgement (incited)             |
+| 12         | Latched                   | Yes    | Active      | Until operator acknowledgement (incited)             |
+| 13         | Active                    | Yes    | Active      | Timely operator action is required                   |
+| 14         | Normal                    | No     | Normal      | Does not require operator action                     |    
 
 
 **Note**: Registration isn't really used to determine state at this time; just ensures an initial set of "Normal" alarms are recorded.
