@@ -171,7 +171,7 @@ Multiple overrides are possible simultaneously and precedence determines effecti
 | 7 | Latched | Until Operator Ack | A fleeting alarm (one that toggles between active and not active too quickly) can be configured to require acknowledgement by operators - the alarm is latched once active and won't clear to Normal (or Active) until acknowledged |
 
 ### Alarm States
-The effective alarm state is computed by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor), which consumes the registered-alarms, active-alarms, and overridden-alarms topics and outputs to the alarm-state topic the effective alarm state.  The effective alarm states take into consideration override precedence, one shot vs continuous shelving, and active vs inactive while overridden considerations.  The alarm states in precedence order:
+The effective alarm state is computed by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor), which consumes the registered-alarms, active-alarms, and overridden-alarms topics and outputs to the alarm-state topic the effective alarm state.  The effective alarm state takes into consideration override precedence, one shot vs continuous shelving, and active vs inactive combinations with overridden considerations.  The alarm states in precedence order:
 
 | Precedence | State                     | Active | Effectively | Note                                                    |
 |------------|---------------------------|--------|------------ |---------------------------------------------------------|
