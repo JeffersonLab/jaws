@@ -1,0 +1,65 @@
+---
+version: '3.8'
+
+services:
+  zookeeper:
+    image: debezium/zookeeper:1.4.0.Final
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: debezium/kafka:1.4.0.Final
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_HOME: "/kafka"
+      BOOTSTRAP_SERVER: "kafka:9092"
+      ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,overridden-alarms:1:1:compact'
+
+  registry:
+    image: confluentinc/cp-schema-registry:6.0.1
+    hostname: registry
+    container_name: registry
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - 8081:8081
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
+      SCHEMA_REGISTRY_HOST_NAME: registry
+
+  state:
+    image: slominskir/alarm-state-processor:1.0.0
+    hostname: state
+    container_name: state
+    depends_on:
+      - zookeeper
+      - kafka
+      - registry
+      - jaws
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
+
+  jaws:
+    image: slominskir/jaws:2.3.0
+    tty: true
+    stdin_open: true
+    hostname: jaws
+    container_name: jaws
+    depends_on:
+      - zookeeper
+      - kafka
+      - registry
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
+      ALARM_DEFINITIONS: "alarm1|channel1|INJ|RF|/,alarm2|channel2|INJ|RF|/,alarm3|channel3|INJ|RF|/"

@@ -63,7 +63,7 @@ services:
       - "5064:5064/udp"
       - "5065:5065/udp"
     volumes:
-      - ./softioc-db:/db
+      - ../softioc-db:/db
 
   epics2kafka-alarms:
     image: slominskir/epics2kafka-alarms:1.1.0
@@ -77,7 +77,7 @@ services:
       OFFSET_STORAGE_TOPIC: connect-offsets
       STATUS_STORAGE_TOPIC: connect-status
     volumes:
-      - ./connect-config:/config
+      - ../connect-config:/config
 
   registrations2epics:
     image: slominskir/registrations2epics:1.2.0
