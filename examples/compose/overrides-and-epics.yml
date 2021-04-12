@@ -37,7 +37,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: registry
 
   state:
-    image: slominskir/alarm-state-processor:0.1.0
+    image: slominskir/alarm-state-processor:1.0.1
     hostname: state
     container_name: state
     depends_on:
