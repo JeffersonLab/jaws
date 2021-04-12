@@ -12,6 +12,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [Overview](https://github.com/JeffersonLab/jaws#overview)
 - [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
 - [Topics and Schemas](https://github.com/JeffersonLab/jaws#topics-and-schemas)
+   - [Supporting Topics and Schemas](https://github.com/JeffersonLab/jaws#supporting-topics-and-schemas)
    - [Tombstones](https://github.com/JeffersonLab/jaws#tombstones)
    - [Headers](https://github.com/JeffersonLab/jaws#headers)
    - [Customize Alarms](https://github.com/JeffersonLab/jaws#customize-alarms)
@@ -83,6 +84,15 @@ The alarm system state is stored in three Kafka topics.   Topic schemas are stor
 | overridden-alarms | Set of alarms that have been overridden. | AVRO: [overridden-alarms-key](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/overridden-alarms-key.avsc) | AVRO: [overridden-alarms-value](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/overridden-alarms-value.avsc) | set-overridden.py, list-overridden.py |
 
 The alarm system relies on Kafka not only for notification of changes, but for [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) - everything is stored in Kafka and the entire state of the system is built by replaying messages.   All topics have compaction enabled to remove old messages that would be overwritten on replay.  Compaction is not very aggressive though so some candidates for deletion are often lingering when clients connect so they must be prepared to handle the ordered messages on replay as ones later in the stream with the same key overwrite ones earlier.  To modify a record simply set a new one with the same key. 
+
+### Supporting Topics and Schemas
+In addition to the three core topics, the following topics provide value add via various supporting apps:
+
+| Topic | Description | Key Schema | Value Schema | Note |
+|-------|-------------|------------|--------------|------|
+| alarm-state | Contains effective alarm state considering overrides | String: alarm name | String: [alarm state](https://github.com/JeffersonLab/jaws#alarm-states) | Technically each client could figure out the alarm state themselves, but it's a chore so its done by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor) |
+| group-registration | Contains group-wide registration information to avoid redundant specification | String: group name | AVRO: group-registration-value | |
+| jaws-config | Contains shared configuration data | String: config property name | String: config property value |  |
 
 ### Tombstones
 To unset (remove) a record write a [tombstone](https://kafka.apache.org/documentation.html#compaction) record (null/None value).  This can be done with the provided scripts using the --unset option.  The tombstone approach is used to unregister, unsuppress, unacknowledge, and unset active alarming.   
