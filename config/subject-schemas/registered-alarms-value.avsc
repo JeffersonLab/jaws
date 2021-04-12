@@ -180,6 +180,16 @@
             "default": true
         },
         {
+            "name": "ondelayseconds",
+            "type": ["null", "long"],
+            "doc": "The number of seconds of on-delay"
+        },
+        {
+            "name": "offdelayseconds",
+            "type": ["null", "long"],
+            "doc": "The number of seconds of off-delay"
+        },
+        {
             "name": "maskedby",
             "type": ["null", "string"],
             "doc": "The name of the parent alarm, which if active, masks this alarm (flood suppression via logical hierarchy)"
