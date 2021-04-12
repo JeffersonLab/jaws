@@ -184,17 +184,17 @@ The effective alarm state is computed by the [alarm-state-processor](https://git
 | Precedence | State                     | Active | Effectively | Note                                                    |
 |------------|---------------------------|--------|------------ |---------------------------------------------------------|
 | 1          | NormalDisabled            | No     | Normal      | Until disable removed (suppressed)                      |
-| 2          | Disabled                  | Yes    | Normal      | Until disable removed (suppressed)                      |
-| 3          | NormalFiltered            | No     | Normal      | Until the filter is removed (suppressed)                |
-| 4          | Filtered                  | Yes    | Normal      | Until the filter is removed OR the alarm actually becomes inactive (suppressed) |
-| 5          | Masked                    | Yes    | Normal      | Until the alarm or parent alarm actually becomes inactive (suppressed) |
-| 6          | OnDelayed                 | Yes    | Normal      | Until delay expires OR actually becomes inactive (suppressed)          |
-| 7          | OneShotShelved            | Yes    | Normal      | Until it actually becomes inactive OR shelving expires (suppressed)    |
+| 2          | Disabled                  | Yes    | Normal      | Until disable removed OR the alarm becomes inactive (suppressed)       |
+| 3          | NormalFiltered            | No     | Normal      | Until the filter is removed (suppressed)                               |
+| 4          | Filtered                  | Yes    | Normal      | Until the filter is removed OR the alarm becomes inactive (suppressed) |
+| 5          | Masked                    | Yes    | Normal      | Until the alarm or parent alarm becomes inactive (suppressed)          |
+| 6          | OnDelayed                 | Yes    | Normal      | Until delay expires OR the alarm becomes inactive (suppressed)         |
+| 7          | OneShotShelved            | Yes    | Normal      | Until the alarm becomes inactive OR shelving expires (suppressed)      |
 | 8          | NormalContinuousShelved   | No     | Normal      | Until shelving expires (suppressed)                                    |
-| 9          | ContinuousShelved         | Yes    | Normal      | Until delay expires (suppressed)                     |
+| 9          | ContinuousShelved         | Yes    | Normal      | Until delay expires OR the alarm becomes inactive (suppressed)         |
 | 10         | OffDelayed                | No     | Active      | Until delay expires (incited)                        |
 | 11         | NormalLatched             | No     | Active      | Until operator acknowledgement (incited)             |
-| 12         | Latched                   | Yes    | Active      | Until operator acknowledgement (incited)             |
+| 12         | Latched                   | Yes    | Active      | Until operator acknowledgement OR the alarm becomes inactive (incited)    |
 | 13         | Active                    | Yes    | Active      | Timely operator action is required                   |
 | 14         | Normal                    | No     | Normal      | Does not require operator action                     |    
 
