@@ -178,7 +178,7 @@ Multiple overrides are possible simultaneously and precedence determines effecti
 
 _† Incited alarm override (Others are suppressed override)_
 
-**Note**: Some overrides are disallowed by configuration.  The registered-alarms topic schema contains fields indicating whehter an alarm is filterable, maskable, on-delayable, off-delayable, and latchable.
+**Note**: Some overrides are disallowed by configuration.  The registered-alarms topic schema contains fields indicating whehter an alarm is filterable, maskable (maskedby), on-delayable (ondelayseconds), off-delayable (offdelayseconds), and latchable (latching).
 
 ## Alarm States
 The effective alarm state is computed by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor), which consumes the registered-alarms, active-alarms, and overridden-alarms topics and outputs to the alarm-state topic the effective alarm state.  The effective alarm state takes into consideration override precedence, one shot vs continuous shelving, and active vs inactive combinations with overridden considerations.  The alarm states in precedence order:
