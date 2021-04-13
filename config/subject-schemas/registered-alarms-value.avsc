@@ -153,19 +153,9 @@
             "doc": "Markdown formatted text describing the corrective action to take when the alarm becomes active"
         },
         {
-            "name": "pointofcontactfirstname",
+            "name": "pointofcontactusername",
             "type": "string",
-            "doc": "First name of point of contact"
-        },
-        {
-            "name": "pointofcontactlastname",
-            "type": "string",
-            "doc": "Last name of point of contact"
-        },
-        {
-            "name": "pointofcontactemail",
-            "type": "string",
-            "doc": "email address of point of contact"
+            "doc": "Username (identifier) of point of contact.  Full contact info should be obtained from user database (LDAP for example)"
         },
         {
             "name": "latching",
