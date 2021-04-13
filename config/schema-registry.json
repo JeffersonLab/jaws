@@ -2,5 +2,9 @@
   {"file": "config/subject-schemas/active-alarms-value.avsc", "subject": "active-alarms-value", "references": []},
   {"file": "config/subject-schemas/registered-alarms-value.avsc", "subject": "registered-alarms-value", "references": []},
   {"file": "config/subject-schemas/overridden-alarms-value.avsc", "subject": "overridden-alarms-value", "references": []},
-  {"file": "config/subject-schemas/overridden-alarms-key.avsc", "subject": "overridden-alarms-key", "references": []}
+  {"file": "config/subject-schemas/overridden-alarms-key.avsc", "subject": "overridden-alarms-key", "references": []},
+  {"file": "config/subject-schemas/registered-groups-key.avsc", "subject": "registered-groups-key", "references": []},
+  {"file": "config/subject-schemas/registered-groups-value.avsc", "subject": "registered-groups-value", "references": []},
+  {"file": "config/subject-schemas/alarm-state-value.avsc", "subject": "alarm-state-value", "references": []},
+  {"file": "config/subject-schemas/jaws-config-value.avsc", "subject": "jaws-config-value", "references": []}
 ]
