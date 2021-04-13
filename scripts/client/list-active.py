@@ -24,8 +24,7 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 
 key_deserializer = StringDeserializer()
 
-value_deserializer = AvroDeserializer(value_schema_str,
-                                     schema_registry_client)
+value_deserializer = AvroDeserializer(schema_registry_client, value_schema_str)
 
 ts = time.time()
 
