@@ -6,23 +6,25 @@
     "fields": [
         {
             "name": "FacilityMap",
-            "type": "map",
-            "values": {
-                "type": "enum",
-                "name": "FacilityEnum",
-                "doc": "Enumeration of possible facilities",
-                "symbols": [
-                    "CEBAF",
-                    "LERF",
-                    "ITF"
-                ]
-            },
-            "default": {
-                "INJ": "CEBAF",
-                "NL": "CEBAF",
-                "SL": "CEBAF"
-            },
-            "doc": "Location to Facility map"
+            "type": {
+                "type": "map",
+                "values": {
+                    "type": "enum",
+                    "name": "FacilityEnum",
+                    "doc": "Enumeration of possible facilities",
+                    "symbols": [
+                        "CEBAF",
+                        "LERF",
+                        "ITF"
+                    ]
+                },
+                "default": {
+                    "INJ": "CEBAF",
+                    "NL": "CEBAF",
+                    "SL": "CEBAF"
+                },
+                "doc": "Location to Facility map"
+            }
         }
     ]
 }
