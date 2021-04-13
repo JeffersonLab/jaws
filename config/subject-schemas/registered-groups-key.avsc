@@ -1,0 +1,32 @@
+{
+    "type": "record",
+    "name": "RegisteredGroupKey",
+    "doc": "Key of a registered group",
+    "namespace": "org.jlab.jaws.entity",
+    "fields": [
+        {
+            "name": "name",
+            "type": {
+                "type": "enum",
+                "name": "AlarmGroup",
+                "doc": "Enumeration of possible groups; a group provides inheritable (shared) values for registration fields.  The Default_Group provides the system defaults, otherwise it would be possible to have null values in required fields",
+                "symbols": [
+                    "Default_Group",
+                    "BCM_Temperature",
+                    "Trim_Temperature",
+                    "Shunt_Temperature",
+                    "CAMAC_Temperature",
+                    "CAMAC_Voltage",
+                    "MPS_Voltage_Mismatch",
+                    "MPS_Voltage_Fault",
+                    "MPS_Setpoint_Invalid",
+                    "Magnet_Mismatch",
+                    "Magnet_Communication_Error",
+                    "Vacuum_Level",
+                    "LCW_Supply_Pressure"
+                ]
+            },
+            "doc": "The registered group"
+        }
+    ]
+}
