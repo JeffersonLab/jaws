@@ -1,193 +1,251 @@
 {
-    "type": "record",
-    "name": "RegisteredAlarm",
-    "doc" : "Master alarm database record",
-    "namespace": "org.jlab.jaws.entity",
-    "fields": [
+  "type": "record",
+  "name": "RegisteredAlarm",
+  "doc": "Master alarm database record",
+  "namespace": "org.jlab.jaws.entity",
+  "fields": [
+    {
+      "name": "group",
+      "type": {
+        "type": "enum",
+        "name": "AlarmGroup",
+        "doc": "Enumeration of possible groups; a group provides inheritable (shared) values for registration fields.  The Default_Group provides the system defaults, otherwise it would be possible to have null values in required fields",
+        "symbols": [
+          "Default_Group",
+          "BCM_Temperature",
+          "Trim_Temperature",
+          "Shunt_Temperature",
+          "CAMAC_Temperature",
+          "CAMAC_Voltage",
+          "MPS_Voltage_Mismatch",
+          "MPS_Voltage_Fault",
+          "MPS_Setpoint_Invalid",
+          "Magnet_Mismatch",
+          "Magnet_Communication_Error",
+          "Vacuum_Level",
+          "LCW_Supply_Pressure"
+        ]
+      },
+      "default": "Default_Group",
+      "doc": "The alarm group; provides inheritable shared field values; fields are only overridden if null; the producer field is required and cannot be overridden"
+    },
+    {
+      "name": "producer",
+      "type": [
         {
-            "name": "producer",
-            "type": [
-                {
-                    "type": "record",
-                    "name": "SimpleProducer",
-                    "fields": [],
-                    "doc": "Alarm producer which has no specific source"
-                },
-                {
-                    "type": "record",
-                    "name": "EPICSProducer",
-                    "fields": [
-                        {
-                            "name": "pv",
-                            "type": "string",
-                            "doc": "The name of the EPICS CA PV, which can be correlated with the key of the epics-channels topic"
-                        }
-                    ],
-                    "doc": "Alarm producer which sources alarms from EPICS"
-                },
-                {
-                    "type": "record",
-                    "name": "CALCProducer",
-                    "fields": [
-                        {
-                            "name": "expression",
-                            "type": "string",
-                            "doc": "The CALC expression used to generate alarms"
-                        }
-                    ],
-                    "doc": "Alarm producer which uses CALC-like expressions"
-                }
-            ],
-            "doc": "Indicates how this alarm is produced, useful for producers to monitor when new alarms are added/removed"
+          "type": "record",
+          "name": "SimpleProducer",
+          "fields": [],
+          "doc": "Alarm producer which has no specific source"
         },
         {
-            "name": "location",
-            "type": {
-                "type": "enum",
-                "name": "AlarmLocation",
-                "doc": "Enumeration of possible locations",
-                "symbols": [
-                    "S1D",
-                    "S2D",
-                    "S3D",
-                    "S4D",
-                    "S5D",
-                    "L1",
-                    "L2",
-                    "L3",
-                    "L4",
-                    "L5",
-                    "L6",
-                    "L7",
-                    "L8",
-                    "L9",
-                    "LA",
-                    "LB",
-                    "A1",
-                    "A2",
-                    "A3",
-                    "A4",
-                    "A5",
-                    "A6",
-                    "A7",
-                    "A8",
-                    "A9",
-                    "AA",
-                    "BSY2",
-                    "BSY4",
-                    "BSY6",
-                    "BSY8",
-                    "BSYA",
-                    "BSYD",
-                    "INJ",
-                    "NL",
-                    "SL",
-                    "EA",
-                    "WA",
-                    "BSY",
-                    "HA",
-                    "HB",
-                    "HC",
-                    "HD",
-                    "ACC",
-                    "CHL",
-                    "MCC",
-                    "LERF",
-                    "UITF"
-                ]
+          "type": "record",
+          "name": "EPICSProducer",
+          "fields": [
+            {
+              "name": "pv",
+              "type": "string",
+              "doc": "The name of the EPICS CA PV, which can be correlated with the key of the epics-channels topic"
             }
+          ],
+          "doc": "Alarm producer which sources alarms from EPICS"
         },
         {
-            "name": "category",
-            "type": {
-                "type": "enum",
-                "name": "AlarmCategory",
-                "doc": "Enumeration of possible categories; useful for consumers to filter out alarms of interest",
-                "symbols": [
-                    "Aperture",
-                    "BCM",
-                    "Box",
-                    "BPM",
-                    "CAMAC",
-                    "Crate",
-                    "Dump",
-                    "Gun",
-                    "Harp",
-                    "Helicity",
-                    "IC",
-                    "IOC",
-                    "Laser",
-                    "LCW",
-                    "Misc",
-                    "ODH",
-                    "RADCON",
-                    "RF",
-                    "Vacuum"
-                ]
+          "type": "record",
+          "name": "CALCProducer",
+          "fields": [
+            {
+              "name": "expression",
+              "type": "string",
+              "doc": "The CALC expression used to generate alarms"
             }
-        },
-        {
-            "name": "priority",
-            "type": {
-                "type": "enum",
-                "name": "AlarmPriority",
-                "doc": "Enumeration of possible priorities; useful for operators to know which alarms to handle first",
-                "symbols": [
-                    "P1_CRITICAL",
-                    "P2_MAJOR",
-                    "P3_MINOR",
-                    "P4_INCIDENTAL"
-                ]
-            },
-            "default": "P3_MINOR",
-            "doc": "The alarm priority"
-        },
-        {
-            "name": "rationale",
-            "type": "string",
-            "doc": "Markdown formatted text describing the reason this alarm is necessary"
-        },
-        {
-            "name": "correctiveaction",
-            "type": "string",
-            "doc": "Markdown formatted text describing the corrective action to take when the alarm becomes active"
-        },
-        {
-            "name": "pointofcontactusername",
-            "type": "string",
-            "doc": "Username (identifier) of point of contact.  Full contact info should be obtained from user database (LDAP for example)"
-        },
-        {
-            "name": "latching",
-            "type": "boolean",
-            "doc": "Indicates whether this alarm latches when activated and can only be cleared after an explicit acknowledgement",
-            "default": false
-        },
-        {
-            "name": "filterable",
-            "type": "boolean",
-            "doc": "Indicates whether this alarm can be filtered out of view (typically done when a portion of the machine is turned off).  Some alarms must always be monitored, regardless of program.",
-            "default": true
-        },
-        {
-            "name": "ondelayseconds",
-            "type": ["null", "long"],
-            "doc": "The number of seconds of on-delay"
-        },
-        {
-            "name": "offdelayseconds",
-            "type": ["null", "long"],
-            "doc": "The number of seconds of off-delay"
-        },
-        {
-            "name": "maskedby",
-            "type": ["null", "string"],
-            "doc": "The name of the parent alarm, which if active, masks this alarm (flood suppression via logical hierarchy)"
-        },
-        {
-            "name": "screenpath",
-            "type": "string",
-            "doc": "The path the alarm screen display"
+          ],
+          "doc": "Alarm producer which uses CALC-like expressions"
         }
-    ]
+      ],
+      "doc": "Indicates how this alarm is produced, useful for producers to monitor when new alarms are added/removed"
+    },
+    {
+      "name": "location",
+      "type": [
+        "null",
+        {
+          "type": "enum",
+          "name": "AlarmLocation",
+          "doc": "Enumeration of possible locations",
+          "symbols": [
+            "S1D",
+            "S2D",
+            "S3D",
+            "S4D",
+            "S5D",
+            "L1",
+            "L2",
+            "L3",
+            "L4",
+            "L5",
+            "L6",
+            "L7",
+            "L8",
+            "L9",
+            "LA",
+            "LB",
+            "A1",
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6",
+            "A7",
+            "A8",
+            "A9",
+            "AA",
+            "BSY2",
+            "BSY4",
+            "BSY6",
+            "BSY8",
+            "BSYA",
+            "BSYD",
+            "INJ",
+            "NL",
+            "SL",
+            "EA",
+            "WA",
+            "BSY",
+            "HA",
+            "HB",
+            "HC",
+            "HD",
+            "ACC",
+            "CHL",
+            "MCC",
+            "LERF",
+            "UITF"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "category",
+      "type": [
+        "null",
+        {
+          "type": "enum",
+          "name": "AlarmCategory",
+          "doc": "Enumeration of possible categories; useful for consumers to filter out alarms of interest",
+          "symbols": [
+            "Aperture",
+            "BCM",
+            "Box",
+            "BPM",
+            "CAMAC",
+            "Crate",
+            "Dump",
+            "Gun",
+            "Harp",
+            "Helicity",
+            "IC",
+            "IOC",
+            "Laser",
+            "LCW",
+            "Misc",
+            "ODH",
+            "RADCON",
+            "RF",
+            "Vacuum"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "priority",
+      "type": [
+        "null",
+        {
+          "type": "enum",
+          "name": "AlarmPriority",
+          "doc": "Enumeration of possible priorities; useful for operators to know which alarms to handle first",
+          "symbols": [
+            "P1_CRITICAL",
+            "P2_MAJOR",
+            "P3_MINOR",
+            "P4_INCIDENTAL"
+          ]
+        }
+      ],
+      "doc": "The alarm priority"
+    },
+    {
+      "name": "rationale",
+      "type": [
+        "null",
+        "string"
+      ],
+      "doc": "Markdown formatted text describing the reason this alarm is necessary"
+    },
+    {
+      "name": "correctiveaction",
+      "type": [
+        "null",
+        "string"
+      ],
+      "doc": "Markdown formatted text describing the corrective action to take when the alarm becomes active"
+    },
+    {
+      "name": "pointofcontactusername",
+      "type": [
+        "null",
+        "string"
+      ],
+      "doc": "Username (identifier) of point of contact.  Full contact info should be obtained from user database (LDAP for example)"
+    },
+    {
+      "name": "latching",
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "doc": "Indicates whether this alarm latches when activated and can only be cleared after an explicit acknowledgement",
+    },
+    {
+      "name": "filterable",
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "doc": "Indicates whether this alarm can be filtered out of view (typically done when a portion of the machine is turned off).  Some alarms must always be monitored, regardless of program.",
+    },
+    {
+      "name": "ondelayseconds",
+      "type": [
+        "null",
+        "long"
+      ],
+      "doc": "The number of seconds of on-delay"
+    },
+    {
+      "name": "offdelayseconds",
+      "type": [
+        "null",
+        "long"
+      ],
+      "doc": "The number of seconds of off-delay"
+    },
+    {
+      "name": "maskedby",
+      "type": [
+        "null",
+        "string"
+      ],
+      "doc": "The name of the parent alarm, which if active, masks this alarm (flood suppression via logical hierarchy)"
+    },
+    {
+      "name": "screenpath",
+      "type": [
+        "null",
+        "string"
+      ],
+      "doc": "The path the alarm screen display"
+    }
+  ]
 }
