@@ -64,7 +64,7 @@ def get_row(msg):
     key = msg.key()
     value = msg.value()
 
-    row = [key, value["producer"], value["location"], value["category"], value["priority"], value["rationale"], value["correctiveaction"], value["pointofcontactfirstname"], value["pointofcontactlastname"], value["pointofcontactemail"], value["latching"], value["filterable"], value["maskedby"], value["screenpath"]]
+    row = [key, value["producer"], value["location"], value["category"], value["priority"], value["rationale"], value["correctiveaction"], value["pointofcontactusername"], value["latching"], value["filterable"], value["maskedby"], value["screenpath"]]
 
     ts = time.ctime(timestamp[1] / 1000)
 
@@ -91,7 +91,7 @@ def get_row(msg):
 
 def disp_table():
 
-    head=["Alarm Name", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action", "P.O.C. Firstname", "P.O.C. Lastname", "P.O.C. email", "Latching", "Filterable", "Masked By", "Screen Path"]
+    head=["Alarm Name", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action", "P.O.C. Username", "Latching", "Filterable", "Masked By", "Screen Path"]
     table = []
 
     if not params.nometa:

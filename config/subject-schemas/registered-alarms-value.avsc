@@ -9,7 +9,7 @@
       "type": {
         "type": "enum",
         "name": "AlarmGroup",
-        "doc": "Enumeration of possible groups; a group provides inheritable (shared) values for registration fields.  The Default_Group provides the system defaults, otherwise it would be possible to have null values in required fields",
+        "doc": "Enumeration of possible groups, a group provides inheritable (shared) values for registration fields.  The Default_Group provides the system defaults, otherwise it would be possible to have null values in required fields",
         "symbols": [
           "Default_Group",
           "BCM_Temperature",
@@ -24,10 +24,10 @@
           "Magnet_Communication_Error",
           "Vacuum_Level",
           "LCW_Supply_Pressure"
-        ]
+        ],
+        "default": "Default_Group"
       },
-      "default": "Default_Group",
-      "doc": "The alarm group; provides inheritable shared field values; fields are only overridden if null; the producer field is required and cannot be overridden"
+      "doc": "The alarm group; provides inheritable shared field values, fields are only overridden if null, the producer field is required and cannot be overridden"
     },
     {
       "name": "producer",
@@ -205,7 +205,7 @@
         "null",
         "boolean"
       ],
-      "doc": "Indicates whether this alarm latches when activated and can only be cleared after an explicit acknowledgement",
+      "doc": "Indicates whether this alarm latches when activated and can only be cleared after an explicit acknowledgement"
     },
     {
       "name": "filterable",
@@ -213,7 +213,7 @@
         "null",
         "boolean"
       ],
-      "doc": "Indicates whether this alarm can be filtered out of view (typically done when a portion of the machine is turned off).  Some alarms must always be monitored, regardless of program.",
+      "doc": "Indicates whether this alarm can be filtered out of view (typically done when a portion of the machine is turned off).  Some alarms must always be monitored, regardless of program."
     },
     {
       "name": "ondelayseconds",

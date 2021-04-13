@@ -37,9 +37,10 @@ avro_serializer = AvroSerializer(value_schema_str,
 
 value_schema = avro.schema.Parse(value_schema_str)
 
-locations = value_schema.fields[1].type.symbols
-categories = value_schema.fields[2].type.symbols
-priorities = value_schema.fields[3].type.symbols
+groups = value_schema.fields[0].type.symbols
+locations = value_schema.fields[2].type.schemas[1].symbols
+categories = value_schema.fields[3].type.schemas[1].symbols
+priorities = value_schema.fields[4].type.schemas[1].symbols
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': StringSerializer('utf_8'),
@@ -88,24 +89,23 @@ def doImport(file) :
 @click.command()
 @click.option('--file', is_flag=True, help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the registered-alarms-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
+@click.option('--group', type=click.Choice(groups), help="The alarm group")
 @click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")
 @click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm")
 @click.option('--producerexpression', help="The CALC expression used to generate this alarm")
 @click.option('--location', type=click.Choice(locations), help="The alarm location")
 @click.option('--category', type=click.Choice(categories), help="The alarm category")
 @click.option('--priority', type=click.Choice(priorities), help="The alarm priority")
-@click.option('--filterable', is_flag=True, default=True, help="True if alarm can be filtered out of view")
-@click.option('--latching', is_flag=True, help="Indicate that the alarm latches and requires acknowledgement to clear")
+@click.option('--filterable', is_flag=True, default=None, help="True if alarm can be filtered out of view")
+@click.option('--latching', is_flag=True, default=None, help="Indicate that the alarm latches and requires acknowledgement to clear")
 @click.option('--screenpath', help="The path the alarm screen display")
-@click.option('--pointofcontactfirstname', default="", help="The point of contact first name")
-@click.option('--pointofcontactlastname', default="", help="The point of contact last name")
-@click.option('--pointofcontactemail', default="", help="The point of contact email")
-@click.option('--rationale', default="", help="The alarm rationale")
-@click.option('--correctiveaction', default="", help="The corrective action")
+@click.option('--pointofcontactusername', help="The point of contact user name")
+@click.option('--rationale', help="The alarm rationale")
+@click.option('--correctiveaction', help="The corrective action")
 @click.option('--maskedby', help="The optional parent alarm that masks this one")
 @click.argument('name')
 
-def cli(file, unset, producersimple, producerpv, producerexpression, location, category, priority, filterable, latching, screenpath, pointofcontactfirstname, pointofcontactlastname, pointofcontactemail, rationale, correctiveaction, maskedby, name):
+def cli(file, unset, group, producersimple, producerpv, producerexpression, location, category, priority, filterable, latching, screenpath, pointofcontactusername, rationale, correctiveaction, maskedby, name):
     global params
 
     params = types.SimpleNamespace()
@@ -128,14 +128,10 @@ def cli(file, unset, producersimple, producerpv, producerexpression, location, c
             else:
                 producer = {"expression" : producerexpression}
 
-            if location == None or category == None or screenpath == None:
-                raise click.ClickException(
-                    "Must specify options --location, --category, --screenpath")
+            params.value = {"group": group, "producer": producer, "location": location, "category": category, "priority": priority, "filterable": filterable, "latching": latching, "screenpath": screenpath, "pointofcontactusername": pointofcontactusername, "rationale": rationale, "correctiveaction": correctiveaction, "maskedby": maskedby}
 
-            params.value = {"producer": producer, "location": location, "category": category, "filterable": filterable, "latching": latching, "screenpath": screenpath, "pointofcontactfirstname": pointofcontactfirstname, "pointofcontactlastname": pointofcontactlastname, "pointofcontactemail": pointofcontactemail, "rationale": rationale, "correctiveaction": correctiveaction, "maskedby": maskedby}
-
-            if priority is not None:
-                params.value["priority"] = priority
+            if group is None:
+                params.value["group"] = "Default_Group"
 
             print('Message: {}'.format(params.value))
 
