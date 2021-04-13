@@ -31,8 +31,7 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 
 key_serializer = StringSerializer()
 
-value_serializer = AvroSerializer(value_schema_str,
-                                       schema_registry_client)
+value_serializer = AvroSerializer(schema_registry_client, value_schema_str)
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': key_serializer,

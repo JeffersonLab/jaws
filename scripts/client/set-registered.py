@@ -32,8 +32,7 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-avro_serializer = AvroSerializer(value_schema_str,
-                                 schema_registry_client)
+avro_serializer = AvroSerializer(schema_registry_client, value_schema_str)
 
 value_schema = avro.schema.Parse(value_schema_str)
 
