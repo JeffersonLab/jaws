@@ -6,16 +6,138 @@ import click
 import time
 import json
 
+from json import loads
+
+from io import BytesIO
+from struct import unpack
+from fastavro import schemaless_reader
+
 from tabulate import tabulate
 
 from confluent_kafka import DeserializingConsumer
-from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry import SchemaRegistryClient, _MAGIC_BYTE, topic_subject_name_strategy
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.serialization import StringDeserializer, SerializationError
 from confluent_kafka import OFFSET_BEGINNING
 
+
+from confluent_kafka.schema_registry import Schema
+
+from fastavro import parse_schema
+
+
+def _schema_loads(schema_str):
+    """
+    Instantiates a Schema instance from a declaration string
+    Args:
+        schema_str (str): Avro Schema declaration.
+    .. _Schema declaration:
+        https://avro.apache.org/docs/current/spec.html#schemas
+    Returns:
+        Schema: Schema instance
+    """
+    schema_str = schema_str.strip()
+
+    # canonical form primitive declarations are not supported
+    if schema_str[0] != "{":
+        schema_str = '{"type":"' + schema_str + '"}'
+
+    return Schema(schema_str, schema_type='AVRO')
+
+
+class _ContextStringIO(BytesIO):
+    """
+    Wrapper to allow use of StringIO via 'with' constructs.
+    """
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+        return False
+
+
+class AvroDeserializerWithReferences(AvroDeserializer):
+    __slots__ = ['_reader_schema', '_registry', '_from_dict', '_writer_schemas', '_return_record_name', '_named_schemas']
+
+    def __init__(self, schema_registry_client, schema=None, from_dict=None, return_record_name=False, named_schemas={}):
+        self._registry = schema_registry_client
+        self._writer_schemas = {}
+
+        self._reader_schema = schema
+        self._named_schemas = named_schemas
+
+        if from_dict is not None and not callable(from_dict):
+            raise ValueError("from_dict must be callable with the signature"
+                             " from_dict(SerializationContext, dict) -> object")
+        self._from_dict = from_dict
+
+        self._return_record_name = return_record_name
+        if not isinstance(self._return_record_name, bool):
+            raise ValueError("return_record_name must be a boolean value")
+
+    def __call__(self, value, ctx):
+        """
+        Decodes a Confluent Schema Registry formatted Avro bytes to an object.
+        Arguments:
+            value (bytes): bytes
+            ctx (SerializationContext): Metadata pertaining to the serialization
+                operation.
+        Raises:
+            SerializerError: if an error occurs ready data.
+        Returns:
+            object: object if ``from_dict`` is set, otherwise dict. If no value is supplied None is returned.
+        """  # noqa: E501
+        if value is None:
+            return None
+
+        if len(value) <= 5:
+            raise SerializationError("Message too small. This message was not"
+                                     " produced with a Confluent"
+                                     " Schema Registry serializer")
+
+        with _ContextStringIO(value) as payload:
+            magic, schema_id = unpack('>bI', payload.read(5))
+            if magic != _MAGIC_BYTE:
+                raise SerializationError("Unknown magic byte. This message was"
+                                         " not produced with a Confluent"
+                                         " Schema Registry serializer")
+
+            writer_schema = self._writer_schemas.get(schema_id, None)
+
+            if writer_schema is None:
+                schema = self._registry.get_schema(schema_id)
+                prepared_schema = _schema_loads(schema.schema_str)
+                writer_schema = parse_schema(loads(
+                    prepared_schema.schema_str), _named_schemas=self._named_schemas)
+                self._writer_schemas[schema_id] = writer_schema
+
+            obj_dict = schemaless_reader(payload,
+                                         writer_schema,
+                                         self._reader_schema,
+                                         self._return_record_name)
+
+            if self._from_dict is not None:
+                return self._from_dict(obj_dict, ctx)
+
+            return obj_dict
+
+
+
+
+
+
+
+
+
+
+
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
+
+with open(projectpath + '/config/shared-schemas/AlarmCategory.avsc', 'r') as file:
+    category_schema_str = file.read()
 
 with open(projectpath + '/config/subject-schemas/registered-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
@@ -25,7 +147,14 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-avro_deserializer = AvroDeserializer(schema_registry_client, value_schema_str)
+category_schema = Schema(category_schema_str, "AVRO", [])
+schema = Schema(value_schema_str, "AVRO", [category_schema])
+
+named_schemas = {}
+cat_dict = loads(category_schema_str)
+parse_schema(cat_dict, _named_schemas=named_schemas)
+
+avro_deserializer = AvroDeserializerWithReferences(schema_registry_client, None, None, False, named_schemas)
 string_deserializer = StringDeserializer('utf_8')
 
 ts = time.time()

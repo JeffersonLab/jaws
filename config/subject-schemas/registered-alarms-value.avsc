@@ -127,35 +127,7 @@
     },
     {
       "name": "category",
-      "type": [
-        "null",
-        {
-          "type": "enum",
-          "name": "AlarmCategory",
-          "doc": "Enumeration of possible categories; useful for consumers to filter out alarms of interest",
-          "symbols": [
-            "Aperture",
-            "BCM",
-            "Box",
-            "BPM",
-            "CAMAC",
-            "Crate",
-            "Dump",
-            "Gun",
-            "Harp",
-            "Helicity",
-            "IC",
-            "IOC",
-            "Laser",
-            "LCW",
-            "Misc",
-            "ODH",
-            "RADCON",
-            "RF",
-            "Vacuum"
-          ]
-        }
-      ]
+      "type": "AlarmCategory"
     },
     {
       "name": "priority",
