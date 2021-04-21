@@ -150,11 +150,6 @@ string_deserializer = StringDeserializer('utf_8')
 
 ts = time.time()
 
-consumer_conf = {'bootstrap.servers': bootstrap_servers,
-                 'key.deserializer': string_deserializer,
-                 'value.deserializer': avro_deserializer,
-                 'group.id': 'list-registered.py' + str(ts)}
-
 
 class EventSourceTable:
     __slots__ = ['_hash', '_config', '_on_initial_state', '_on_state_update', '_state', '_default_conf',
@@ -171,6 +166,11 @@ class EventSourceTable:
         self._empty = False
         self._default_conf = {}
         self._state = {}
+
+        consumer_conf = {'bootstrap.servers': config['bootstrap.servers'],
+                         'key.deserializer': config['key.deserializer'],
+                         'value.deserializer': config['value.deserializer'],
+                         'group.id': config['group.id']}
 
         c = DeserializingConsumer(consumer_conf)
         c.subscribe([config['topic']], on_assign=self._my_on_assign)
@@ -325,7 +325,12 @@ def handle_state_update(records):
 
 
 def list_records():
-    config = {'topic': 'registered-alarms', 'monitor': params.monitor}
+    config = {'topic': 'registered-alarms',
+              'monitor': params.monitor,
+              'bootstrap.servers': bootstrap_servers,
+              'key.deserializer': string_deserializer,
+              'value.deserializer': avro_deserializer,
+              'group.id': 'list-registered.py' + str(ts)}
     EventSourceTable(config, handle_initial_state, handle_state_update)
 
 
