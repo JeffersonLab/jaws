@@ -20,7 +20,6 @@ from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.serialization import StringDeserializer, SerializationError
 from confluent_kafka import OFFSET_BEGINNING
 
-
 from confluent_kafka.schema_registry import Schema
 
 from fastavro import parse_schema
@@ -59,7 +58,8 @@ class _ContextStringIO(BytesIO):
 
 
 class AvroDeserializerWithReferences(AvroDeserializer):
-    __slots__ = ['_reader_schema', '_registry', '_from_dict', '_writer_schemas', '_return_record_name', '_named_schemas']
+    __slots__ = ['_reader_schema', '_registry', '_from_dict', '_writer_schemas', '_return_record_name',
+                 '_named_schemas']
 
     def __init__(self, schema_registry_client, schema=None, from_dict=None, return_record_name=False, named_schemas={}):
         self._registry = schema_registry_client
@@ -124,15 +124,6 @@ class AvroDeserializerWithReferences(AvroDeserializer):
             return obj_dict
 
 
-
-
-
-
-
-
-
-
-
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
 
@@ -165,26 +156,95 @@ consumer_conf = {'bootstrap.servers': bootstrap_servers,
                  'group.id': 'list-registered.py' + str(ts)}
 
 
-registered = {}
+class EventSourceTable:
+    __slots__ = ['_hash', '_config', '_on_initial_state', '_on_state_update', '_state', '_default_conf',
+                 '_empty', '_high', '_low', '_run']
 
-empty = False
+    def __init__(self, config, on_initial_state, on_state_update):
+        self._config = config
+        self._on_initial_state = on_initial_state
+        self._on_state_update = on_state_update
 
-def my_on_assign(consumer, partitions):
-    # We are assuming one partition, otherwise low/high would each be array and checking against high water mark would probably not work since other partitions could still contain unread messages.
-    global low
-    global high
-    global empty
-    for p in partitions:
-        p.offset = OFFSET_BEGINNING
-        low, high = consumer.get_watermark_offsets(p)
-        if high == 0:
-            empty = True
-    consumer.assign(partitions)
+        self._run = True
+        self._low = None
+        self._high = None
+        self._empty = False
+        self._default_conf = {}
+        self._state = {}
+
+        c = DeserializingConsumer(consumer_conf)
+        c.subscribe([config['topic']], on_assign=self._my_on_assign)
+
+        while True:
+            try:
+                msg = c.poll(1.0)
+
+            except SerializationError as e:
+                print("Message deserialization failed for {}: {}".format(msg, e))
+                break
+
+            if self._empty:
+                break
+
+            if msg is None:
+                continue
+
+            if msg.error():
+                print("AvroConsumer error: {}".format(msg.error()))
+                continue
+
+            if msg.value() is None:
+                del self._state[msg.key()]
+            else:
+                self._state[msg.key()] = msg
+
+            if msg.offset() + 1 == self._high:
+                break
+
+        self._on_initial_state(self._state)
+
+        if not config['monitor']:
+            self._run = False
+
+        while self._run:
+            try:
+                msg = c.poll(1.0)
+
+            except SerializationError as e:
+                print("Message deserialization failed for {}: {}".format(msg, e))
+                break
+
+            if msg is None:
+                continue
+
+            if msg.error():
+                print("AvroConsumer error: {}".format(msg.error()))
+                continue
+
+            self._on_state_update(self._state)
+
+        c.close()
+
+    def stop(self):
+        self._run = False
+
+    def _my_on_assign(self, consumer, partitions):
+
+        for p in partitions:
+            p.offset = OFFSET_BEGINNING
+            self._low, self._high = consumer.get_watermark_offsets(p)
+
+            if self._high == 0:
+                self._empty = True
+
+        consumer.assign(partitions)
+
 
 def disp_row(msg):
     row = get_row(msg)
-    if(row is not None):
-        print(row) # TODO: format with a row template!
+    if (row is not None):
+        print(row)  # TODO: format with a row template!
+
 
 def get_row(msg):
     timestamp = msg.timestamp()
@@ -192,7 +252,9 @@ def get_row(msg):
     key = msg.key()
     value = msg.value()
 
-    row = [key, value["producer"], value["location"], value["category"], value["priority"], value["rationale"], value["correctiveaction"], value["pointofcontactusername"], value["latching"], value["filterable"], value["maskedby"], value["screenpath"]]
+    row = [key, value["producer"], value["location"], value["category"], value["priority"], value["rationale"],
+           value["correctiveaction"], value["pointofcontactusername"], value["latching"], value["filterable"],
+           value["maskedby"], value["screenpath"]]
 
     ts = time.ctime(timestamp[1] / 1000)
 
@@ -217,9 +279,10 @@ def get_row(msg):
 
     return row
 
-def disp_table():
 
-    head=["Alarm Name", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action", "P.O.C. Username", "Latching", "Filterable", "Masked By", "Screen Path"]
+def disp_table():
+    head = ["Alarm Name", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action",
+            "P.O.C. Username", "Latching", "Filterable", "Masked By", "Screen Path"]
     table = []
 
     if not params.nometa:
@@ -227,7 +290,7 @@ def disp_table():
 
     for msg in registered.values():
         row = get_row(msg)
-        if(row is not None):
+        if (row is not None):
             table.append(row)
 
     print(tabulate(table, head))
@@ -237,74 +300,41 @@ def export():
     for msg in registered.values():
         key = msg.key()
         value = msg.value()
-   
+
         if params.category is None or (value is not None and params.category == value['category']):
             v = json.dumps(value)
             print(key + '=' + v)
 
-def list():
-    c = DeserializingConsumer(consumer_conf)
 
-    c.subscribe(['registered-alarms'], on_assign=my_on_assign)
+registered = {}
 
-    while True:
-        try:
-            msg = c.poll(1.0)
 
-        except SerializationError as e:
-            print("Message deserialization failed for {}: {}".format(msg, e))
-            break
+def handle_initial_state(records):
+    global registered
 
-        if empty:
-            break
-
-        if msg is None:
-            continue
-
-        if msg.error():
-            print("AvroConsumer error: {}".format(msg.error()))
-            continue
-
-        if msg.value() is None:
-            del registered[msg.key()]
-        else:
-            registered[msg.key()] = msg
-
-        if msg.offset() + 1 == high:
-            break
+    registered = records
 
     if params.export:
         export()
     else:
         disp_table()
 
-    if params.monitor:
-        while True:
-            try:
-                msg = c.poll(1.0)
 
-            except SerializationError as e:
-                print("Message deserialization failed for {}: {}".format(msg, e))
-                break
+def handle_state_update(records):
+    disp_row(records)
 
-            if msg is None:
-                continue
 
-            if msg.error():
-                print("AvroConsumer error: {}".format(msg.error()))
-                continue
-
-            disp_row(msg)
-
-    c.close()
+def list_records():
+    config = {'topic': 'registered-alarms', 'monitor': params.monitor}
+    EventSourceTable(config, handle_initial_state, handle_state_update)
 
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
-@click.option('--export', is_flag=True, help="Dump records in AVRO JSON format such that they can be imported by set-registered.py; implies --nometa")
+@click.option('--export', is_flag=True,
+              help="Dump records in AVRO JSON format such that they can be imported by set-registered.py; implies --nometa")
 @click.option('--category', help="Only show registered alarms in the specified category")
-
 def cli(monitor, nometa, export, category):
     global params
 
@@ -315,6 +345,7 @@ def cli(monitor, nometa, export, category):
     params.export = export
     params.category = category
 
-    list()
+    list_records()
+
 
 cli()
