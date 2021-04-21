@@ -7,122 +7,13 @@ import time
 import json
 
 from json import loads
-
-from io import BytesIO
-from struct import unpack
-from fastavro import schemaless_reader
-
+from jlab_jaws.serde.avro import AvroDeserializerWithReferences
+from jlab_jaws.eventsource.table import EventSourceTable
 from tabulate import tabulate
-
-from confluent_kafka import DeserializingConsumer
-from confluent_kafka.schema_registry import SchemaRegistryClient, _MAGIC_BYTE, topic_subject_name_strategy
-from confluent_kafka.schema_registry.avro import AvroDeserializer
-from confluent_kafka.serialization import StringDeserializer, SerializationError
-from confluent_kafka import OFFSET_BEGINNING
-
+from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.serialization import StringDeserializer
 from confluent_kafka.schema_registry import Schema
-
 from fastavro import parse_schema
-
-
-def _schema_loads(schema_str):
-    """
-    Instantiates a Schema instance from a declaration string
-    Args:
-        schema_str (str): Avro Schema declaration.
-    .. _Schema declaration:
-        https://avro.apache.org/docs/current/spec.html#schemas
-    Returns:
-        Schema: Schema instance
-    """
-    schema_str = schema_str.strip()
-
-    # canonical form primitive declarations are not supported
-    if schema_str[0] != "{":
-        schema_str = '{"type":"' + schema_str + '"}'
-
-    return Schema(schema_str, schema_type='AVRO')
-
-
-class _ContextStringIO(BytesIO):
-    """
-    Wrapper to allow use of StringIO via 'with' constructs.
-    """
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        self.close()
-        return False
-
-
-class AvroDeserializerWithReferences(AvroDeserializer):
-    __slots__ = ['_reader_schema', '_registry', '_from_dict', '_writer_schemas', '_return_record_name',
-                 '_named_schemas']
-
-    def __init__(self, schema_registry_client, schema=None, from_dict=None, return_record_name=False, named_schemas={}):
-        self._registry = schema_registry_client
-        self._writer_schemas = {}
-
-        self._reader_schema = schema
-        self._named_schemas = named_schemas
-
-        if from_dict is not None and not callable(from_dict):
-            raise ValueError("from_dict must be callable with the signature"
-                             " from_dict(SerializationContext, dict) -> object")
-        self._from_dict = from_dict
-
-        self._return_record_name = return_record_name
-        if not isinstance(self._return_record_name, bool):
-            raise ValueError("return_record_name must be a boolean value")
-
-    def __call__(self, value, ctx):
-        """
-        Decodes a Confluent Schema Registry formatted Avro bytes to an object.
-        Arguments:
-            value (bytes): bytes
-            ctx (SerializationContext): Metadata pertaining to the serialization
-                operation.
-        Raises:
-            SerializerError: if an error occurs ready data.
-        Returns:
-            object: object if ``from_dict`` is set, otherwise dict. If no value is supplied None is returned.
-        """  # noqa: E501
-        if value is None:
-            return None
-
-        if len(value) <= 5:
-            raise SerializationError("Message too small. This message was not"
-                                     " produced with a Confluent"
-                                     " Schema Registry serializer")
-
-        with _ContextStringIO(value) as payload:
-            magic, schema_id = unpack('>bI', payload.read(5))
-            if magic != _MAGIC_BYTE:
-                raise SerializationError("Unknown magic byte. This message was"
-                                         " not produced with a Confluent"
-                                         " Schema Registry serializer")
-
-            writer_schema = self._writer_schemas.get(schema_id, None)
-
-            if writer_schema is None:
-                schema = self._registry.get_schema(schema_id)
-                prepared_schema = _schema_loads(schema.schema_str)
-                writer_schema = parse_schema(loads(
-                    prepared_schema.schema_str), _named_schemas=self._named_schemas)
-                self._writer_schemas[schema_id] = writer_schema
-
-            obj_dict = schemaless_reader(payload,
-                                         writer_schema,
-                                         self._reader_schema,
-                                         self._return_record_name)
-
-            if self._from_dict is not None:
-                return self._from_dict(obj_dict, ctx)
-
-            return obj_dict
-
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
@@ -143,101 +34,12 @@ schema = Schema(value_schema_str, "AVRO", [category_schema])
 
 named_schemas = {}
 cat_dict = loads(category_schema_str)
-parse_schema(cat_dict, _named_schemas=named_schemas)
+parse_schema(cat_dict, named_schemas=named_schemas)
 
 avro_deserializer = AvroDeserializerWithReferences(schema_registry_client, None, None, False, named_schemas)
 string_deserializer = StringDeserializer('utf_8')
 
 ts = time.time()
-
-
-class EventSourceTable:
-    __slots__ = ['_hash', '_config', '_on_initial_state', '_on_state_update', '_state', '_default_conf',
-                 '_empty', '_high', '_low', '_run']
-
-    def __init__(self, config, on_initial_state, on_state_update):
-        self._config = config
-        self._on_initial_state = on_initial_state
-        self._on_state_update = on_state_update
-
-        self._run = True
-        self._low = None
-        self._high = None
-        self._empty = False
-        self._default_conf = {}
-        self._state = {}
-
-        consumer_conf = {'bootstrap.servers': config['bootstrap.servers'],
-                         'key.deserializer': config['key.deserializer'],
-                         'value.deserializer': config['value.deserializer'],
-                         'group.id': config['group.id']}
-
-        c = DeserializingConsumer(consumer_conf)
-        c.subscribe([config['topic']], on_assign=self._my_on_assign)
-
-        while True:
-            try:
-                msg = c.poll(1.0)
-
-            except SerializationError as e:
-                print("Message deserialization failed for {}: {}".format(msg, e))
-                break
-
-            if self._empty:
-                break
-
-            if msg is None:
-                continue
-
-            if msg.error():
-                print("AvroConsumer error: {}".format(msg.error()))
-                continue
-
-            if msg.value() is None:
-                del self._state[msg.key()]
-            else:
-                self._state[msg.key()] = msg
-
-            if msg.offset() + 1 == self._high:
-                break
-
-        self._on_initial_state(self._state)
-
-        if not config['monitor']:
-            self._run = False
-
-        while self._run:
-            try:
-                msg = c.poll(1.0)
-
-            except SerializationError as e:
-                print("Message deserialization failed for {}: {}".format(msg, e))
-                break
-
-            if msg is None:
-                continue
-
-            if msg.error():
-                print("AvroConsumer error: {}".format(msg.error()))
-                continue
-
-            self._on_state_update(self._state)
-
-        c.close()
-
-    def stop(self):
-        self._run = False
-
-    def _my_on_assign(self, consumer, partitions):
-
-        for p in partitions:
-            p.offset = OFFSET_BEGINNING
-            self._low, self._high = consumer.get_watermark_offsets(p)
-
-            if self._high == 0:
-                self._empty = True
-
-        consumer.assign(partitions)
 
 
 def disp_row(msg):
