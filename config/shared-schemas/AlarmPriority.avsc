@@ -1,0 +1,12 @@
+{
+  "type": "enum",
+  "name": "AlarmPriority",
+  "namespace": "org.jlab.jaws.entity",
+  "doc": "Enumeration of possible priorities; useful for operators to know which alarms to handle first",
+  "symbols": [
+    "P1_CRITICAL",
+    "P2_MAJOR",
+    "P3_MINOR",
+    "P4_INCIDENTAL"
+  ]
+}

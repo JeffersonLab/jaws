@@ -24,6 +24,9 @@ with open(projectpath + '/config/shared-schemas/AlarmLocation.avsc', 'r') as fil
 with open(projectpath + '/config/shared-schemas/AlarmCategory.avsc', 'r') as file:
     category_schema_str = file.read()
 
+with open(projectpath + '/config/shared-schemas/AlarmPriority.avsc', 'r') as file:
+    priority_schema_str = file.read()
+
 with open(projectpath + '/config/subject-schemas/registered-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
@@ -32,13 +35,15 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-category_schema = Schema(category_schema_str, "AVRO", [])
-schema = Schema(value_schema_str, "AVRO", [category_schema])
+#category_schema = Schema(category_schema_str, "AVRO", [])
+#schema = Schema(value_schema_str, "AVRO", [category_schema])
 
 named_schemas = {}
 ref_dict = loads(location_schema_str)
 parse_schema(ref_dict, named_schemas=named_schemas)
 ref_dict = loads(category_schema_str)
+parse_schema(ref_dict, named_schemas=named_schemas)
+ref_dict = loads(priority_schema_str)
 parse_schema(ref_dict, named_schemas=named_schemas)
 
 avro_deserializer = AvroDeserializerWithReferences(schema_registry_client, None, None, False, named_schemas)

@@ -70,30 +70,22 @@
       "type": [
         "null",
         "AlarmLocation"
-      ]
+      ],
+      "doc": "The alarm location"
     },
     {
       "name": "category",
       "type": [
         "null",
         "AlarmCategory"
-      ]
+      ],
+      "doc": "The alarm category"
     },
     {
       "name": "priority",
       "type": [
         "null",
-        {
-          "type": "enum",
-          "name": "AlarmPriority",
-          "doc": "Enumeration of possible priorities; useful for operators to know which alarms to handle first",
-          "symbols": [
-            "P1_CRITICAL",
-            "P2_MAJOR",
-            "P3_MINOR",
-            "P4_INCIDENTAL"
-          ]
-        }
+        "AlarmPriority"
       ],
       "doc": "The alarm priority"
     },

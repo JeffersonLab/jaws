@@ -25,6 +25,9 @@ with open(projectpath + '/config/shared-schemas/AlarmLocation.avsc', 'r') as fil
 with open(projectpath + '/config/shared-schemas/AlarmCategory.avsc', 'r') as file:
     category_schema_str = file.read()
 
+with open(projectpath + '/config/shared-schemas/AlarmPriority.avsc', 'r') as file:
+    priority_schema_str = file.read()
+
 with open(projectpath + '/config/subject-schemas/registered-alarms-value.avsc', 'r') as file:
     value_schema_str = file.read()
 
@@ -43,14 +46,16 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 
 named_schemas = {}
 ref_dict = loads(location_schema_str)
-parse_schema(ref_dict, named_schemas=named_schemas)
+location_schema = parse_schema(ref_dict, named_schemas=named_schemas)
 ref_dict = loads(category_schema_str)
-parse_schema(ref_dict, named_schemas=named_schemas)
+category_schema = parse_schema(ref_dict, named_schemas=named_schemas)
+ref_dict = loads(priority_schema_str)
+priority_schema = parse_schema(ref_dict, named_schemas=named_schemas)
 
-category_schema = Schema(category_schema_str, "AVRO", [])
 location_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmLocation", "alarm-location", "1")
 category_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmCategory", "alarm-category", "1")
-schema = Schema(value_schema_str, "AVRO", [location_schema_ref, category_schema_ref])
+priority_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmPriority", "alarm-priority", "1")
+schema = Schema(value_schema_str, "AVRO", [location_schema_ref, category_schema_ref, priority_schema_ref])
 
 avro_serializer = AvroSerializerWithReferences(schema_registry_client, schema, None, None, named_schemas)
 
@@ -62,9 +67,9 @@ categories = ["RF"]
 priorities = []
 
 #groups = value_schema.fields[0].type.symbols
-#locations = value_schema.fields[2].type.schemas[1].symbols
-#categories = value_schema.fields[3].type.schemas[1].symbols
-#priorities = value_schema.fields[4].type.schemas[1].symbols
+locations = location_schema['symbols']
+categories = category_schema['symbols']
+priorities = priority_schema['symbols']
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': StringSerializer('utf_8'),
