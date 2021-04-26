@@ -100,15 +100,6 @@ def doImport(file) :
        v = json.loads(value)
        print("{}={}".format(key, v))
 
-       # Trying to work around union serialization issues: https://github.com/confluentinc/confluent-kafka-python/pull/785
-       # Note that kafka-avro-console-consumer provided by Confluent requires proper JSON AVRO encoding https://avro.apache.org/docs/current/spec.html#json_encoding
-       if 'org.jlab.alarms.EPICSProducer' in v['producer']:
-           v['producer'] = v['producer']['org.jlab.alarms.EPICSProducer']
-       elif 'org.jlab.alarms.StreamRuleProducer' in v['producer']:
-           v['producer'] = v['producer']['org.jlab.alarms.StreamRuleProducer']
-       else:
-           v['producer'] = v['producer']['org.jlab.alarms.SimpleProducer']
-
        producer.produce(topic=topic, value=v, key=key, headers=hdrs)
 
    producer.flush()
@@ -150,11 +141,11 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
                 raise click.ClickException("Must specify one of --producersimple, --producerpv, --producerexpression")
 
             if producersimple:
-                producer = {}
+                producer = ("org.jlab.jaws.entity.SimpleProducer", {})
             elif producerpv:
-                producer = {"pv": producerpv}
+                producer = ("org.jlab.jaws.entity.EPICSProducer", {"pv": producerpv})
             else:
-                producer = {"expression" : producerexpression}
+                producer = ("org.jlab.jaws.entity.StreamRuleProducer", {"expression": producerexpression})
 
             params.value = {"class": alarmclass, "producer": producer, "location": location, "category": category, "priority": priority, "filterable": filterable, "latching": latching, "screenpath": screenpath, "pointofcontactusername": pointofcontactusername, "rationale": rationale, "correctiveaction": correctiveaction, "maskedby": maskedby}
 

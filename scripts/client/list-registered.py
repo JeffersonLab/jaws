@@ -12,7 +12,6 @@ from jlab_jaws.eventsource.table import EventSourceTable
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
-from confluent_kafka.schema_registry import Schema
 from fastavro import parse_schema
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
@@ -38,9 +37,6 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-#category_schema = Schema(category_schema_str, "AVRO", [])
-#schema = Schema(value_schema_str, "AVRO", [category_schema])
-
 named_schemas = {}
 ref_dict = loads(class_schema_str)
 parse_schema(ref_dict, named_schemas=named_schemas)
@@ -51,7 +47,7 @@ parse_schema(ref_dict, named_schemas=named_schemas)
 ref_dict = loads(priority_schema_str)
 parse_schema(ref_dict, named_schemas=named_schemas)
 
-avro_deserializer = AvroDeserializerWithReferences(schema_registry_client, None, None, False, named_schemas)
+avro_deserializer = AvroDeserializerWithReferences(schema_registry_client, None, None, True, named_schemas)
 string_deserializer = StringDeserializer('utf_8')
 
 ts = time.time()
@@ -63,15 +59,32 @@ def disp_row(msg):
         print(row)  # TODO: format with a row template!
 
 
+def disp_ref(ref):
+    if ref != None:
+        result = ref[1]
+    else:
+        result = None
+    return result
+
 def get_row(msg):
     timestamp = msg.timestamp()
     headers = msg.headers()
     key = msg.key()
     value = msg.value()
 
-    row = [key, value["class"], value["producer"], value["location"], value["category"], value["priority"], value["rationale"],
-           value["correctiveaction"], value["pointofcontactusername"], value["latching"], value["filterable"],
-           value["maskedby"], value["screenpath"]]
+    row = [key,
+           value["class"],
+           value["producer"],
+           disp_ref(value["location"]),
+           disp_ref(value["category"]),
+           disp_ref(value["priority"]),
+           value["rationale"],
+           value["correctiveaction"],
+           value["pointofcontactusername"],
+           value["latching"],
+           value["filterable"],
+           value["maskedby"],
+           value["screenpath"]]
 
     ts = time.ctime(timestamp[1] / 1000)
 
