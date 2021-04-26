@@ -1,0 +1,64 @@
+{
+  "type": "record",
+  "name": "RegisteredClass",
+  "doc": "An alarm class",
+  "namespace": "org.jlab.jaws.entity",
+  "fields": [
+    {
+      "name": "location",
+      "type": "AlarmLocation",
+      "doc": "The alarm location"
+    },
+    {
+      "name": "category",
+      "type": "AlarmCategory",
+      "doc": "The alarm category"
+    },
+    {
+      "name": "priority",
+      "type": "AlarmPriority",
+      "doc": "The alarm priority"
+    },
+    {
+      "name": "latching",
+      "type": "boolean",
+      "doc": "Indicates whether this alarm latches when activated and can only be cleared after an explicit acknowledgement",
+      "default": false
+    },
+    {
+      "name": "filterable",
+      "type": "boolean",
+      "doc": "Indicates whether this alarm can be filtered out of view (typically done when a portion of the machine is turned off).  Some alarms must always be monitored, regardless of program.",
+      "default": true
+    },
+    {
+      "name": "ondelayseconds",
+      "type": [
+        "null",
+        "long"
+      ],
+      "doc": "The number of seconds of on-delay"
+    },
+    {
+      "name": "offdelayseconds",
+      "type": [
+        "null",
+        "long"
+      ],
+      "doc": "The number of seconds of off-delay"
+    },
+    {
+      "name": "maskedby",
+      "type": [
+        "null",
+        "string"
+      ],
+      "doc": "The name of the parent alarm, which if active, masks this alarm (flood suppression via logical hierarchy)"
+    },
+    {
+      "name": "screenpath",
+      "type": "string",
+      "doc": "The path the alarm screen display"
+    }
+  ]
+}

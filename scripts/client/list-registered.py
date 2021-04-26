@@ -18,6 +18,9 @@ from fastavro import parse_schema
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
 
+with open(projectpath + '/config/shared-schemas/AlarmClass.avsc', 'r') as file:
+    class_schema_str = file.read()
+
 with open(projectpath + '/config/shared-schemas/AlarmLocation.avsc', 'r') as file:
     location_schema_str = file.read()
 
@@ -39,6 +42,8 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 #schema = Schema(value_schema_str, "AVRO", [category_schema])
 
 named_schemas = {}
+ref_dict = loads(class_schema_str)
+parse_schema(ref_dict, named_schemas=named_schemas)
 ref_dict = loads(location_schema_str)
 parse_schema(ref_dict, named_schemas=named_schemas)
 ref_dict = loads(category_schema_str)
@@ -64,7 +69,7 @@ def get_row(msg):
     key = msg.key()
     value = msg.value()
 
-    row = [key, value["producer"], value["location"], value["category"], value["priority"], value["rationale"],
+    row = [key, value["class"], value["producer"], value["location"], value["category"], value["priority"], value["rationale"],
            value["correctiveaction"], value["pointofcontactusername"], value["latching"], value["filterable"],
            value["maskedby"], value["screenpath"]]
 
@@ -93,7 +98,7 @@ def get_row(msg):
 
 
 def disp_table():
-    head = ["Alarm Name", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action",
+    head = ["Alarm Name", "Class", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action",
             "P.O.C. Username", "Latching", "Filterable", "Masked By", "Screen Path"]
     table = []
 

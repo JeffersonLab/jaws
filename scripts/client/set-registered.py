@@ -19,6 +19,9 @@ from jlab_jaws.serde.avro import AvroSerializerWithReferences
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
 
+with open(projectpath + '/config/shared-schemas/AlarmClass.avsc', 'r') as file:
+    class_schema_str = file.read()
+
 with open(projectpath + '/config/shared-schemas/AlarmLocation.avsc', 'r') as file:
     location_schema_str = file.read()
 
@@ -45,6 +48,8 @@ sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 named_schemas = {}
+ref_dict = loads(class_schema_str)
+class_schema = parse_schema(ref_dict, named_schemas=named_schemas)
 ref_dict = loads(location_schema_str)
 location_schema = parse_schema(ref_dict, named_schemas=named_schemas)
 ref_dict = loads(category_schema_str)
@@ -52,21 +57,15 @@ category_schema = parse_schema(ref_dict, named_schemas=named_schemas)
 ref_dict = loads(priority_schema_str)
 priority_schema = parse_schema(ref_dict, named_schemas=named_schemas)
 
+class_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmClass", "alarm-class", "1")
 location_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmLocation", "alarm-location", "1")
 category_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmCategory", "alarm-category", "1")
 priority_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmPriority", "alarm-priority", "1")
-schema = Schema(value_schema_str, "AVRO", [location_schema_ref, category_schema_ref, priority_schema_ref])
+schema = Schema(value_schema_str, "AVRO", [class_schema_ref, location_schema_ref, category_schema_ref, priority_schema_ref])
 
 avro_serializer = AvroSerializerWithReferences(schema_registry_client, schema, None, None, named_schemas)
 
-#value_schema = avro.schema.Parse(value_schema_str)
-
-groups = []
-locations = []
-categories = ["RF"]
-priorities = []
-
-#groups = value_schema.fields[0].type.symbols
+classes = class_schema['symbols']
 locations = location_schema['symbols']
 categories = category_schema['symbols']
 priorities = priority_schema['symbols']
@@ -118,7 +117,7 @@ def doImport(file) :
 @click.command()
 @click.option('--file', is_flag=True, help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the registered-alarms-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
-@click.option('--group', type=click.Choice(groups), help="The alarm group")
+@click.option('--alarmclass', type=click.Choice(classes), help="The alarm class")
 @click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")
 @click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm")
 @click.option('--producerexpression', help="The CALC expression used to generate this alarm")
@@ -134,7 +133,7 @@ def doImport(file) :
 @click.option('--maskedby', help="The optional parent alarm that masks this one")
 @click.argument('name')
 
-def cli(file, unset, group, producersimple, producerpv, producerexpression, location, category, priority, filterable, latching, screenpath, pointofcontactusername, rationale, correctiveaction, maskedby, name):
+def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression, location, category, priority, filterable, latching, screenpath, pointofcontactusername, rationale, correctiveaction, maskedby, name):
     global params
 
     params = types.SimpleNamespace()
@@ -157,10 +156,10 @@ def cli(file, unset, group, producersimple, producerpv, producerexpression, loca
             else:
                 producer = {"expression" : producerexpression}
 
-            params.value = {"group": group, "producer": producer, "location": location, "category": category, "priority": priority, "filterable": filterable, "latching": latching, "screenpath": screenpath, "pointofcontactusername": pointofcontactusername, "rationale": rationale, "correctiveaction": correctiveaction, "maskedby": maskedby}
+            params.value = {"class": alarmclass, "producer": producer, "location": location, "category": category, "priority": priority, "filterable": filterable, "latching": latching, "screenpath": screenpath, "pointofcontactusername": pointofcontactusername, "rationale": rationale, "correctiveaction": correctiveaction, "maskedby": maskedby}
 
-            if group is None:
-                params.value["group"] = "Default_Group"
+            if alarmclass is None:
+                params.value["class"] = "Base_Class"
 
             print('Message: {}'.format(params.value))
 
