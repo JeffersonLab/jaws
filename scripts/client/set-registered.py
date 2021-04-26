@@ -19,6 +19,9 @@ from jlab_jaws.serde.avro import AvroSerializerWithReferences
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
 
+with open(projectpath + '/config/shared-schemas/AlarmLocation.avsc', 'r') as file:
+    location_schema_str = file.read()
+
 with open(projectpath + '/config/shared-schemas/AlarmCategory.avsc', 'r') as file:
     category_schema_str = file.read()
 
@@ -39,12 +42,15 @@ sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 named_schemas = {}
+ref_dict = loads(location_schema_str)
+parse_schema(ref_dict, named_schemas=named_schemas)
 ref_dict = loads(category_schema_str)
 parse_schema(ref_dict, named_schemas=named_schemas)
 
 category_schema = Schema(category_schema_str, "AVRO", [])
+location_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmLocation", "alarm-location", "1")
 category_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmCategory", "alarm-category", "1")
-schema = Schema(value_schema_str, "AVRO", [category_schema_ref])
+schema = Schema(value_schema_str, "AVRO", [location_schema_ref, category_schema_ref])
 
 avro_serializer = AvroSerializerWithReferences(schema_registry_client, schema, None, None, named_schemas)
 

@@ -1,7 +1,11 @@
 [
+  {"file": "config/shared-schemas/AlarmLocation.avsc", "subject": "alarm-location", "references": []},
   {"file": "config/shared-schemas/AlarmCategory.avsc", "subject": "alarm-category", "references": []},
   {"file": "config/subject-schemas/active-alarms-value.avsc", "subject": "active-alarms-value", "references": []},
-  {"file": "config/subject-schemas/registered-alarms-value.avsc", "subject": "registered-alarms-value", "references": [{"name": "org.jlab.jaws.entity.AlarmCategory", "subject": "alarm-category", "version": "1"}]},
+  {"file": "config/subject-schemas/registered-alarms-value.avsc", "subject": "registered-alarms-value", "references": [
+    {"name": "org.jlab.jaws.entity.AlarmLocation", "subject": "alarm-location", "version": "1"},
+    {"name": "org.jlab.jaws.entity.AlarmCategory", "subject": "alarm-category", "version": "1"}
+  ]},
   {"file": "config/subject-schemas/overridden-alarms-value.avsc", "subject": "overridden-alarms-value", "references": []},
   {"file": "config/subject-schemas/overridden-alarms-key.avsc", "subject": "overridden-alarms-key", "references": []},
   {"file": "config/subject-schemas/registered-groups-key.avsc", "subject": "registered-groups-key", "references": []},

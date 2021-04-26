@@ -18,6 +18,9 @@ from fastavro import parse_schema
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
 
+with open(projectpath + '/config/shared-schemas/AlarmLocation.avsc', 'r') as file:
+    location_schema_str = file.read()
+
 with open(projectpath + '/config/shared-schemas/AlarmCategory.avsc', 'r') as file:
     category_schema_str = file.read()
 
@@ -33,8 +36,10 @@ category_schema = Schema(category_schema_str, "AVRO", [])
 schema = Schema(value_schema_str, "AVRO", [category_schema])
 
 named_schemas = {}
-cat_dict = loads(category_schema_str)
-parse_schema(cat_dict, named_schemas=named_schemas)
+ref_dict = loads(location_schema_str)
+parse_schema(ref_dict, named_schemas=named_schemas)
+ref_dict = loads(category_schema_str)
+parse_schema(ref_dict, named_schemas=named_schemas)
 
 avro_deserializer = AvroDeserializerWithReferences(schema_registry_client, None, None, False, named_schemas)
 string_deserializer = StringDeserializer('utf_8')
