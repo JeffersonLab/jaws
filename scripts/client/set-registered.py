@@ -100,7 +100,6 @@ def doImport(file) :
        v = json.loads(value)
        print("{}={}".format(key, v))
 
-       # Note that kafka-avro-console-consumer provided by Confluent requires proper JSON AVRO encoding https://avro.apache.org/docs/current/spec.html#json_encoding
        # confluent-kafka-python uses a tuple to differentiate unions, not a JSON structure as in AVRO spec.  See: https://github.com/confluentinc/confluent-kafka-python/issues/656
        if 'org.jlab.jaws.entity.EPICSProducer' in v['producer']:
            v['producer'] = ("org.jlab.jaws.entity.EPICSProducer", v['producer']['org.jlab.jaws.entity.EPICSProducer'])
