@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import pkgutil
 import types
 import click
 import time
@@ -14,23 +15,20 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
 from fastavro import parse_schema
 
-scriptpath = os.path.dirname(os.path.realpath(__file__))
-projectpath = scriptpath + '/../../'
+class_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmClass.avsc")
+class_schema_str = class_bytes.decode('utf-8')
 
-with open(projectpath + '/config/shared-schemas/AlarmClass.avsc', 'r') as file:
-    class_schema_str = file.read()
+location_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmLocation.avsc")
+location_schema_str = location_bytes.decode('utf-8')
 
-with open(projectpath + '/config/shared-schemas/AlarmLocation.avsc', 'r') as file:
-    location_schema_str = file.read()
+category_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmCategory.avsc")
+category_schema_str = category_bytes.decode('utf-8')
 
-with open(projectpath + '/config/shared-schemas/AlarmCategory.avsc', 'r') as file:
-    category_schema_str = file.read()
+priority_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmPriority.avsc")
+priority_schema_str = priority_bytes.decode('utf-8')
 
-with open(projectpath + '/config/shared-schemas/AlarmPriority.avsc', 'r') as file:
-    priority_schema_str = file.read()
-
-with open(projectpath + '/config/subject-schemas/registered-alarms-value.avsc', 'r') as file:
-    value_schema_str = file.read()
+value_bytes = pkgutil.get_data("jlab_jaws", "avro/subject_schemas/registered-alarms-value.avsc")
+value_schema_str = value_bytes.decode('utf-8')
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -55,16 +53,17 @@ ts = time.time()
 
 def disp_row(msg):
     row = get_row(msg)
-    if (row is not None):
+    if row is not None:
         print(row)  # TODO: format with a row template!
 
 
 def disp_ref(ref):
-    if ref != None:
+    if ref is not None:
         result = ref[1]
     else:
         result = None
     return result
+
 
 def get_row(msg):
     timestamp = msg.timestamp()
@@ -120,7 +119,7 @@ def disp_table():
 
     for msg in registered.values():
         row = get_row(msg)
-        if (row is not None):
+        if row is not None:
             table.append(row)
 
     print(tabulate(table, head))
