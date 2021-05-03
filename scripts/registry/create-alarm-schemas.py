@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 
-import os, json
+import json
+import os
+import pkgutil
 
 from confluent_kafka.schema_registry import SchemaRegistryClient, Schema, SchemaReference
-
-scriptpath = os.path.dirname(os.path.realpath(__file__))
-projectpath = scriptpath + '/../../'
 
 sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
 
-def register(file, subject, references=[]):
-    with open(file, 'r') as f:
-        schema_str = f.read()
 
-    unregistered_schema = Schema(schema_str, 'AVRO', references)
+def register(file, subject, references=[]):
+
+    schema_bytes = pkgutil.get_data("jlab_jaws", file)
+
+    json_dict = json.loads(schema_bytes)
+
+    json_str = json.dumps(json_dict)
+
+    unregistered_schema = Schema(json_str, 'AVRO', references)
 
     id = client.register_schema(subject, unregistered_schema)
 
@@ -24,10 +28,8 @@ def register(file, subject, references=[]):
 
     return registered_schema
 
-def process(record):
-    if not record['file'].startswith('/'):
-        record['file'] = projectpath + record['file']
 
+def process(record):
     references = []
 
     for ref in record['references']:
@@ -35,10 +37,9 @@ def process(record):
 
     s = register(record['file'], record['subject'], references)
 
-conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schema-registry.json')
 
-with open(conf, 'r') as f:
-    str = f.read()
-    records = json.loads(str)
-    for record in records:
-        process(record)
+conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
+
+records = json.loads(conf)
+for r in records:
+    process(r)
