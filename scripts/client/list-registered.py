@@ -1,21 +1,16 @@
 #!/usr/bin/env python3
 
 import os
-import pkgutil
 import types
 import click
 import time
 import json
 
-from json import loads
-
-from jlab_jaws.serde.avro import AvroDeserializerWithReferences
-from jlab_jaws.avro.subject_schemas.entities import RegisteredAlarm, SimpleProducer
 from jlab_jaws.eventsource.table import EventSourceTable
+from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
-from fastavro import parse_schema
 
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
@@ -24,7 +19,7 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 key_deserializer = StringDeserializer('utf_8')
-value_deserializer = get_registered_alarm_deserializer()
+value_deserializer = RegisteredAlarmSerde.get_registered_alarm_deserializer(schema_registry_client)
 
 ts = time.time()
 
@@ -42,7 +37,7 @@ def get_row(msg):
     value = msg.value()
 
     row = [key,
-           value.alarmClass,
+           value.alarm_class,
            value.producer,
            value.location,
            value.category,
