@@ -1,37 +1,20 @@
 #!/usr/bin/env python3
 
 import os
-import pkgutil
 
 import pwd
 import types
 import click
 import json
 
-from json import loads
-from fastavro import parse_schema
 
 from confluent_kafka import SerializingProducer
 from confluent_kafka.serialization import StringSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
-from confluent_kafka.schema_registry import Schema, SchemaReference
-from jlab_jaws.serde.avro import AvroSerializerWithReferences
-
-class_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmClass.avsc")
-class_schema_str = class_bytes.decode('utf-8')
-
-location_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmLocation.avsc")
-location_schema_str = location_bytes.decode('utf-8')
-
-category_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmCategory.avsc")
-category_schema_str = category_bytes.decode('utf-8')
-
-priority_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmPriority.avsc")
-priority_schema_str = priority_bytes.decode('utf-8')
-
-value_bytes = pkgutil.get_data("jlab_jaws", "avro/subject_schemas/registered-alarms-value.avsc")
-value_schema_str = value_bytes.decode('utf-8')
+from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde
+from jlab_jaws.avro.subject_schemas.entities import RegisteredAlarm
+from jlab_jaws.avro.referenced_schemas.entities import AlarmClass, AlarmLocation, AlarmCategory, AlarmPriority
 
 
 def delivery_report(err, msg):
@@ -48,29 +31,13 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-named_schemas = {}
-ref_dict = loads(class_schema_str)
-class_schema = parse_schema(ref_dict, named_schemas=named_schemas)
-ref_dict = loads(location_schema_str)
-location_schema = parse_schema(ref_dict, named_schemas=named_schemas)
-ref_dict = loads(category_schema_str)
-category_schema = parse_schema(ref_dict, named_schemas=named_schemas)
-ref_dict = loads(priority_schema_str)
-priority_schema = parse_schema(ref_dict, named_schemas=named_schemas)
 
-class_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmClass", "alarm-class", "1")
-location_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmLocation", "alarm-location", "1")
-category_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmCategory", "alarm-category", "1")
-priority_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmPriority", "alarm-priority", "1")
-schema = Schema(value_schema_str, "AVRO",
-                [class_schema_ref, location_schema_ref, category_schema_ref, priority_schema_ref])
+avro_serializer = RegisteredAlarmSerde.get_registered_alarm_serializer(schema_registry_client)
 
-avro_serializer = AvroSerializerWithReferences(schema_registry_client, schema, None, None, named_schemas)
-
-classes = class_schema['symbols']
-locations = location_schema['symbols']
-categories = category_schema['symbols']
-priorities = priority_schema['symbols']
+classes = AlarmClass._member_names_
+locations = AlarmLocation._member_names_
+categories = AlarmCategory._member_names_
+priorities = AlarmPriority._member_names_
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': StringSerializer('utf_8'),
@@ -139,10 +106,12 @@ def doImport(file):
 @click.option('--rationale', help="The alarm rationale")
 @click.option('--correctiveaction', help="The corrective action")
 @click.option('--maskedby', help="The optional parent alarm that masks this one")
+@click.option('--ondelayseconds', type=int, default=None, help="Number of on delay seconds")
+@click.option('--offdelayseconds', type=int, default=None, help="Number of off delay seconds")
 @click.argument('name')
 def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression, location, category,
         priority, filterable, latching, screenpath, pointofcontactusername, rationale,
-        correctiveaction, maskedby, name):
+        correctiveaction, maskedby, ondelayseconds, offdelayseconds, name):
     global params
 
     params = types.SimpleNamespace()
@@ -165,13 +134,12 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
             else:
                 producer = ("org.jlab.jaws.entity.StreamRuleProducer", {"expression": producerexpression})
 
-            params.value = {"class": alarmclass, "producer": producer, "location": location, "category": category,
-                            "priority": priority, "filterable": filterable, "latching": latching,
-                            "screenpath": screenpath, "pointofcontactusername": pointofcontactusername,
-                            "rationale": rationale, "correctiveaction": correctiveaction, "maskedby": maskedby}
-
             if alarmclass is None:
-                params.value["class"] = "Base_Class"
+                alarmclass = "Base_Class"
+
+            params.value = RegisteredAlarm(location, category, priority, rationale, correctiveaction,
+                                           pointofcontactusername, latching, filterable,
+                                           ondelayseconds, offdelayseconds, maskedby, screenpath, alarmclass, producer)
 
             print('Message: {}'.format(params.value))
 

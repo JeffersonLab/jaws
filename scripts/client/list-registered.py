@@ -19,7 +19,7 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 key_deserializer = StringDeserializer('utf_8')
-value_deserializer = RegisteredAlarmSerde.get_registered_alarm_deserializer(schema_registry_client)
+value_deserializer = RegisteredAlarmSerde.deserializer(schema_registry_client)
 
 ts = time.time()
 
