@@ -8,45 +8,23 @@ import time
 import json
 
 from json import loads
+
 from jlab_jaws.serde.avro import AvroDeserializerWithReferences
+from jlab_jaws.avro.subject_schemas.entities import RegisteredAlarm, SimpleProducer
 from jlab_jaws.eventsource.table import EventSourceTable
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
 from fastavro import parse_schema
 
-class_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmClass.avsc")
-class_schema_str = class_bytes.decode('utf-8')
-
-location_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmLocation.avsc")
-location_schema_str = location_bytes.decode('utf-8')
-
-category_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmCategory.avsc")
-category_schema_str = category_bytes.decode('utf-8')
-
-priority_bytes = pkgutil.get_data("jlab_jaws", "avro/referenced_schemas/AlarmPriority.avsc")
-priority_schema_str = priority_bytes.decode('utf-8')
-
-value_bytes = pkgutil.get_data("jlab_jaws", "avro/subject_schemas/registered-alarms-value.avsc")
-value_schema_str = value_bytes.decode('utf-8')
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-named_schemas = {}
-ref_dict = loads(class_schema_str)
-parse_schema(ref_dict, named_schemas=named_schemas)
-ref_dict = loads(location_schema_str)
-parse_schema(ref_dict, named_schemas=named_schemas)
-ref_dict = loads(category_schema_str)
-parse_schema(ref_dict, named_schemas=named_schemas)
-ref_dict = loads(priority_schema_str)
-parse_schema(ref_dict, named_schemas=named_schemas)
-
-avro_deserializer = AvroDeserializerWithReferences(schema_registry_client, None, None, True, named_schemas)
-string_deserializer = StringDeserializer('utf_8')
+key_deserializer = StringDeserializer('utf_8')
+value_deserializer = get_registered_alarm_deserializer()
 
 ts = time.time()
 
@@ -57,14 +35,6 @@ def disp_row(msg):
         print(row)  # TODO: format with a row template!
 
 
-def disp_ref(ref):
-    if ref is not None:
-        result = ref[1]
-    else:
-        result = None
-    return result
-
-
 def get_row(msg):
     timestamp = msg.timestamp()
     headers = msg.headers()
@@ -72,18 +42,18 @@ def get_row(msg):
     value = msg.value()
 
     row = [key,
-           value["class"],
-           value["producer"],
-           disp_ref(value["location"]),
-           disp_ref(value["category"]),
-           disp_ref(value["priority"]),
-           value["rationale"],
-           value["correctiveaction"],
-           value["pointofcontactusername"],
-           value["latching"],
-           value["filterable"],
-           value["maskedby"],
-           value["screenpath"]]
+           value.alarmClass,
+           value.producer,
+           value.location,
+           value.category,
+           value.priority,
+           value.rationale,
+           value.corrective_action,
+           value.point_of_contact_username,
+           value.latching,
+           value.filterable,
+           value.masked_by,
+           value.screen_path]
 
     ts = time.ctime(timestamp[1] / 1000)
 
@@ -157,8 +127,8 @@ def list_records():
     config = {'topic': 'registered-alarms',
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
-              'key.deserializer': string_deserializer,
-              'value.deserializer': avro_deserializer,
+              'key.deserializer': key_deserializer,
+              'value.deserializer': value_deserializer,
               'group.id': 'list-registered.py' + str(ts)}
     EventSourceTable(config, handle_initial_state, handle_state_update)
 
