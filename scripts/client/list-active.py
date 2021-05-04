@@ -5,11 +5,10 @@ import types
 import click
 import time
 
-from confluent_kafka import DeserializingConsumer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
-from confluent_kafka.serialization import StringDeserializer, SerializationError
-from confluent_kafka import OFFSET_BEGINNING
+from confluent_kafka.serialization import StringDeserializer
+from jlab_jaws.eventsource.table import EventSourceTable
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
@@ -26,26 +25,6 @@ key_deserializer = StringDeserializer()
 
 value_deserializer = AvroDeserializer(schema_registry_client, value_schema_str)
 
-ts = time.time()
-
-consumer_conf = {'bootstrap.servers': bootstrap_servers,
-                 'key.deserializer': key_deserializer,
-                 'value.deserializer': value_deserializer,
-                 'group.id': 'list-active.py' + str(ts)}
-
-empty = False
-
-def my_on_assign(consumer, partitions):
-    # We are assuming one partition, otherwise low/high would each be array and checking against high water mark would probably not work since other partitions could still contain unread messages.
-    global low
-    global high
-    global empty
-    for p in partitions:
-        p.offset = OFFSET_BEGINNING
-        low, high = consumer.get_watermark_offsets(p)
-        if high == 0:
-            empty = True
-    consumer.assign(partitions)
 
 def disp_msg(msg):
     timestamp = msg.timestamp()
@@ -70,35 +49,34 @@ def disp_msg(msg):
 
     print(ts, '|', user, '|', producer, '|', host, '|', key, '=', value)
 
-def list():
-    c = DeserializingConsumer(consumer_conf)
 
-    c.subscribe([params.topic], on_assign=my_on_assign)
+def disp_table(records):
+    for record in records:
+        disp_row(record)
 
-    while True:
-        try:
-            msg = c.poll(1.0)
 
-        except SerializationError as e:
-            print("Message deserialization failed for {}: {}".format(msg, e))
-            break
+def disp_row(record):
+    disp_msg(record)
 
-        if (not params.monitor) and empty:
-            break
 
-        if msg is None:
-            continue
+def handle_initial_state(records):
+    disp_table(records.values())
 
-        if msg.error():
-            print("AvroConsumer error: {}".format(msg.error()))
-            continue
 
-        disp_msg(msg)
+def handle_state_update(records):
+    disp_row(records.values())
 
-        if (not params.monitor) and msg.offset() + 1 == high:
-            break
 
-    c.close()
+def list_records():
+    ts = time.time()
+
+    config = {'topic': 'active-alarms',
+              'monitor': params.monitor,
+              'bootstrap.servers': bootstrap_servers,
+              'key.deserializer': key_deserializer,
+              'value.deserializer': value_deserializer,
+              'group.id': 'list-active.py' + str(ts)}
+    EventSourceTable(config, handle_initial_state, handle_state_update)
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
@@ -112,6 +90,6 @@ def cli(monitor, topic):
     params.monitor = monitor
     params.topic = topic
 
-    list()
+    list_records()
 
 cli()
