@@ -27,8 +27,6 @@ RUN cd /usr/src \
     && git clone https://github.com/JeffersonLab/jaws \
     && cd ./jaws \
     && cp -r scripts /scripts \
-    && cp -r config /config \
-    && cp -r plugins /plugins \
     && cd .. \
     && chmod -R +x /scripts/* \
     && cp ./jaws/docker-entrypoint.sh / \
