@@ -6,15 +6,10 @@ import click
 import time
 
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.serialization import StringDeserializer
+from jlab_jaws.avro.subject_schemas.serde import ActiveAlarmSerde
 from jlab_jaws.eventsource.table import EventSourceTable
 
-scriptpath = os.path.dirname(os.path.realpath(__file__))
-projectpath = scriptpath + '/../../'
-
-with open(projectpath + '/config/subject-schemas/active-alarms-value.avsc', 'r') as file:
-    value_schema_str = file.read()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -23,7 +18,7 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 
 key_deserializer = StringDeserializer()
 
-value_deserializer = AvroDeserializer(schema_registry_client, value_schema_str)
+value_deserializer = ActiveAlarmSerde.deserializer(schema_registry_client)
 
 
 def disp_msg(msg):
