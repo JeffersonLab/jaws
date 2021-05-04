@@ -1,7 +1,0 @@
-{
-    "type"      : "record",
-    "name"      : "SimpleAlarming",
-    "namespace" : "org.jlab.alarms",
-    "doc"       : "Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.",
-    "fields"    : []
-}

@@ -1,7 +1,0 @@
-{
-    "type"      : "record",
-    "name"      : "SimpleProducer",
-    "namespace" : "org.jlab.alarms",
-    "doc"       : "Producer of simple alarms.  There are no fields.",
-    "fields"    : []
-}

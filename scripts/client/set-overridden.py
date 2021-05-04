@@ -1,25 +1,18 @@
 #!/usr/bin/env python3
 
 import os
+
 import pwd
 import types
 import click
 import time
 
-import avro.schema
-
 from confluent_kafka import SerializingProducer
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from confluent_kafka.schema_registry.avro import AvroSerializer
+from jlab_jaws.avro.subject_schemas.entities import OverriddenAlarmValue, LatchedAlarm, FilteredAlarm, MaskedAlarm, \
+    DisabledAlarm, OnDelayedAlarm, OffDelayedAlarm, ShelvedAlarm, OverriddenAlarmKey, OverriddenAlarmType
+from jlab_jaws.avro.subject_schemas.serde import OverriddenAlarmKeySerde, OverriddenAlarmValueSerde
 
-scriptpath = os.path.dirname(os.path.realpath(__file__))
-projectpath = scriptpath + '/../../'
-
-with open(projectpath + '/config/subject-schemas/overridden-alarms-key.avsc', 'r') as file:
-    key_schema_str = file.read()
-
-with open(projectpath + '/config/subject-schemas/overridden-alarms-value.avsc', 'r') as file:
-    value_schema_str = file.read()
 
 def delivery_report(err, msg):
     """ Called once for each message produced to indicate delivery result.
@@ -29,22 +22,14 @@ def delivery_report(err, msg):
     else:
         print('Message delivered')
 
+
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-key_serializer = AvroSerializer(schema_registry_client, key_schema_str)
-
-value_serializer = AvroSerializer(schema_registry_client, value_schema_str)
-
-key_schema = avro.schema.Parse(key_schema_str)
-
-value_schema = avro.schema.Parse(value_schema_str)
-
-overridetypes = key_schema.fields[1].type.symbols
-
-reasons = value_schema.fields[0].type.schemas[6].fields[2].type.symbols
+key_serializer = OverriddenAlarmKeySerde.serializer(schema_registry_client)
+value_serializer = OverriddenAlarmValueSerde.serializer(schema_registry_client)
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': key_serializer,
@@ -56,24 +41,21 @@ topic = 'overridden-alarms'
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-overridden.py'),('host',os.uname().nodename)]
 
 def send() :
-    if params.value is None:
-        val_payload = None
-    else:
-        val_payload = params.value
-
-    producer.produce(topic=topic, value=val_payload, key=params.key, headers=hdrs, on_delivery=delivery_report)
+    producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
     producer.flush()
 
+
 @click.command()
-@click.option('--override', type=click.Choice(overridetypes), help="The type of override")
+@click.option('--override', type=click.Choice(OverriddenAlarmType._member_names_), help="The type of override")
 @click.option('--unset', is_flag=True, help="Remove the override")
 @click.option('--expirationseconds', type=int, help="The number of seconds until the shelved status expires, None for indefinite")
-@click.option('--reason', type=click.Choice(reasons), help="The explanation for why this alarm has been shelved")
+@click.option('--reason', type=click.Choice(ShelvedAlarmReason._member_names_), help="The explanation for why this alarm has been shelved")
+@click.option('--oneshot', is_flag=True, help="Whether shelving is one-shot or continuous")
 @click.option('--comments', help="Operator explanation for why suppressed")
 @click.option('--filtername', help="Name of filter rule associated with this override")
 @click.argument('name')
 
-def cli(override, unset, expirationseconds, reason, comments, filtername, name):
+def cli(override, unset, expirationseconds, reason, oneshot, comments, filtername, name):
     global params
 
     params = types.SimpleNamespace()
@@ -81,7 +63,7 @@ def cli(override, unset, expirationseconds, reason, comments, filtername, name):
     if override == None:
         raise click.ClickException("--override is required")
 
-    params.key = {"name": name, "type": override}
+    params.key = OverriddenAlarmKey(name, OverriddenAlarmType[override])
 
     if expirationseconds != None:
         timestampSeconds = time.time() + expirationseconds;
@@ -91,27 +73,39 @@ def cli(override, unset, expirationseconds, reason, comments, filtername, name):
         params.value = None
     else:
         if override == "Shelved":
-            if reason == None:
+            if reason is None:
                 raise click.ClickException("--reason is required")
 
-            if expirationseconds == None:
+            if expirationseconds is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            params.value = {"msg": {"reason": reason, "comments": comments, "expiration": timestampMillis}}
+            msg = ShelvedAlarm(timestampMillis, comments, reason, oneshot)
 
-        elif override == "OnDelay" or override == "OffDelay":
-            if expirationseconds == None:
+        elif override == "OnDelayed":
+            if expirationseconds is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            params.value = {"msg": {"expiration": timestampMillis}}
+            msg = OnDelayedAlarm(timestampMillis)
+        elif override == "OffDelayed":
+            if expirationseconds is None:
+                raise click.ClickException("--expirationseconds is required")
+
+            msg = OffDelayedAlarm(timestampMillis)
         elif override == "Disabled":
-            params.value = {"msg": {"comments": comments}}
+            msg = DisabledAlarm(comments)
         elif override == "Filtered":
-            params.value = {"msg": {"filtername": filtername}}
-        else: # Latched, Masked
-            params.value = {"msg": {}}
+            if filtername is None:
+                raise click.ClickException("--filtername is required")
 
-        print(params.value)
+            msg = FilteredAlarm(filtername)
+        elif override == "Masked":
+            msg = MaskedAlarm()
+        else: # assume Latched
+            msg = LatchedAlarm()
+
+        params.value = OverriddenAlarmValue(msg)
+
+    print(params.value)
 
     send()
 
