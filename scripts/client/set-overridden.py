@@ -10,7 +10,8 @@ import time
 from confluent_kafka import SerializingProducer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from jlab_jaws.avro.subject_schemas.entities import OverriddenAlarmValue, LatchedAlarm, FilteredAlarm, MaskedAlarm, \
-    DisabledAlarm, OnDelayedAlarm, OffDelayedAlarm, ShelvedAlarm, OverriddenAlarmKey, OverriddenAlarmType
+    DisabledAlarm, OnDelayedAlarm, OffDelayedAlarm, ShelvedAlarm, OverriddenAlarmKey, OverriddenAlarmType, \
+    ShelvedAlarmReason
 from jlab_jaws.avro.subject_schemas.serde import OverriddenAlarmKeySerde, OverriddenAlarmValueSerde
 
 
