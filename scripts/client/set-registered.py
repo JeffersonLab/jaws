@@ -32,7 +32,7 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 
-avro_serializer = RegisteredAlarmSerde.get_registered_alarm_serializer(schema_registry_client)
+avro_serializer = RegisteredAlarmSerde.serializer(schema_registry_client)
 
 classes = AlarmClass._member_names_
 locations = AlarmLocation._member_names_
