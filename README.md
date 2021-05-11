@@ -26,7 +26,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 
 ## Overview
-The alarm system is composed of three subsystems: _registered-alarms_, _active-alarms_, and _overridden-alarms_.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the _registered-alarms_ topic (the master alarm database).   Alarms are triggered active by producing messages on the _active-alarms_ topic.     An alarm can be overridden to either suppress or incite the active state by placing a message on the _overridden-alarms_ topic.  The alarm system is composed of the following services:
+The JAWS alarm system is composed of three subsystems: _registered-alarms_, _active-alarms_, and _overridden-alarms_.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the _registered-alarms_ topic (the master alarm database).   Alarms are triggered active by producing messages on the _active-alarms_ topic.     An alarm can be overridden to either suppress or incite the active state by placing a message on the _overridden-alarms_ topic.  The alarm system is composed of the following services:
 - **Sources**
    - anything authorized to produce messages on the _active-alarms_ topic
       - plugin: [epics2kafka-alarms](https://github.com/JeffersonLab/epics2kafka-alarms)
