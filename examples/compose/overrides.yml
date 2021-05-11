@@ -37,7 +37,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: registry
 
   state:
-    image: slominskir/alarm-state-processor:1.0.1
+    image: slominskir/alarm-state-processor:1.1.0
     hostname: state
     container_name: state
     depends_on:
@@ -50,7 +50,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:2.3.0
+    image: slominskir/jaws:2.4.0
     tty: true
     stdin_open: true
     hostname: jaws
