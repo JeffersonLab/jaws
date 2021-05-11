@@ -160,7 +160,7 @@ Operator Initiated
 Automated
  - On-Delay and Un-On-Delay
  - Off-Delay† and Un-Off-Delay
- - Latch† (unacknowledged)
+ - Latch† (unacknowledge)
  - Mask and Unmask
  - Unshelve (timer expiration or one-shot active encountered)
 
