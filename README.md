@@ -73,6 +73,8 @@ docker exec jaws /scripts/client/set-active.py alarm1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
+See: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
+
 ## Topics and Schemas
 
 The alarm system state is stored in three Kafka topics.   Topic schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.  Python scripts are provided for managing the alarm system topics.  
