@@ -132,7 +132,7 @@ Schema references are being used experimentally at this time.  See: [Confluent P
 ### Customize Alarms
 The information registered with an alarm can be customized by modifying the [registered-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
 
-Overrides can be customized by modifiying the [overridden-alarms-key](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/overridden-alarms-key.avsc) and [overridden-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject-schemas/overridden-alarms-value.avsc) schemas.  For example, to add or remove override options.
+Overrides can be customized by modifiying the [overridden-alarms-key](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/overridden-alarms-key.avsc) and [overridden-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/overridden-alarms-value.avsc) schemas.  For example, to add or remove override options.
 
 Generally alarm producers should simply indicate that an alarm is active or not.   However, not all producers work this way - some are a tangled mess (like EPICS, which indicates priority and type at the time of activation notification - a single EPICS PV therefore maps to multiple alarms).   It is possible to modify the [active-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/active-alarms-value.avsc) schemas to be anything you want.  The schema is currently a union of schemas for flexibility:
 
