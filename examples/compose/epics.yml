@@ -49,7 +49,6 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-      ALARM_DEFINITIONS: "alarm1|channel1|INJ|RF|/|/,alarm2|channel2|INJ|RF|/|/,alarm3|channel3|INJ|RF|/|/"
 
   softioc:
     image: slominskir/softioc:1.1.0
