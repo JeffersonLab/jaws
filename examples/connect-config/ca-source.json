@@ -5,16 +5,12 @@
     "tasks.max" : 1,
     "monitor.addr.list": "softioc",
     "command.bootstrap.servers": "kafka://kafka:9092",
-    "key.converter": "io.confluent.connect.avro.AvroConverter",
-    "key.converter.schema.registry.url": "http://registry:8081",
-    "key.converter.enhanced.avro.schema.support":  true,
-    "key.converter.connect.meta.data": false,
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter": "io.confluent.connect.avro.AvroConverter",
     "value.converter.schema.registry.url": "http://registry:8081",
     "value.converter.enhanced.avro.schema.support":  true,
     "value.converter.connect.meta.data": false,
-    "transforms": "alarmsKey,alarmsValue",
-    "transforms.alarmsKey.type": "org.jlab.alarms.EpicsToAlarm$Key",
+    "transforms": "alarmsValue",
     "transforms.alarmsValue.type": "org.jlab.alarms.EpicsToAlarm$Value"
   }
 }
