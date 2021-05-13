@@ -3,14 +3,14 @@ version: '3.8'
 
 services:
   zookeeper:
-    image: debezium/zookeeper:1.4.0.Final
+    image: debezium/zookeeper:1.5.0.Final
     hostname: zookeeper
     container_name: zookeeper
     ports:
       - "2181:2181"
 
   kafka:
-    image: debezium/kafka:1.4.0.Final
+    image: debezium/kafka:1.5.0.Final
     hostname: kafka
     container_name: kafka
     depends_on:
@@ -24,7 +24,7 @@ services:
       CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,overridden-alarms:1:1:compact'
 
   registry:
-    image: confluentinc/cp-schema-registry:6.0.1
+    image: confluentinc/cp-schema-registry:6.0.2
     hostname: registry
     container_name: registry
     depends_on:
