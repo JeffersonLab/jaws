@@ -11,6 +11,6 @@
     "value.converter.enhanced.avro.schema.support":  true,
     "value.converter.connect.meta.data": false,
     "transforms": "alarmsValue",
-    "transforms.alarmsValue.type": "org.jlab.alarms.EpicsToAlarm$Value"
+    "transforms.alarmsValue.type": "org.jlab.jaws.EpicsToAlarm$Value"
   }
 }
