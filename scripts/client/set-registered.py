@@ -13,7 +13,7 @@ from confluent_kafka.serialization import StringSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
 from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde
-from jlab_jaws.avro.subject_schemas.entities import RegisteredAlarm
+from jlab_jaws.avro.subject_schemas.entities import RegisteredAlarm, SimpleProducer, EPICSProducer, CALCProducer
 from jlab_jaws.avro.referenced_schemas.entities import AlarmClass, AlarmLocation, AlarmCategory, AlarmPriority
 
 from common import delivery_report
@@ -63,13 +63,12 @@ def doImport(file):
         v = json.loads(value)
         print("{}={}".format(key, v))
 
-        # confluent-kafka-python uses a tuple to differentiate unions, not a JSON structure as in AVRO spec.
-        # See: https://github.com/confluentinc/confluent-kafka-python/issues/656
+        # confluent-kafka-python uses a tuple to differentiate unions (tuple only required if ambiguous)
         if 'org.jlab.jaws.entity.EPICSProducer' in v['producer']:
             v['producer'] = ("org.jlab.jaws.entity.EPICSProducer", v['producer']['org.jlab.jaws.entity.EPICSProducer'])
-        elif 'org.jlab.jaws.entity.StreamRuleProducer' in v['producer']:
+        elif 'org.jlab.jaws.entity.CALCProducer' in v['producer']:
             v['producer'] = (
-                "org.jlab.jaws.entity.StreamRuleProducer", v['producer']['org.jlab.jaws.entity.StreamRuleProducer'])
+                "org.jlab.jaws.entity.CALCProducer", v['producer']['org.jlab.jaws.entity.CALCProducer'])
         else:
             v['producer'] = (
                 "org.jlab.jaws.entity.SimpleProducer", v['producer']['org.jlab.jaws.entity.SimpleProducer'])
@@ -120,18 +119,20 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
                 raise click.ClickException("Must specify one of --producersimple, --producerpv, --producerexpression")
 
             if producersimple:
-                p = ("org.jlab.jaws.entity.SimpleProducer", {})
+                p = SimpleProducer()
             elif producerpv:
-                p = ("org.jlab.jaws.entity.EPICSProducer", {"pv": producerpv})
+                p = EPICSProducer(producerpv)
             else:
-                p = ("org.jlab.jaws.entity.StreamRuleProducer", {"expression": producerexpression})
+                p = CALCProducer(producerexpression)
 
             if alarmclass is None:
                 alarmclass = "Base_Class"
 
-            params.value = RegisteredAlarm(location, category, priority, rationale, correctiveaction,
+            params.value = RegisteredAlarm(AlarmLocation.get(location), AlarmCategory.get(category),
+                                           AlarmPriority.get(priority), rationale, correctiveaction,
                                            pointofcontactusername, latching, filterable,
-                                           ondelayseconds, offdelayseconds, maskedby, screenpath, alarmclass, p)
+                                           ondelayseconds, offdelayseconds, maskedby, screenpath,
+                                           AlarmClass[alarmclass], p)
 
             print('Message: {}'.format(params.value))
 
