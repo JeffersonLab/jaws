@@ -24,12 +24,6 @@ value_deserializer = RegisteredAlarmSerde.deserializer(schema_registry_client)
 ts = time.time()
 
 
-def disp_row(msg):
-    row = get_row(msg)
-    if row is not None:
-        print(row)  # TODO: format with a row template!
-
-
 def get_row(msg):
     timestamp = msg.timestamp()
     headers = msg.headers()
@@ -115,7 +109,10 @@ def handle_initial_state(records):
 
 
 def handle_state_update(records):
-    disp_row(records)
+    for record in records.values():
+        row = get_row(record)
+        if row is not None:
+            print(row)  # TODO: format with a row template!
 
 
 def list_records():
