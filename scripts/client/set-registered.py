@@ -120,18 +120,18 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
                 raise click.ClickException("Must specify one of --producersimple, --producerpv, --producerexpression")
 
             if producersimple:
-                producer = ("org.jlab.jaws.entity.SimpleProducer", {})
+                p = ("org.jlab.jaws.entity.SimpleProducer", {})
             elif producerpv:
-                producer = ("org.jlab.jaws.entity.EPICSProducer", {"pv": producerpv})
+                p = ("org.jlab.jaws.entity.EPICSProducer", {"pv": producerpv})
             else:
-                producer = ("org.jlab.jaws.entity.StreamRuleProducer", {"expression": producerexpression})
+                p = ("org.jlab.jaws.entity.StreamRuleProducer", {"expression": producerexpression})
 
             if alarmclass is None:
                 alarmclass = "Base_Class"
 
             params.value = RegisteredAlarm(location, category, priority, rationale, correctiveaction,
                                            pointofcontactusername, latching, filterable,
-                                           ondelayseconds, offdelayseconds, maskedby, screenpath, alarmclass, producer)
+                                           ondelayseconds, offdelayseconds, maskedby, screenpath, alarmclass, p)
 
             print('Message: {}'.format(params.value))
 
