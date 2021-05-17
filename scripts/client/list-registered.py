@@ -68,7 +68,7 @@ def get_row(msg):
     return row
 
 
-def disp_table():
+def disp_table(records):
     head = ["Alarm Name", "Class", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action",
             "P.O.C. Username", "Latching", "Filterable", "Masked By", "Screen Path"]
     table = []
@@ -76,7 +76,7 @@ def disp_table():
     if not params.nometa:
         head = ["Timestamp", "User", "Host", "Produced By"] + head
 
-    for msg in registered.values():
+    for msg in records.values():
         row = get_row(msg)
         if row is not None:
             table.append(row)
@@ -84,8 +84,8 @@ def disp_table():
     print(tabulate(table, head))
 
 
-def export():
-    for msg in registered.values():
+def export(records):
+    for msg in records.values():
         key = msg.key()
         value = msg.value()
 
@@ -94,18 +94,11 @@ def export():
             print(key + '=' + v)
 
 
-registered = {}
-
-
 def handle_initial_state(records):
-    global registered
-
-    registered = records
-
     if params.export:
-        export()
+        export(records)
     else:
-        disp_table()
+        disp_table(records)
 
 
 def handle_state_update(record):
