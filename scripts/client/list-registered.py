@@ -12,6 +12,8 @@ from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
 
+from common import get_row_header
+
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
@@ -44,24 +46,11 @@ def get_row(msg):
                value.masked_by,
                value.screen_path]
 
-    ts = time.ctime(timestamp[1] / 1000)
-
-    user = ''
-    producer = ''
-    host = ''
-
-    if headers is not None:
-        lookup = dict(headers)
-        bytez = lookup.get('user', b'')
-        user = bytez.decode()
-        bytez = lookup.get('producer', b'')
-        producer = bytez.decode()
-        bytez = lookup.get('host', b'')
-        host = bytez.decode()
+    row_header = get_row_header(headers, timestamp)
 
     if params.category is None or (value is not None and params.category == value['category']):
         if not params.nometa:
-            row = [ts, user, host, producer] + row
+            row = row_header + row
     else:
         row = None
 

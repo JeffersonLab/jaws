@@ -12,15 +12,7 @@ from jlab_jaws.avro.subject_schemas.entities import ActiveAlarm, SimpleAlarming,
     EPICSSTAT
 from jlab_jaws.avro.subject_schemas.serde import ActiveAlarmSerde
 
-
-def delivery_report(err, msg):
-    """ Called once for each message produced to indicate delivery result.
-        Triggered by poll() or flush(). """
-    if err is not None:
-        print('Message delivery failed: {}'.format(err))
-    else:
-        print('Message delivered')
-
+from common import delivery_report
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
