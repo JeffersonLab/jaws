@@ -80,7 +80,7 @@ def cli(override, unset, expirationseconds, reason, oneshot, comments, filternam
             if expirationseconds is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = ShelvedAlarm(timestampMillis, comments, reason, oneshot)
+            msg = ShelvedAlarm(timestampMillis, comments, ShelvedAlarmReason[reason], oneshot)
 
         elif override == "OnDelayed":
             if expirationseconds is None:
