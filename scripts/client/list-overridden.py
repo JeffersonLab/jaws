@@ -8,6 +8,7 @@ import time
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from jlab_jaws.avro.subject_schemas.serde import OverriddenAlarmKeySerde, OverriddenAlarmValueSerde
 from jlab_jaws.eventsource.table import EventSourceTable
+from tabulate import tabulate
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -19,11 +20,18 @@ key_deserializer = OverriddenAlarmKeySerde.deserializer(schema_registry_client)
 value_deserializer = OverriddenAlarmValueSerde.deserializer(schema_registry_client)
 
 
-def disp_msg(msg):
+def get_row(msg):
     timestamp = msg.timestamp()
     headers = msg.headers()
     key = msg.key()
     value = msg.value()
+
+    if value is None:
+        row = [key.name, key.type, None]
+    else:
+        row = [key.name,
+               key.type.name,
+               value]
 
     ts = time.ctime(timestamp[1] / 1000)
 
@@ -40,20 +48,33 @@ def disp_msg(msg):
         bytez = lookup.get('host', b'')
         host = bytez.decode()
 
-    print(ts, '|', user, '|', producer, '|', host, '|', key, value)
+    row = [ts, user, host, producer] + row
+
+    return row
 
 
 def disp_table(records):
-    for record in records:
-        disp_msg(record)
+    head = ["Alarm Name", "Override Type", "Value"]
+    table = []
+
+    head = ["Timestamp", "User", "Host", "Produced By"] + head
+
+    for msg in records.values():
+        row = get_row(msg)
+        if row is not None:
+            table.append(row)
+
+    print(tabulate(table, head))
 
 
 def handle_initial_state(records):
-    disp_table(records.values())
+    disp_table(records)
 
 
 def handle_state_update(record):
-    disp_msg(record)
+    row = get_row(record)
+    if row is not None:
+        print(row)
 
 
 def list_records():
