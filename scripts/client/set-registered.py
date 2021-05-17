@@ -128,8 +128,10 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
             if alarmclass is None:
                 alarmclass = "Base_Class"
 
-            params.value = RegisteredAlarm(AlarmLocation.get(location), AlarmCategory.get(category),
-                                           AlarmPriority.get(priority), rationale, correctiveaction,
+            params.value = RegisteredAlarm(AlarmLocation[location] if location is not None else None,
+                                           AlarmCategory[category] if category is not None else None,
+                                           AlarmPriority[priority] if priority is not None else None,
+                                           rationale, correctiveaction,
                                            pointofcontactusername, latching, filterable,
                                            ondelayseconds, offdelayseconds, maskedby, screenpath,
                                            AlarmClass[alarmclass], p)
