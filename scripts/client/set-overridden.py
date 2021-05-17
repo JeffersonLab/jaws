@@ -41,6 +41,7 @@ topic = 'overridden-alarms'
 
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-overridden.py'),('host',os.uname().nodename)]
 
+
 def send() :
     producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
     producer.flush()
@@ -55,7 +56,6 @@ def send() :
 @click.option('--comments', help="Operator explanation for why suppressed")
 @click.option('--filtername', help="Name of filter rule associated with this override")
 @click.argument('name')
-
 def cli(override, unset, expirationseconds, reason, oneshot, comments, filtername, name):
     global params
 
@@ -109,6 +109,7 @@ def cli(override, unset, expirationseconds, reason, oneshot, comments, filternam
     print(params.value)
 
     send()
+
 
 cli()
 
