@@ -61,14 +61,14 @@ def cli(override, unset, expirationseconds, reason, oneshot, comments, filternam
 
     params = types.SimpleNamespace()
 
-    if override == None:
+    if override is None:
         raise click.ClickException("--override is required")
 
     params.key = OverriddenAlarmKey(name, OverriddenAlarmType[override])
 
-    if expirationseconds != None:
-        timestampSeconds = time.time() + expirationseconds;
-        timestampMillis = int(timestampSeconds * 1000);
+    if expirationseconds is not None:
+        timestamp_seconds = time.time() + expirationseconds;
+        timestamp_millis = int(timestamp_seconds * 1000);
 
     if unset:
         params.value = None
@@ -80,18 +80,18 @@ def cli(override, unset, expirationseconds, reason, oneshot, comments, filternam
             if expirationseconds is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = ShelvedAlarm(timestampMillis, comments, ShelvedAlarmReason[reason], oneshot)
+            msg = ShelvedAlarm(timestamp_millis, comments, ShelvedAlarmReason[reason], oneshot)
 
         elif override == "OnDelayed":
             if expirationseconds is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = OnDelayedAlarm(timestampMillis)
+            msg = OnDelayedAlarm(timestamp_millis)
         elif override == "OffDelayed":
             if expirationseconds is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = OffDelayedAlarm(timestampMillis)
+            msg = OffDelayedAlarm(timestamp_millis)
         elif override == "Disabled":
             msg = DisabledAlarm(comments)
         elif override == "Filtered":
