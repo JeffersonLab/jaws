@@ -45,19 +45,15 @@ def disp_msg(msg):
 
 def disp_table(records):
     for record in records:
-        disp_row(record)
-
-
-def disp_row(record):
-    disp_msg(record)
+        disp_msg(record)
 
 
 def handle_initial_state(records):
     disp_table(records.values())
 
 
-def handle_state_update(records):
-    disp_row(records.values())
+def handle_state_update(record):
+    disp_msg(record)
 
 
 def list_records():
