@@ -108,11 +108,10 @@ def handle_initial_state(records):
         disp_table()
 
 
-def handle_state_update(records):
-    for record in records.values():
-        row = get_row(record)
-        if row is not None:
-            print(row)  # TODO: format with a row template!
+def handle_state_update(record):
+    row = get_row(record)
+    if row is not None:
+        print(row)  # TODO: format with a row template!
 
 
 def list_records():
