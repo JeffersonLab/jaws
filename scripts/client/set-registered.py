@@ -110,7 +110,7 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
 
     params.key = name
 
-    if (file):
+    if file:
         doImport(name)
     else:
         if unset:
