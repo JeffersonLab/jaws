@@ -12,7 +12,6 @@ from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
 
-
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
@@ -30,19 +29,22 @@ def get_row(msg):
     key = msg.key()
     value = msg.value()
 
-    row = [key,
-           value.alarm_class,
-           value.producer,
-           value.location,
-           value.category,
-           value.priority,
-           value.rationale,
-           value.corrective_action,
-           value.point_of_contact_username,
-           value.latching,
-           value.filterable,
-           value.masked_by,
-           value.screen_path]
+    if value is None:
+        row = [key, None]
+    else:
+        row = [key,
+               value.alarm_class,
+               value.producer,
+               value.location,
+               value.category,
+               value.priority,
+               value.rationale,
+               value.corrective_action,
+               value.point_of_contact_username,
+               value.latching,
+               value.filterable,
+               value.masked_by,
+               value.screen_path]
 
     ts = time.ctime(timestamp[1] / 1000)
 
