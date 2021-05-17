@@ -90,7 +90,7 @@ def export(records):
         value = msg.value()
 
         if params.category is None or (value is not None and params.category == value['category']):
-            v = json.dumps(value)
+            v = json.dumps(RegisteredAlarmSerde._to_dict(value, None))
             print(key + '=' + v)
 
 
