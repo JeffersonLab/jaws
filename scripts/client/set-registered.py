@@ -63,17 +63,9 @@ def doImport(file):
         v = json.loads(value)
         print("{}={}".format(key, v))
 
-        # confluent-kafka-python uses a tuple to differentiate unions (tuple only required if ambiguous)
-        if 'org.jlab.jaws.entity.EPICSProducer' in v['producer']:
-            v['producer'] = ("org.jlab.jaws.entity.EPICSProducer", v['producer']['org.jlab.jaws.entity.EPICSProducer'])
-        elif 'org.jlab.jaws.entity.CALCProducer' in v['producer']:
-            v['producer'] = (
-                "org.jlab.jaws.entity.CALCProducer", v['producer']['org.jlab.jaws.entity.CALCProducer'])
-        else:
-            v['producer'] = (
-                "org.jlab.jaws.entity.SimpleProducer", v['producer']['org.jlab.jaws.entity.SimpleProducer'])
+        value_obj = RegisteredAlarmSerde.from_dict(v)
 
-        producer.produce(topic=topic, value=v, key=key, headers=hdrs)
+        producer.produce(topic=topic, value=value_obj, key=key, headers=hdrs)
 
     producer.flush()
 
