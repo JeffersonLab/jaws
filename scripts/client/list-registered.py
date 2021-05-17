@@ -20,8 +20,6 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 key_deserializer = StringDeserializer('utf_8')
 value_deserializer = RegisteredAlarmSerde.deserializer(schema_registry_client)
 
-ts = time.time()
-
 
 def get_row(msg):
     timestamp = msg.timestamp()
@@ -109,6 +107,8 @@ def handle_state_update(record):
 
 
 def list_records():
+    ts = time.time()
+
     config = {'topic': 'registered-alarms',
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
