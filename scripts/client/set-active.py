@@ -21,6 +21,7 @@ def delivery_report(err, msg):
     else:
         print('Message delivered')
 
+
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
@@ -38,6 +39,7 @@ topic = 'active-alarms'
 
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active.py'),('host',os.uname().nodename)]
 
+
 def send() :
     if params.value is None:
         val_payload = None
@@ -47,13 +49,13 @@ def send() :
     producer.produce(topic=topic, value=val_payload, key=params.key, headers=hdrs, on_delivery=delivery_report)
     producer.flush()
 
+
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear an alarm, missing to set active")
 @click.option('--note', help="The note (only for NoteAlarming)")
 @click.option('--sevr', type=click.Choice(EPICSSEVR._member_names_), help="The sevr (only for EPICSAlarming)")
 @click.option('--stat', type=click.Choice(EPICSSTAT._member_names_), help="The stat (only for EPICSAlarming)")
 @click.argument('name')
-
 def cli(unset, note, stat, sevr, name):
     global params
 
@@ -63,16 +65,17 @@ def cli(unset, note, stat, sevr, name):
 
     if unset:
       params.value = None
-    elif sevr and stat:
-        msg = EPICSAlarming(sevr, stat)
-    elif note:
-        msg = NoteAlarming(note)
     else:
-        msg = SimpleAlarming()
+        if sevr and stat:
+            msg = EPICSAlarming(sevr, stat)
+        elif note:
+            msg = NoteAlarming(note)
+        else:
+            msg = SimpleAlarming()
 
-    params.value = ActiveAlarm(msg)
+        params.value = ActiveAlarm(msg)
 
     send()
 
-cli()
 
+cli()
