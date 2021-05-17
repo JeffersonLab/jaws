@@ -105,8 +105,7 @@ def handle_initial_state(records):
 
 def handle_state_update(record):
     row = get_row(record)
-    if row is not None:
-        print(row)
+    print(row)
 
 
 def list_records():
