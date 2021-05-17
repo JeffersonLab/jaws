@@ -59,7 +59,7 @@ def cli(unset, note, stat, sevr, name):
       params.value = None
     else:
         if sevr and stat:
-            msg = EPICSAlarming(sevr, stat)
+            msg = EPICSAlarming(EPICSSEVR[sevr], EPICSSTAT[stat])
         elif note:
             msg = NoteAlarming(note)
         else:
