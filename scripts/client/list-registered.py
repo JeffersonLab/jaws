@@ -33,11 +33,11 @@ def get_row(msg):
         row = [key, None]
     else:
         row = [key,
-               value.alarm_class,
+               value.alarm_class.name,
                value.producer,
-               value.location,
-               value.category,
-               value.priority,
+               value.location.name if value.location is not None else None,
+               value.category.name if value.category is not None else None,
+               value.priority.name if value.priority is not None else None,
                value.rationale,
                value.corrective_action,
                value.point_of_contact_username,
