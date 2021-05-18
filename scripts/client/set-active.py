@@ -32,13 +32,8 @@ topic = 'active-alarms'
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active.py'),('host',os.uname().nodename)]
 
 
-def send() :
-    if params.value is None:
-        val_payload = None
-    else:
-        val_payload = params.value
-
-    producer.produce(topic=topic, value=val_payload, key=params.key, headers=hdrs, on_delivery=delivery_report)
+def send():
+    producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
     producer.flush()
 
 
