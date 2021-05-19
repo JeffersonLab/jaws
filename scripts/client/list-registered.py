@@ -39,9 +39,8 @@ def alarms_get_row(msg):
         row = [key, None]
     else:
 
-        if value.alarm_class in classes:
-            print("merging class defaults: {}".format(classes[value.alarm_class]))
-            RegisteredClassSerde.setClassDefaults(value, classes[value.alarm_class])
+        if value.alarm_class.name in classes:
+            RegisteredClassSerde.setClassDefaults(value, classes[value.alarm_class.name].value())
 
         row = [key,
                value.alarm_class.name,
@@ -172,7 +171,8 @@ def classes_initial_state(records):
     global classes
 
     if params.display == 'alarms_with_class_defaults':
-        classes = records
+        for record in records.values():
+            classes[record.key().alarm_class.name] = record
         list_alarms()
     elif params.export:
         classes_export(records)
@@ -182,7 +182,7 @@ def classes_initial_state(records):
 
 def classes_state_update(record):
     if params.display == 'alarms_with_class_defaults':
-        classes[record.key()] = record
+        classes[record.key().alarm_class.name] = record
     else:
         row = classes_get_row(record)
         print(row)
