@@ -37,11 +37,6 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: registry
 
   jaws:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
     tty: true
     stdin_open: true
     hostname: jaws
@@ -53,9 +48,3 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-      CLASS_DEFINITIONS: /registrations/class-registrations
-      ALARM_DEFINITIONS: "alarm1|channel1|INJ|RF|/,alarm2|channel2|INJ|RF|/,alarm3|channel3|INJ|RF|/"
-    volumes:
-      - ./docker-entrypoint.sh:/docker-entrypoint.sh
-      - ./scripts:/scripts
-      - ./examples/registrations:/registrations

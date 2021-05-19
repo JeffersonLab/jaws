@@ -1,0 +1,9 @@
+---
+version: '3.8'
+
+services:
+  jaws:
+    image: slominskir/jaws:2.4.0
+    environment:
+      CLASS_DEFINITIONS: "Base_Class|INJ|RF|P3_MINOR|Timely operator action required|Call expert|helpdesk|/"
+      ALARM_DEFINITIONS: "alarm1|channel1|INJ|RF|/,alarm2|channel2|INJ|RF|/,alarm3|channel3|INJ|RF|/"

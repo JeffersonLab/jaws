@@ -1,0 +1,17 @@
+---
+version: '3.8'
+
+services:
+  jaws:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
+    environment:
+      CLASS_DEFINITIONS: /registrations/class-registrations
+      ALARM_DEFINITIONS: /registrations/alarm-registrations
+    volumes:
+      - ./docker-entrypoint.sh:/docker-entrypoint.sh
+      - ./scripts:/scripts
+      - ./examples/registrations:/registrations
