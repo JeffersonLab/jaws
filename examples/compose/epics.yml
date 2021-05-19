@@ -37,7 +37,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: registry
 
   jaws:
-    image: slominskir/jaws:2.4.0
+    image: slominskir/jaws:2.5.0
     tty: true
     stdin_open: true
     hostname: jaws
