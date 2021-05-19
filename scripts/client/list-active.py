@@ -67,7 +67,7 @@ def handle_state_update(record):
 def list_records():
     ts = time.time()
 
-    config = {'topic': params.topic,
+    config = {'topic': 'active-alarms',
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': key_deserializer,
@@ -79,14 +79,12 @@ def list_records():
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
-@click.option('--topic', default='active-alarms', help="Topic to read from (used to switch between filtered views)")
-def cli(monitor, topic):
+def cli(monitor):
     global params
 
     params = types.SimpleNamespace()
 
     params.monitor = monitor
-    params.topic = topic
 
     list_records()
 
