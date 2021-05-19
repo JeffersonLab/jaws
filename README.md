@@ -94,7 +94,7 @@ In addition to the three core topics, the following topics provide extra feature
 
 | Topic | Description | Key Schema | Value Schema | Note |
 |-------|-------------|------------|--------------|------|
-| alarm-state | Contains effective alarm state considering overrides | String: alarm name | String: [alarm state](https://github.com/JeffersonLab/jaws#alarm-states) | Technically each client could figure out the alarm state themselves, but it's a chore so its done by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor) |
+| alarm-state | Contains effective alarm state considering overrides | String: alarm name | AVRO: [alarm-state-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/alarm-state-value.avsc) | Technically each client could figure out the alarm state themselves, but it's a chore so its done by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor) |
 | registered-classes | Contains class-wide registration information to avoid redundant specification | AVRO: [registered-classes-key](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/registered-classes-key.avsc) | AVRO: [registered-classes-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/registered-classes-value.avsc) | Optionally some registration fields can be left empty and instead inherit values from a class specification - for example the corrective action for a certain class of machine Magnets (of which there are hundreds of instances) is typically the same. |
 | jaws-config | Contains shared configuration data | String: config property name | String: config property value |  |
 
