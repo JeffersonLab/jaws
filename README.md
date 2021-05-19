@@ -73,7 +73,9 @@ docker exec jaws /scripts/client/set-active.py alarm1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
-See: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
+**Note**: The docker-compose up command implicitly reads both _docker-compose.yml_ and _docker-compose-override.yml_.
+
+**See**: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
 
 ## Topics and Schemas
 
@@ -248,6 +250,11 @@ The following environment variables are required by the scripts:
 docker pull slominskir/jaws
 ```
 Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/jaws)
+
+**Note**: When developing the app you can mount the build artifact into the container by substituting the docker-compose up command with:
+```
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
+```
 
 ## See Also
  - [Developer Notes](https://github.com/JeffersonLab/jaws/wiki/Developer-Notes)
