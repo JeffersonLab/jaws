@@ -149,8 +149,9 @@ def classes_export(records):
         value = msg.value()
 
         if params.category is None or (value is not None and params.category == value['category']):
+            k = json.dumps(RegisteredClassKeySerde.to_dict(key))
             v = json.dumps(RegisteredClassSerde.to_dict(value))
-            print(key + '=' + v)
+            print(k + '=' + v)
 
 
 def alarms_initial_state(records):
@@ -232,9 +233,8 @@ def cli(monitor, nometa, export, category, display):
 
     if display == 'alarms':
         list_alarms()
-    elif display == 'classes':
-        list_classes()
     else:
         list_classes()
+
 
 cli()

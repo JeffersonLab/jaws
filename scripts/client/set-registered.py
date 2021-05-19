@@ -54,7 +54,7 @@ def send(producer, topic):
     producer.flush()
 
 
-def doImport(file):
+def alarms_import(file):
     print("Loading file", file)
     handle = open(file, 'r')
     lines = handle.readlines()
@@ -71,6 +71,29 @@ def doImport(file):
         alarm_producer.produce(topic=alarm_topic, value=value_obj, key=key, headers=hdrs)
 
     alarm_producer.flush()
+
+
+def classes_import(file):
+    print("Loading file", file)
+    handle = open(file, 'r')
+    lines = handle.readlines()
+
+    for line in lines:
+        tokens = line.split("=", 1)
+        key = tokens[0]
+        value = tokens[1]
+        k = json.loads(key)
+        v = json.loads(value)
+        print("{}={}".format(key, v))
+
+        key_obj = RegisteredClassKeySerde.from_dict(k)
+        value_obj = RegisteredClassSerde.from_dict(v)
+
+        print('Message: {}={}'.format(key_obj, value_obj))
+
+        class_producer.produce(topic=alarm_topic, value=value_obj, key=key_obj, headers=hdrs)
+
+    class_producer.flush()
 
 
 @click.command()
@@ -105,63 +128,65 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
     params = types.SimpleNamespace()
 
     if editclass:
-        if name in classes:
-            params.key = RegisteredClassKey(AlarmClass[name])
+        if file:
+            classes_import(name)
         else:
-            raise click.ClickException("class name must be one of: {}".format(classes))
+            if name in classes:
+                params.key = RegisteredClassKey(AlarmClass[name])
+            else:
+                raise click.ClickException("class name must be one of: {}".format(classes))
 
-        if unset:
-            params.value = None
-        else:
-            if location is None:
-                raise click.ClickException("--location required")
+            if unset:
+                params.value = None
+            else:
+                if location is None:
+                    raise click.ClickException("--location required")
 
-            if category is None:
-                raise click.ClickException("--category required")
+                if category is None:
+                    raise click.ClickException("--category required")
 
-            if priority is None:
-                raise click.ClickException("--priority required")
+                if priority is None:
+                    raise click.ClickException("--priority required")
 
-            if rationale is None:
-                raise click.ClickException("--rationale required")
+                if rationale is None:
+                    raise click.ClickException("--rationale required")
 
-            if correctiveaction is None:
-                raise click.ClickException("--correctiveaction required")
+                if correctiveaction is None:
+                    raise click.ClickException("--correctiveaction required")
 
-            if pointofcontactusername is None:
-                raise click.ClickException("--pointofcontactusername required")
+                if pointofcontactusername is None:
+                    raise click.ClickException("--pointofcontactusername required")
 
-            if screenpath is None:
-                raise click.ClickException("--screenpath required")
+                if screenpath is None:
+                    raise click.ClickException("--screenpath required")
 
-            # TODO: filterable and latching should be required in registered-class-value schema
-            if filterable is None:
-                filterable = True
+                # TODO: filterable and latching should be required in registered-class-value schema
+                if filterable is None:
+                    filterable = True
 
-            if latching is None:
-                latching = True
+                if latching is None:
+                    latching = True
 
-            # TODO: None not allowed right now for both delay ints...
-            if ondelayseconds is None:
-                ondelayseconds = 0
+                # TODO: None not allowed right now for both delay ints...
+                if ondelayseconds is None:
+                    ondelayseconds = 0
 
-            if offdelayseconds is None:
-                offdelayseconds = 0
+                if offdelayseconds is None:
+                    offdelayseconds = 0
 
-            params.value = RegisteredClass(AlarmLocation[location],
-                                           AlarmCategory[category],
-                                           AlarmPriority[priority],
-                                           rationale, correctiveaction,
-                                           pointofcontactusername, latching, filterable,
-                                           ondelayseconds, offdelayseconds, maskedby, screenpath)
-        print('Message: {}={}'.format(params.key, params.value))
-        send(class_producer, class_topic)
-
+                params.value = RegisteredClass(AlarmLocation[location],
+                                               AlarmCategory[category],
+                                               AlarmPriority[priority],
+                                               rationale, correctiveaction,
+                                               pointofcontactusername, latching, filterable,
+                                               ondelayseconds, offdelayseconds, maskedby, screenpath)
+            print('Message: {}={}'.format(params.key, params.value))
+            send(class_producer, class_topic)
     else:
         params.key = name
 
         if file:
-            doImport(name)
+            alarms_import(name)
         else:
             if unset:
                 params.value = None

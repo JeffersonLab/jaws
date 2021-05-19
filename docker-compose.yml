@@ -56,4 +56,4 @@ services:
       ALARM_DEFINITIONS: "alarm1|channel1|INJ|RF|/,alarm2|channel2|INJ|RF|/,alarm3|channel3|INJ|RF|/"
     volumes:
       - ./scripts:/scripts
-      - ./examples/alarm-registrations:/tmp/alarm-registrations
+      - ./examples/registrations:/registrations
