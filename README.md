@@ -26,7 +26,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 
 ## Overview
-The JAWS alarm system is composed of three subsystems: _registered-alarms_, _active-alarms_, and _overridden-alarms_.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the _registered-alarms_ topic (the master alarm database).   Alarms are triggered active by producing messages on the _active-alarms_ topic.     An alarm can be overridden to either suppress or incite the active state by placing a message on the _overridden-alarms_ topic.  The alarm system is composed of the following services:
+The JAWS alarm system is composed primarily of three subsystems: _registered-alarms_, _active-alarms_, and _overridden-alarms_.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the _registered-alarms_ topic (the master alarm database).   Alarms are triggered active by producing messages on the _active-alarms_ topic.     An alarm can be overridden to either suppress or incite the active state by placing a message on the _overridden-alarms_ topic.  The alarm system is composed of the following services:
 - **Sources**
    - anything authorized to produce messages on the _active-alarms_ topic
       - plugin: [epics2kafka-alarms](https://github.com/JeffersonLab/epics2kafka-alarms)
@@ -79,7 +79,7 @@ docker exec jaws /scripts/client/set-active.py alarm1
 
 ## Topics and Schemas
 
-The alarm system state is stored in three Kafka topics.   Topic schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.  Python scripts are provided for managing the alarm system topics.  
+The alarm system state is stored primarily in three Kafka topics.   Topic schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.  Python scripts are provided for managing the alarm system topics.  
 
 | Topic | Description | Key Schema | Value Schema | Scripts |
 |-------|-------------|------------|--------------|---------|
@@ -90,7 +90,7 @@ The alarm system state is stored in three Kafka topics.   Topic schemas are stor
 The alarm system relies on Kafka not only for notification of changes, but for [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) - everything is stored in Kafka and the entire state of the system is built by replaying messages.   All topics have compaction enabled to remove old messages that would be overwritten on replay.  Compaction is not very aggressive though so some candidates for deletion are often lingering when clients connect so they must be prepared to handle the ordered messages on replay as ones later in the stream with the same key overwrite ones earlier.  To modify a record simply set a new one with the same key. 
 
 ### Supporting Topics and Schemas
-In addition to the three core topics, the following topics provide value add via various supporting apps:
+In addition to the three core topics, the following topics provide extra features:
 
 | Topic | Description | Key Schema | Value Schema | Note |
 |-------|-------------|------------|--------------|------|
