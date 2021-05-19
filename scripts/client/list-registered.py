@@ -90,8 +90,6 @@ def classes_get_row(msg):
     key = msg.key()
     value = msg.value()
 
-    print("Key = {}".format(key))
-
     if value is None:
         row = [key.alarm_class.name, None]
     else:
@@ -132,6 +130,7 @@ def classes_disp_table(records):
             table.append(row)
 
     print(tabulate(table, head))
+
 
 def alarms_export(records):
     for msg in records.values():

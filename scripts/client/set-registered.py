@@ -91,7 +91,7 @@ def classes_import(file):
 
         print('Message: {}={}'.format(key_obj, value_obj))
 
-        class_producer.produce(topic=alarm_topic, value=value_obj, key=key_obj, headers=hdrs)
+        class_producer.produce(topic=class_topic, value=value_obj, key=key_obj, headers=hdrs)
 
     class_producer.flush()
 
@@ -177,10 +177,16 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
                 params.value = RegisteredClass(AlarmLocation[location],
                                                AlarmCategory[category],
                                                AlarmPriority[priority],
-                                               rationale, correctiveaction,
-                                               pointofcontactusername, latching, filterable,
-                                               ondelayseconds, offdelayseconds, maskedby, screenpath)
-            print('Message: {}={}'.format(params.key, params.value))
+                                               rationale,
+                                               correctiveaction,
+                                               pointofcontactusername,
+                                               latching,
+                                               filterable,
+                                               ondelayseconds,
+                                               offdelayseconds,
+                                               maskedby,
+                                               screenpath)
+
             send(class_producer, class_topic)
     else:
         params.key = name
@@ -212,8 +218,6 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
                                                pointofcontactusername, latching, filterable,
                                                ondelayseconds, offdelayseconds, maskedby, screenpath,
                                                AlarmClass[alarmclass], p)
-
-                print('Message: {}'.format(params.value))
 
             send(alarm_producer, alarm_topic)
 
