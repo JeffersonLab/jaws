@@ -197,7 +197,8 @@ def list_alarms():
               'key.deserializer': alarms_key_deserializer,
               'value.deserializer': alarms_value_deserializer,
               'group.id': 'list-registered.py' + str(ts)}
-    EventSourceTable(config, alarms_initial_state, alarms_state_update)
+    etable = EventSourceTable(config, alarms_initial_state, alarms_state_update)
+    etable.start()
 
 
 def list_classes():
@@ -209,7 +210,8 @@ def list_classes():
               'key.deserializer': classes_key_deserializer,
               'value.deserializer': classes_value_deserializer,
               'group.id': 'list-registered.py' + str(ts)}
-    EventSourceTable(config, classes_initial_state, classes_state_update)
+    etable = EventSourceTable(config, classes_initial_state, classes_state_update)
+    etable.start()
 
 
 @click.command()

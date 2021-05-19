@@ -73,7 +73,8 @@ def list_records():
               'key.deserializer': key_deserializer,
               'value.deserializer': value_deserializer,
               'group.id': 'list-active.py' + str(ts)}
-    EventSourceTable(config, handle_initial_state, handle_state_update)
+    etable = EventSourceTable(config, handle_initial_state, handle_state_update)
+    etable.start()
 
 
 @click.command()
