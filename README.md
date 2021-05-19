@@ -73,7 +73,7 @@ docker exec jaws /scripts/client/set-active.py alarm1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
-**Note**: The docker-compose up command implicitly reads both _docker-compose.yml_ and _docker-compose-override.yml_.
+**Note**: The docker-compose up command implicitly reads both _docker-compose.yml_ and _docker-compose.override.yml_.
 
 **See**: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
 
