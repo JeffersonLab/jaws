@@ -197,22 +197,22 @@ _† Incited alarm override (Others are suppressed override)_
 ## Alarm States
 The effective alarm state is computed by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor), which consumes the registered-alarms, active-alarms, and overridden-alarms topics and outputs to the alarm-state topic the effective alarm state.  The effective alarm state takes into consideration override precedence, one shot vs continuous shelving, and active vs inactive combinations with overridden considerations.  The alarm states in precedence order:
 
-| Precedence | State                     | Active | Effectively | Note                                                    |
-|------------|---------------------------|--------|------------ |---------------------------------------------------------|
-| 1          | NormalDisabled            | No     | Normal      | Until disable removed (suppressed)                      |
-| 2          | Disabled                  | Yes    | Normal      | Until disable removed OR the alarm becomes inactive (suppressed)       |
-| 3          | NormalFiltered            | No     | Normal      | Until the filter is removed (suppressed)                               |
-| 4          | Filtered                  | Yes    | Normal      | Until the filter is removed OR the alarm becomes inactive (suppressed) |
-| 5          | Masked                    | Yes    | Normal      | Until the alarm or parent alarm becomes inactive (suppressed)          |
-| 6          | OnDelayed                 | Yes    | Normal      | Until delay expires OR the alarm becomes inactive (suppressed)         |
-| 7          | OneShotShelved            | Yes    | Normal      | Until the alarm becomes inactive OR shelving expires (suppressed)      |
-| 8          | NormalContinuousShelved   | No     | Normal      | Until shelving expires (suppressed)                                    |
-| 9          | ContinuousShelved         | Yes    | Normal      | Until delay expires OR the alarm becomes inactive (suppressed)         |
-| 10         | OffDelayed                | No     | Active      | Until delay expires (incited)                        |
-| 11         | NormalLatched             | No     | Active      | Until operator acknowledgement (incited)             |
-| 12         | Latched                   | Yes    | Active      | Until operator acknowledgement OR the alarm becomes inactive (incited)    |
-| 13         | Active                    | Yes    | Active      | Timely operator action is required                   |
-| 14         | Normal                    | No     | Normal      | Does not require operator action                     |    
+| Precedence | State                     | Actually | Effectively | Note                                                     |
+|------------|---------------------------|--------|------------ |------------------------------------------------------------|
+| 1          | NormalDisabled            | Normal | Normal      | Until disable removed (suppressed)                         |
+| 2          | Disabled                  | Active | Normal      | Until disable removed OR the alarm becomes inactive (suppressed)       |
+| 3          | NormalFiltered            | Normal | Normal      | Until the filter is removed (suppressed)                               |
+| 4          | Filtered                  | Active | Normal      | Until the filter is removed OR the alarm becomes inactive (suppressed) |
+| 5          | Masked                    | Active | Normal      | Until the alarm or parent alarm becomes inactive (suppressed)          |
+| 6          | OnDelayed                 | Active | Normal      | Until delay expires OR the alarm becomes inactive (suppressed)         |
+| 7          | OneShotShelved            | Active | Normal      | Until the alarm becomes inactive OR shelving expires (suppressed)      |
+| 8          | NormalContinuousShelved   | Normal | Normal      | Until shelving expires (suppressed)                                    |
+| 9          | ContinuousShelved         | Active | Normal      | Until delay expires OR the alarm becomes inactive (suppressed)         |
+| 10         | OffDelayed                | Normal | Active      | Until delay expires (incited)                        |
+| 11         | NormalLatched             | Normal | Active      | Until operator acknowledgement (incited)             |
+| 12         | Latched                   | Active | Active      | Until operator acknowledgement OR the alarm becomes inactive (incited)    |
+| 13         | Active                    | Active | Active      | Timely operator action is required                   |
+| 14         | Normal                    | Normal | Normal      | Does not require operator action                     |    
 
 **Note**: Some states are mutually exclusive such as the override states with "Normal" prefix cannot occur at the same times as their Active counterparts (For example, an alarm can not be both NormalDisabled and Disabled at the same time, but an alarm can be both Disabled and Filtered).  The Precedence is arbitrary in these mutually exclusive cases.  The way our override schema is keyed it is also impossible for an alarm to be both One shot and continuous shelved simultaneously (they're also mutually exclusive states).
 
