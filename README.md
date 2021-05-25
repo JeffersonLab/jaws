@@ -129,7 +129,7 @@ At JLab we we're expermimenting with various strategies such as translating EPIC
 
 ## Overrides
 An alarm can be in two basic states: 
-  - "Active": Timely operator action required (actively alarming)
+  - "Active": Timely operator action required (actively alarming / annunciating)
   - "Normal": No operator action required
 
 In an ideal world alarm producers are sophisticated and aware of the machine program and nuisance alarms are non-existant.  Nuisance alarms are alarms which are in the Active state incorrectly - there really isn't any operator action required despite the alarm producer indicating there is.   In practice, nuisance alarms are very common and quickly undermine the value of an alarm system.   Overrides are one way for operators to deal with nuisance alarms by adding a layer of indirection from alarm producers and allowing effective alarm state to differ from actual alarm state.
