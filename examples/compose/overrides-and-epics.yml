@@ -21,7 +21,6 @@ services:
       KAFKA_HOME: "/kafka"
       BOOTSTRAP_SERVER: "kafka:9092"
       ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,overridden-alarms:1:1:compact'
 
   registry:
     image: confluentinc/cp-schema-registry:6.0.2
@@ -48,21 +47,6 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-
-  jaws:
-    image: slominskir/jaws:2.6.0
-    tty: true
-    stdin_open: true
-    hostname: jaws
-    container_name: jaws
-    depends_on:
-      - zookeeper
-      - kafka
-      - registry
-    environment:
-      BOOTSTRAP_SERVERS: "kafka:9092"
-      SCHEMA_REGISTRY: "http://registry:8081"
-      ALARM_DEFINITIONS: "alarm1|channel1|INJ|RF|/,alarm2|channel2|INJ|RF|/,alarm3|channel3|INJ|RF|/"
 
   softioc:
     image: slominskir/softioc:1.1.0
@@ -104,3 +88,18 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
+
+  jaws:
+    image: slominskir/jaws:2.6.1
+    tty: true
+    stdin_open: true
+    hostname: jaws
+    container_name: jaws
+    depends_on:
+      - zookeeper
+      - kafka
+      - registry
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
+      ALARM_DEFINITIONS: "alarm1|channel1|INJ|RF|/,alarm2|channel2|INJ|RF|/,alarm3|channel3|INJ|RF|/"
