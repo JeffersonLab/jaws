@@ -8,13 +8,21 @@ while [ $(curl -s -o /dev/null -w %{http_code} http://registry:8081/schemas/type
   sleep 5
 done
 
+
+echo "------------------------"
+echo "Step 2: Creating Topics "
+echo "------------------------"
+/scripts/broker/create-alarm-topics.py
+
+
 echo "---------------------------------------"
-echo "Step 2: Adding Schemas to the registry "
+echo "Step 3: Adding Schemas to the registry "
 echo "---------------------------------------"
 /scripts/registry/create-alarm-schemas.py
 
+
 echo "----------------------------------------------------------------"
-echo "Step 3: Adding class definitions to the registered-classes topic "
+echo "Step 4: Adding class definitions to the registered-classes topic "
 echo "----------------------------------------------------------------"
 if [[ -z "${CLASS_DEFINITIONS}" ]]; then
   echo "No class definitions specified"
@@ -45,8 +53,9 @@ else
     done
 fi
 
+
 echo "----------------------------------------------------------------"
-echo "Step 4: Adding alarm definitions to the registered-alarms topic "
+echo "Step 5: Adding alarm definitions to the registered-alarms topic "
 echo "----------------------------------------------------------------"
 if [[ -z "${ALARM_DEFINITIONS}" ]]; then
   echo "No alarm definitions specified"
