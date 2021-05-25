@@ -114,25 +114,6 @@ Additionally, the built-in timestamp provided in all Kafka messages is used to p
 
 **Note**: There is no schema for message headers so content is not easily enforceable.  However, the topic management scripts provided include the audit headers listed.
 
-### Schema Peculiarities
-
-#### AVRO Unions
-For AVRO Unions we avoid placing this structure at the root.  Instead we use a single field _msg_, which is a union of records.  The _msg_ field appears unnecessary, and as an alternative the entire value could have been a union. However, a nested union is less problematic than a union at the AVRO root ([confluent blog](https://www.confluent.io/blog/multiple-event-types-in-the-same-kafka-topic/)).   If a union was used at the root then (1) the schema must be pre-registered with the registry instead of being created on-the-fly by clients, (2) the AVRO serializer must have additional configuration:
-```
-auto.register.schemas=false
-use.latest.version=true
-```
-This may appear especially odd with messages that have no fields.   For example the value is:
-```
-{"msg":{}}
-```
-instead of:
-```
-{}
-```
-#### Schema References
-Schema references are being used experimentally at this time.  See: [Confluent Python API does not support schema references](https://github.com/confluentinc/confluent-kafka-python/issues/974).
-
 ### Customize Alarms
 The information registered with an alarm can be customized by modifying the [registered-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
 
