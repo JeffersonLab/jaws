@@ -50,7 +50,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:2.5.0
+    image: slominskir/jaws:2.6.0
     tty: true
     stdin_open: true
     hostname: jaws
