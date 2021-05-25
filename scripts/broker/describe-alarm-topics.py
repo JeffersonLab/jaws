@@ -9,13 +9,17 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 a = AdminClient({'bootstrap.servers': bootstrap_servers})
 
+
 def print_config(config, depth):
     print('%40s = %-50s' %
           ((' ' * depth) + config.name, config.value))
 
+
 resources = [ConfigResource('topic', 'registered-alarms'),
              ConfigResource('topic', 'active-alarms'),
-             ConfigResource('topic', 'overridden-alarms')]
+             ConfigResource('topic', 'overridden-alarms'),
+             ConfigResource('topic', 'registered-classes'),
+             ConfigResource('topic', 'alarm-state')]
 
 fs = a.describe_configs(resources)
 
