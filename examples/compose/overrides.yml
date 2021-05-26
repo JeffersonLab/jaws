@@ -27,7 +27,6 @@ services:
     hostname: registry
     container_name: registry
     depends_on:
-      - zookeeper
       - kafka
     ports:
       - 8081:8081
@@ -40,9 +39,16 @@ services:
     hostname: state
     container_name: state
     depends_on:
-      - zookeeper
-      - kafka
-      - registry
+      - jaws
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
+
+  auto:
+    image: slominskir/jaws-auto-override-processor:1.2.0
+    hostname: auto
+    container_name: auto
+    depends_on:
       - jaws
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
@@ -55,8 +61,6 @@ services:
     hostname: jaws
     container_name: jaws
     depends_on:
-      - zookeeper
-      - kafka
       - registry
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
