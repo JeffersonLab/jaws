@@ -11,11 +11,6 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 - [Overview](https://github.com/JeffersonLab/jaws#overview)
 - [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
-- [Topics and Schemas](https://github.com/JeffersonLab/jaws#topics-and-schemas)
-   - [Supporting Topics and Schemas](https://github.com/JeffersonLab/jaws#supporting-topics-and-schemas)
-   - [Tombstones](https://github.com/JeffersonLab/jaws#tombstones)
-   - [Headers](https://github.com/JeffersonLab/jaws#headers)
-   - [Customize Alarms](https://github.com/JeffersonLab/jaws#customize-alarms)
 - [Overrides](https://github.com/JeffersonLab/jaws#overrides)
    - [Incited Alarms](https://github.com/JeffersonLab/jaws#incited-alarms)
    - [Suppressed Alarms](https://github.com/JeffersonLab/jaws#suppressed-alarms)
@@ -51,56 +46,6 @@ docker exec jaws /scripts/client/set-active.py alarm1
 **Note**: The docker-compose up command implicitly reads both _docker-compose.yml_ and _docker-compose.override.yml_.
 
 **See**: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
-
-## Topics and Schemas
-
-The alarm system state is stored primarily in three Kafka topics.   Topic schemas are stored in the [Schema Registry](https://github.com/confluentinc/schema-registry) in [AVRO](https://avro.apache.org/) format.  Python scripts are provided for managing the alarm system topics.  
-
-| Topic | Description | Key Schema | Value Schema | Scripts |
-|-------|-------------|------------|--------------|---------|
-| registered-alarms | Set of all possible alarm metadata (descriptions). | String: alarm name | AVRO: [registered-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/registered-alarms-value.avsc) | set-registered.py, list-registered.py |
-| active-alarms | Set of alarms currently active (alarming). | String: alarm name | AVRO: [active-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/active-alarms-value.avsc) | set-active.py, list-active.py |
-| overridden-alarms | Set of alarms that have been overridden. | AVRO: [overridden-alarms-key](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/overridden-alarms-key.avsc) | AVRO: [overridden-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/overridden-alarms-value.avsc) | set-overridden.py, list-overridden.py |
-
-The alarm system relies on Kafka not only for notification of changes, but for [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) [[1](https://www.confluent.io/blog/okay-store-data-apache-kafka/)], [[2](https://www.confluent.io/blog/publishing-apache-kafka-new-york-times/)], [[3](https://www.confluent.io/blog/event-sourcing-cqrs-stream-processing-apache-kafka-whats-connection/)] - everything is stored in Kafka and the entire state of the system is built by replaying messages.   All topics have compaction enabled to remove old messages that would be overwritten on replay.  Compaction is not very aggressive though so some candidates for deletion are often lingering when clients connect so they must be prepared to handle the ordered messages on replay as ones later in the stream with the same key overwrite ones earlier.  To modify a record simply set a new one with the same key. 
-
-### Supporting Topics and Schemas
-In addition to the three core topics, the following topics provide extra features:
-
-| Topic | Description | Key Schema | Value Schema | Note |
-|-------|-------------|------------|--------------|------|
-| alarm-state | Contains effective alarm state considering overrides | String: alarm name | AVRO: [alarm-state-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/alarm-state-value.avsc) | Technically each client could figure out the alarm state themselves, but it's a chore so its done by the [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor) |
-| registered-classes | Contains class-wide registration information to avoid redundant specification | AVRO: [registered-classes-key](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/registered-classes-key.avsc) | AVRO: [registered-classes-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/registered-classes-value.avsc) | Optionally some registration fields can be left empty and instead inherit values from a class specification - for example the corrective action for a certain class of machine Magnets (of which there are hundreds of instances) is typically the same. |
-| jaws-config | Contains shared configuration data | String: config property name | String: config property value |  |
-
-### Tombstones
-To unset (remove) a record write a [tombstone](https://kafka.apache.org/documentation.html#compaction) record (null/None value).  This can be done with the provided scripts using the --unset option.  The tombstone approach is used to unregister, unsuppress, unacknowledge, and unset active alarming.   
-
-### Headers
-The alarm system topics are expected to include audit information in Kafka message headers:
-
-| Header | Description |
-|--------|-------------|
-| user | The username of the account whom produced the message |
-| producer | The application name that produced the message |
-| host | The hostname where the message was produced |
-
-Additionally, the built-in timestamp provided in all Kafka messages is used to provide basic message timing information.  The alarm system uses the default producer provided timestamps (as opposed to broker provided), so timestamps may not be ordered.
-
-**Note**: There is no schema for message headers so content is not easily enforceable.  However, the topic management scripts provided include the audit headers listed.
-
-### Customize Alarms
-The information registered with an alarm can be customized by modifying the [registered-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/registered-alarms-value.avsc) schema.  For example, producer, locations, and categories are domain specific.
-
-Overrides can be customized by modifiying the [overridden-alarms-key](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/overridden-alarms-key.avsc) and [overridden-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/overridden-alarms-value.avsc) schemas.  For example, to add or remove override options.
-
-Generally alarm producers should simply indicate that an alarm is active or not.   However, not all producers work this way - some are a tangled mess (like EPICS, which indicates priority and type at the time of activation notification - a single EPICS PV therefore maps to multiple alarms).   It is possible to modify the [active-alarms-value](https://github.com/JeffersonLab/jaws-libp/blob/main/src/jlab_jaws/avro/subject_schemas/active-alarms-value.avsc) schemas to be anything you want.  The schema is currently a union of schemas for flexibility:
-
- - **SimpleAlarming**: Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields. 
- - **NoteAlarming**: Alarming state for an alarm with an extra information string. 
- - **EPICSAlarming**: Alarming state for an EPICS alarm with STAT and SEVR fields.
-
-At JLab we we're expermimenting with various strategies such as translating EPICSAlarming records (raw EPICS records) into NoteAlarming records using a Kafka Streams app that maps the on-the-fly active messages containing SEVR to one of two specific registered alarms (PV Name + MAJOR, PV Name + MINOR) and then stashing the dubiously valued STAT field as a note.
 
 ## Overrides
 An alarm can be in two basic states: 
