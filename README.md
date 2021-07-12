@@ -166,10 +166,10 @@ Multiple overrides are possible simultaneously and precedence determines effecti
 | 1 | Disabled | Manual Operator Command | Indefinite | A broken alarm can be flagged as out-of-service |
 | 2 | Filtered | Manual Operator Command of filterable alarm | Indefinite | An alarm can be "suppressed by design" - generally a group of alarms are filtered out when not needed for the current machine program.  The Filter Processor helps operators filter multiple alarms with simple grouping commands (like by area).  |
 | 3 | Masked | Automatic upon activtation of both maskable alarm and parent alarm | Only while parent alarm is active | An alarm can be suppressed by a parent alarm to minimize confusion during an alarm flood and build an alarm hierarchy |
-| 4 | OnDelayed | Automatic upon activation of on-delalyable alarm | Short with expiration | An alarm with an on-delay is temporarily suppressed upon activation to minimize fleeting/chattering |  
+| 4 | OnDelayed | Automatic upon activation of on-delayable alarm | Short with expiration | An alarm with an on-delay is temporarily suppressed upon activation to minimize fleeting/chattering |  
 | 5 | Shelved | Manual Operator Command | Short with expiration | An alarm can be temporarily suppressed via manual operator command |
 | 6 | OffDelayed† | Automatic upon de-activation of off-delayable alarm | Short with expiration | An alarm with an off-delay is temporarily incited upon de-activation to minimize fleeting/chattering |
-| 7 | Latched† | Automatic upon activation of latachable alarm | Until Operator Ack | A fleeting alarm (one that toggles between active and not active too quickly) can be configured to require acknowledgement by operators - the alarm is latched once active and won't clear to Normal (or Active) until acknowledged |
+| 7 | Latched† | Automatic upon activation of latchable alarm | Until Operator Ack | A fleeting alarm (one that toggles between active and not active too quickly) can be configured to require acknowledgement by operators - the alarm is latched once active and won't clear to Normal (or Active) until acknowledged |
 
 _† Incited alarm override (Others are suppressed override)_
 
