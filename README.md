@@ -36,8 +36,8 @@ The JAWS alarm system is composed primarily of three subsystems: _registered-ala
    - *Registry*: [Confluent Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
    - *Stream Processors*: 
      - [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor) - Compute alarm state given _registered-alarms_, _active-alarms_, and _overridden-alarms_ and output to the _alarm-state_ topic 
-     - [jaws-auto-override-processor](https://github.com/JeffersonLab/jaws-auto-override-processor) - Applys and maintains automated overrides (timers, triggers) based on configuration without manual operator intervention
-     - [alarm-filter-processor](https://github.com/JeffersonLab/alarms-filter) - Applys and maintains filter commands in the generation of alarm overrides
+     - [jaws-auto-override-processor](https://github.com/JeffersonLab/jaws-auto-override-processor) - Applies and maintains automated overrides (timers, triggers) based on configuration without manual operator intervention
+     - [alarm-filter-processor](https://github.com/JeffersonLab/alarms-filter) - Applies and maintains filter commands in the generation of alarm overrides
      - plugin: [registrations2epics](https://github.com/JeffersonLab/registrations2epics) - alarm registrations inform epics2kafka what to monitor
 - **Clients**   
    - Admin Command Line Interface (CLI) - Python scripts included in this project to manage the alarm system
