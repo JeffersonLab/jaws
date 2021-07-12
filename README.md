@@ -26,32 +26,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 
 ## Overview
-The JAWS alarm system is composed primarily of three subsystems: _registered-alarms_, _active-alarms_, and _overridden-alarms_.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the _registered-alarms_ topic (the master alarm database).   Alarms are triggered active by producing messages on the _active-alarms_ topic.     An alarm can be overridden to either suppress or incite the active state by placing a message on the _overridden-alarms_ topic.  The alarm system is composed of the following services:
-- **Sources**
-   - anything authorized to produce messages on the _active-alarms_ topic
-      - plugin: [epics2kafka-alarms](https://github.com/JeffersonLab/epics2kafka-alarms)
-- **Middleware**
-   - *Broker*: Kafka - distributed message system
-   - *Coordinator*: [ZooKeeper](https://zookeeper.apache.org/) - required by Kafka for bookkeeping and coordination
-   - *Registry*: [Confluent Schema Registry](https://github.com/confluentinc/schema-registry) - message schema lookup
-   - *Stream Processors*: 
-     - [alarm-state-processor](https://github.com/JeffersonLab/alarm-state-processor) - Compute alarm state given _registered-alarms_, _active-alarms_, and _overridden-alarms_ and output to the _alarm-state_ topic 
-     - [jaws-auto-override-processor](https://github.com/JeffersonLab/jaws-auto-override-processor) - Applies and maintains automated overrides (timers, triggers) based on configuration without manual operator intervention
-     - [alarm-filter-processor](https://github.com/JeffersonLab/alarms-filter) - Applies and maintains filter commands in the generation of alarm overrides
-     - plugin: [registrations2epics](https://github.com/JeffersonLab/registrations2epics) - alarm registrations inform epics2kafka what to monitor
-- **Clients**   
-   - Admin Command Line Interface (CLI) - Python scripts included in this project to manage the alarm system
-   - [Operator Graphical User Interface (GUI)](https://github.com/JeffersonLab/graphical-alarm-client) - Python desktop app for operators to interface with the alarm system
-
-
-**Note**: The admin CLI scritps are used to:
-   1. Setup/manage the Kafka topics
-   2. Setup/manage AVRO schemas in the registry
-   3. Produce and consume alarm system messages
-
-### JAWS APIs
- - [jaws-libj (Java)](https://github.com/JeffersonLab/jaws-libj)
- - [jaws-libp (Python)](https://github.com/JeffersonLab/jaws-libp)  
+The JAWS alarm system is composed primarily of three subsystems: _registered-alarms_, _active-alarms_, and _overridden-alarms_.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the _registered-alarms_ topic (the master alarm database).   Alarms are triggered active by producing messages on the _active-alarms_ topic.     An alarm can be overridden to either suppress or incite the active state by placing a message on the _overridden-alarms_ topic.  
 
 ## Quick Start with Compose 
 1. Grab project
@@ -238,4 +213,5 @@ docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
 ```
 
 ## See Also
+ - [Software Design](https://github.com/JeffersonLab/jaws/wiki/Software-Design)
  - [Developer Notes](https://github.com/JeffersonLab/jaws/wiki/Developer-Notes)
