@@ -11,7 +11,7 @@ from confluent_kafka import SerializingProducer
 from confluent_kafka.serialization import StringSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
-from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde, RegisteredClassSerde, RegisteredClassKeySerde
+from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde, RegisteredClassSerde
 from jlab_jaws.avro.subject_schemas.entities import RegisteredAlarm, RegisteredClass, \
     SimpleProducer, EPICSProducer, CALCProducer
 from jlab_jaws.avro.referenced_schemas.entities import AlarmLocation, AlarmCategory, AlarmPriority
@@ -83,7 +83,7 @@ def classes_import(file):
         v = json.loads(value)
         print("{}={}".format(key, v))
 
-        key_obj = RegisteredClassKeySerde.from_dict(k)
+        key_obj = key
         value_obj = RegisteredClassSerde.from_dict(v)
 
         print('Message: {}={}'.format(key_obj, value_obj))

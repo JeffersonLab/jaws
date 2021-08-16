@@ -39,11 +39,11 @@ def alarms_get_row(msg):
         row = [key, None]
     else:
 
-        if value.alarm_class.name in classes:
-            RegisteredClassSerde.setClassDefaults(value, classes[value.alarm_class.name].value())
+        if value.alarm_class in classes:
+            RegisteredClassSerde.setClassDefaults(value, classes[value.alarm_class].value())
 
         row = [key,
-               value.alarm_class.name,
+               value.alarm_class,
                value.producer,
                value.location.name if value.location is not None else None,
                value.category.name if value.category is not None else None,
