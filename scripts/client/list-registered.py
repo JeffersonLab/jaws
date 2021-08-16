@@ -7,7 +7,7 @@ import time
 import json
 
 from jlab_jaws.eventsource.table import EventSourceTable
-from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde, RegisteredClassSerde, RegisteredClassKeySerde
+from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde, RegisteredClassSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
@@ -21,7 +21,7 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 alarms_key_deserializer = StringDeserializer('utf_8')
-classes_key_deserializer = RegisteredClassKeySerde.deserializer(schema_registry_client)
+classes_key_deserializer = StringDeserializer('utf_8')
 
 alarms_value_deserializer = RegisteredAlarmSerde.deserializer(schema_registry_client)
 classes_value_deserializer = RegisteredClassSerde.deserializer(schema_registry_client)
@@ -147,7 +147,7 @@ def classes_export(records):
         value = msg.value()
 
         if params.category is None or (value is not None and params.category == value['category']):
-            k = json.dumps(RegisteredClassKeySerde.to_dict(key))
+            k = key
             v = json.dumps(RegisteredClassSerde.to_dict(value))
             print(k + '=' + v)
 

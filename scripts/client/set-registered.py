@@ -12,9 +12,9 @@ from confluent_kafka.serialization import StringSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
 from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde, RegisteredClassSerde, RegisteredClassKeySerde
-from jlab_jaws.avro.subject_schemas.entities import RegisteredAlarm, RegisteredClass, RegisteredClassKey, \
+from jlab_jaws.avro.subject_schemas.entities import RegisteredAlarm, RegisteredClass, \
     SimpleProducer, EPICSProducer, CALCProducer
-from jlab_jaws.avro.referenced_schemas.entities import AlarmClass, AlarmLocation, AlarmCategory, AlarmPriority
+from jlab_jaws.avro.referenced_schemas.entities import AlarmLocation, AlarmCategory, AlarmPriority
 
 from common import delivery_report
 
@@ -24,11 +24,8 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 alarm_value_serializer = RegisteredAlarmSerde.serializer(schema_registry_client)
-
-class_key_serializer = RegisteredClassKeySerde.serializer(schema_registry_client)
 class_value_serializer = RegisteredClassSerde.serializer(schema_registry_client)
 
-classes = AlarmClass._member_names_
 locations = AlarmLocation._member_names_
 categories = AlarmCategory._member_names_
 priorities = AlarmPriority._member_names_
@@ -39,7 +36,7 @@ alarm_producer_conf = {'bootstrap.servers': bootstrap_servers,
 alarm_producer = SerializingProducer(alarm_producer_conf)
 
 class_producer_conf = {'bootstrap.servers': bootstrap_servers,
-                       'key.serializer': class_key_serializer,
+                       'key.serializer': StringSerializer('utf_8'),
                        'value.serializer': class_value_serializer}
 class_producer = SerializingProducer(class_producer_conf)
 
@@ -102,7 +99,7 @@ def classes_import(file):
 @click.option('--file', is_flag=True,
               help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the registered-alarms-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
-@click.option('--alarmclass', type=click.Choice(classes), help="The alarm class")
+@click.option('--alarmclass', help="The alarm class")
 @click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")
 @click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm")
 @click.option('--producerexpression', help="The CALC expression used to generate this alarm")
@@ -131,11 +128,6 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
         if file:
             classes_import(name)
         else:
-            if name in classes:
-                params.key = RegisteredClassKey(AlarmClass[name])
-            else:
-                raise click.ClickException("class name must be one of: {}".format(classes))
-
             if unset:
                 params.value = None
             else:
@@ -209,7 +201,7 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
                     p = CALCProducer(producerexpression)
 
                 if alarmclass is None:
-                    alarmclass = "Base_Class"
+                    alarmclass = "base"
 
                 params.value = RegisteredAlarm(AlarmLocation[location] if location is not None else None,
                                                AlarmCategory[category] if category is not None else None,
@@ -217,7 +209,7 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
                                                rationale, correctiveaction,
                                                pointofcontactusername, latching, filterable,
                                                ondelayseconds, offdelayseconds, maskedby, screenpath,
-                                               AlarmClass[alarmclass], p)
+                                               alarmclass, p)
 
             send(alarm_producer, alarm_topic)
 
