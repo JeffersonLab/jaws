@@ -124,6 +124,8 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
 
     params = types.SimpleNamespace()
 
+    params.key = name
+
     if editclass:
         if file:
             classes_import(name)
@@ -181,8 +183,6 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
 
             send(class_producer, class_topic)
     else:
-        params.key = name
-
         if file:
             alarms_import(name)
         else:

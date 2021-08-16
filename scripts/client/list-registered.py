@@ -90,9 +90,9 @@ def classes_get_row(msg):
     value = msg.value()
 
     if value is None:
-        row = [key.alarm_class.name, None]
+        row = [key, None]
     else:
-        row = [key.alarm_class.name,
+        row = [key,
                value.location.name if value.location is not None else None,
                value.category.name if value.category is not None else None,
                value.priority.name if value.priority is not None else None,
@@ -172,7 +172,7 @@ def classes_initial_state(records):
 
     if params.display == 'alarms_with_class_defaults':
         for record in records.values():
-            classes[record.key().alarm_class.name] = record
+            classes[record.key()] = record
         list_alarms()
     elif params.export:
         classes_export(records)
