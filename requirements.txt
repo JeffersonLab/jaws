@@ -8,5 +8,5 @@ idna==2.9
 pytz==2020.1
 requests==2.23.0
 tabulate==0.8.9
-urllib3==1.25.9
+urllib3==1.26.5
 jlab-jaws==1.3.2
