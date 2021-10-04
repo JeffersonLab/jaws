@@ -79,7 +79,6 @@ def classes_import(file):
         tokens = line.split("=", 1)
         key = tokens[0]
         value = tokens[1]
-        k = json.loads(key)
         v = json.loads(value)
         print("{}={}".format(key, v))
 
