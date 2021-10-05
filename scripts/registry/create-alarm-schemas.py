@@ -3,8 +3,9 @@
 import json
 import os
 import pkgutil
+import traceback
 
-from confluent_kafka.schema_registry import SchemaRegistryClient, Schema, SchemaReference
+from confluent_kafka.schema_registry import SchemaRegistryClient, Schema, SchemaReference, SchemaRegistryError
 
 sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
@@ -35,7 +36,11 @@ def process(record):
     for ref in record['references']:
         references.append(SchemaReference(ref['name'], ref['subject'], ref['version']))
 
-    s = register(record['file'], record['subject'], references)
+    try:
+        s = register(record['file'], record['subject'], references)
+    except SchemaRegistryError:
+        print('Unable to create subject {}'.format(record['subject']))
+        traceback.print_exc()
 
 
 conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
