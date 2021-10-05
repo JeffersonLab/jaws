@@ -3,8 +3,9 @@
 import os
 import json
 import pkgutil
+import traceback
 
-from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry import SchemaRegistryClient, SchemaRegistryError
 
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
@@ -14,9 +15,12 @@ client = SchemaRegistryClient(sr_conf)
 
 
 def process(record):
-    versions = client.delete_subject(record['subject'], True)
-
-    print('Successfully deleted {}; versions: {}'.format(record['subject'], versions))
+    try:
+        versions = client.delete_subject(record['subject'], True)
+        print('Successfully deleted {}; versions: {}'.format(record['subject'], versions))
+    except SchemaRegistryError:
+        print('Unable to delete: {}'.format(record['subject']))
+        traceback.print_exc()
 
 
 conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schema-registry.json')
