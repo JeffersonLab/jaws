@@ -7,11 +7,11 @@ import time
 import json
 
 from jlab_jaws.eventsource.table import EventSourceTable
-from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde, RegisteredClassSerde
+from jlab_jaws.avro.serde import AlarmRegistrationSerde, AlarmClassSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.referenced_schemas.entities import AlarmCategory
+from jlab_jaws.avro.entities import AlarmCategory
 
 from common import get_row_header
 
@@ -23,8 +23,8 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 alarms_key_deserializer = StringDeserializer('utf_8')
 classes_key_deserializer = StringDeserializer('utf_8')
 
-alarms_value_deserializer = RegisteredAlarmSerde.deserializer(schema_registry_client)
-classes_value_deserializer = RegisteredClassSerde.deserializer(schema_registry_client)
+alarms_value_deserializer = AlarmRegistrationSerde.deserializer(schema_registry_client)
+classes_value_deserializer = AlarmClassSerde.deserializer(schema_registry_client)
 
 categories = AlarmCategory._member_names_
 
@@ -40,7 +40,7 @@ def alarms_get_row(msg):
     else:
 
         if value.alarm_class in classes:
-            RegisteredClassSerde.setClassDefaults(value, classes[value.alarm_class].value())
+            AlarmClassSerde.setClassDefaults(value, classes[value.alarm_class].value())
 
         row = [key,
                value.alarm_class,
@@ -137,7 +137,7 @@ def alarms_export(records):
         value = msg.value()
 
         if params.category is None or (value is not None and params.category == value['category']):
-            v = json.dumps(RegisteredAlarmSerde.to_dict(value))
+            v = json.dumps(AlarmRegistrationSerde.to_dict(value))
             print(key + '=' + v)
 
 
@@ -148,7 +148,7 @@ def classes_export(records):
 
         if params.category is None or (value is not None and params.category == value['category']):
             k = key
-            v = json.dumps(RegisteredClassSerde.to_dict(value))
+            v = json.dumps(AlarmClassSerde.to_dict(value))
             print(k + '=' + v)
 
 
@@ -191,7 +191,7 @@ def classes_state_update(record):
 def list_alarms():
     ts = time.time()
 
-    config = {'topic': 'registered-alarms',
+    config = {'topic': 'alarm-registrations',
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': alarms_key_deserializer,
@@ -204,7 +204,7 @@ def list_alarms():
 def list_classes():
     ts = time.time()
 
-    config = {'topic': 'registered-classes',
+    config = {'topic': 'alarm-classes',
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': classes_key_deserializer,

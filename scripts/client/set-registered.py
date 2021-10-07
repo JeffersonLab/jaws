@@ -11,10 +11,10 @@ from confluent_kafka import SerializingProducer
 from confluent_kafka.serialization import StringSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
-from jlab_jaws.avro.subject_schemas.serde import RegisteredAlarmSerde, RegisteredClassSerde
-from jlab_jaws.avro.subject_schemas.entities import RegisteredAlarm, RegisteredClass, \
+from jlab_jaws.avro.serde import AlarmRegistrationSerde, AlarmClassSerde
+from jlab_jaws.avro.entities import AlarmRegistration, AlarmClass, \
     SimpleProducer, EPICSProducer, CALCProducer
-from jlab_jaws.avro.referenced_schemas.entities import AlarmLocation, AlarmCategory, AlarmPriority
+from jlab_jaws.avro.entities import AlarmLocation, AlarmCategory, AlarmPriority
 
 from common import delivery_report
 
@@ -23,8 +23,8 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-alarm_value_serializer = RegisteredAlarmSerde.serializer(schema_registry_client)
-class_value_serializer = RegisteredClassSerde.serializer(schema_registry_client)
+alarm_value_serializer = AlarmRegistrationSerde.serializer(schema_registry_client)
+class_value_serializer = AlarmClassSerde.serializer(schema_registry_client)
 
 locations = AlarmLocation._member_names_
 categories = AlarmCategory._member_names_
@@ -40,8 +40,8 @@ class_producer_conf = {'bootstrap.servers': bootstrap_servers,
                        'value.serializer': class_value_serializer}
 class_producer = SerializingProducer(class_producer_conf)
 
-alarm_topic = 'registered-alarms'
-class_topic = 'registered-classes'
+alarm_topic = 'alarm-registrations'
+class_topic = 'alarm-classes'
 
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-registered.py'), ('host', os.uname().nodename)]
 
@@ -63,7 +63,7 @@ def alarms_import(file):
         v = json.loads(value)
         print("{}={}".format(key, v))
 
-        value_obj = RegisteredAlarmSerde.from_dict(v)
+        value_obj = AlarmRegistrationSerde.from_dict(v)
 
         alarm_producer.produce(topic=alarm_topic, value=value_obj, key=key, headers=hdrs)
 
@@ -83,7 +83,7 @@ def classes_import(file):
         print("{}={}".format(key, v))
 
         key_obj = key
-        value_obj = RegisteredClassSerde.from_dict(v)
+        value_obj = AlarmClassSerde.from_dict(v)
 
         print('Message: {}={}'.format(key_obj, value_obj))
 
@@ -167,7 +167,7 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
                 if offdelayseconds is None:
                     offdelayseconds = 0
 
-                params.value = RegisteredClass(AlarmLocation[location],
+                params.value = AlarmClass(AlarmLocation[location],
                                                AlarmCategory[category],
                                                AlarmPriority[priority],
                                                rationale,
@@ -202,7 +202,7 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
                 if alarmclass is None:
                     alarmclass = "base"
 
-                params.value = RegisteredAlarm(AlarmLocation[location] if location is not None else None,
+                params.value = AlarmRegistration(AlarmLocation[location] if location is not None else None,
                                                AlarmCategory[category] if category is not None else None,
                                                AlarmPriority[priority] if priority is not None else None,
                                                rationale, correctiveaction,
