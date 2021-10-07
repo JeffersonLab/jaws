@@ -6,7 +6,7 @@ import click
 import time
 
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from jlab_jaws.avro.subject_schemas.serde import OverriddenAlarmKeySerde, OverriddenAlarmValueSerde
+from jlab_jaws.avro.serde import AlarmOverrideKeySerde, AlarmOverrideUnionSerde
 from jlab_jaws.eventsource.table import EventSourceTable
 from tabulate import tabulate
 
@@ -18,8 +18,8 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 
-key_deserializer = OverriddenAlarmKeySerde.deserializer(schema_registry_client)
-value_deserializer = OverriddenAlarmValueSerde.deserializer(schema_registry_client)
+key_deserializer = AlarmOverrideKeySerde.deserializer(schema_registry_client)
+value_deserializer = AlarmOverrideUnionSerde.deserializer(schema_registry_client)
 
 
 def get_row(msg):
@@ -68,7 +68,7 @@ def handle_state_update(record):
 def list_records():
     ts = time.time()
 
-    config = {'topic': "overridden-alarms",
+    config = {'topic': "alarm-overrides",
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': key_deserializer,

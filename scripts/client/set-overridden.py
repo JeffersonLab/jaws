@@ -9,10 +9,10 @@ import time
 
 from confluent_kafka import SerializingProducer
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from jlab_jaws.avro.subject_schemas.entities import OverriddenAlarmValue, LatchedAlarm, FilteredAlarm, MaskedAlarm, \
-    DisabledAlarm, OnDelayedAlarm, OffDelayedAlarm, ShelvedAlarm, OverriddenAlarmKey, OverriddenAlarmType, \
-    ShelvedAlarmReason
-from jlab_jaws.avro.subject_schemas.serde import OverriddenAlarmKeySerde, OverriddenAlarmValueSerde
+from jlab_jaws.avro.entities import AlarmOverrideUnion, LatchedOverride, FilteredOverride, MaskedOverride, \
+    DisabledOverride, OnDelayedOverride, OffDelayedOverride, ShelvedOverride, AlarmOverrideKey, OverriddenAlarmType, \
+    ShelvedReason
+from jlab_jaws.avro.serde import AlarmOverrideKeySerde, AlarmOverrideUnionSerde
 
 from common import delivery_report
 
@@ -21,15 +21,15 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-key_serializer = OverriddenAlarmKeySerde.serializer(schema_registry_client)
-value_serializer = OverriddenAlarmValueSerde.serializer(schema_registry_client)
+key_serializer = AlarmOverrideKeySerde.serializer(schema_registry_client)
+value_serializer = AlarmOverrideUnionSerde.serializer(schema_registry_client)
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': key_serializer,
                  'value.serializer': value_serializer}
 producer = SerializingProducer(producer_conf)
 
-topic = 'overridden-alarms'
+topic = 'alarm-overrides'
 
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-overridden.py'),('host',os.uname().nodename)]
 
@@ -43,7 +43,7 @@ def send() :
 @click.option('--override', type=click.Choice(OverriddenAlarmType._member_names_), help="The type of override")
 @click.option('--unset', is_flag=True, help="Remove the override")
 @click.option('--expirationseconds', type=int, help="The number of seconds until the shelved status expires, None for indefinite")
-@click.option('--reason', type=click.Choice(ShelvedAlarmReason._member_names_), help="The explanation for why this alarm has been shelved")
+@click.option('--reason', type=click.Choice(ShelvedReason._member_names_), help="The explanation for why this alarm has been shelved")
 @click.option('--oneshot', is_flag=True, help="Whether shelving is one-shot or continuous")
 @click.option('--comments', help="Operator explanation for why suppressed")
 @click.option('--filtername', help="Name of filter rule associated with this override")
@@ -56,7 +56,7 @@ def cli(override, unset, expirationseconds, reason, oneshot, comments, filternam
     if override is None:
         raise click.ClickException("--override is required")
 
-    params.key = OverriddenAlarmKey(name, OverriddenAlarmType[override])
+    params.key = AlarmOverrideKey(name, OverriddenAlarmType[override])
 
     if expirationseconds is not None:
         timestamp_seconds = time.time() + expirationseconds;
@@ -72,31 +72,31 @@ def cli(override, unset, expirationseconds, reason, oneshot, comments, filternam
             if expirationseconds is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = ShelvedAlarm(timestamp_millis, comments, ShelvedAlarmReason[reason], oneshot)
+            msg = ShelvedOverride(timestamp_millis, comments, ShelvedReason[reason], oneshot)
 
         elif override == "OnDelayed":
             if expirationseconds is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = OnDelayedAlarm(timestamp_millis)
+            msg = OnDelayedOverride(timestamp_millis)
         elif override == "OffDelayed":
             if expirationseconds is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = OffDelayedAlarm(timestamp_millis)
+            msg = OffDelayedOverride(timestamp_millis)
         elif override == "Disabled":
-            msg = DisabledAlarm(comments)
+            msg = DisabledOverride(comments)
         elif override == "Filtered":
             if filtername is None:
                 raise click.ClickException("--filtername is required")
 
-            msg = FilteredAlarm(filtername)
+            msg = FilteredOverride(filtername)
         elif override == "Masked":
-            msg = MaskedAlarm()
+            msg = MaskedOverride()
         else: # assume Latched
-            msg = LatchedAlarm()
+            msg = LatchedOverride()
 
-        params.value = OverriddenAlarmValue(msg)
+        params.value = AlarmOverrideUnion(msg)
 
     print(params.value)
 
