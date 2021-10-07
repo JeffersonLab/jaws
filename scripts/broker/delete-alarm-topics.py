@@ -4,12 +4,16 @@ from confluent_kafka.admin import AdminClient
 from confluent_kafka import KafkaException
 
 import os
+import json
+import pkgutil
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 a = AdminClient({'bootstrap.servers': bootstrap_servers})
 
-topics = ['registered-alarms', 'active-alarms', 'overridden-alarms', 'registered-classes', 'alarm-state']
+conf = pkgutil.get_data("jlab_jaws", "avro/topics.json")
+
+topics = json.loads(conf)
 
 fs = a.delete_topics(topics, operation_timeout=15)
 

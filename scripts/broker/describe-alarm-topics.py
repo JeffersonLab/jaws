@@ -4,10 +4,16 @@ from confluent_kafka.admin import AdminClient, ConfigResource, ConfigSource
 from confluent_kafka import KafkaException
 
 import os
+import json
+import pkgutil
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 a = AdminClient({'bootstrap.servers': bootstrap_servers})
+
+conf = pkgutil.get_data("jlab_jaws", "avro/topics.json")
+
+topics = json.loads(conf)
 
 
 def print_config(config, depth):
@@ -15,11 +21,10 @@ def print_config(config, depth):
           ((' ' * depth) + config.name, config.value))
 
 
-resources = [ConfigResource('topic', 'registered-alarms'),
-             ConfigResource('topic', 'active-alarms'),
-             ConfigResource('topic', 'overridden-alarms'),
-             ConfigResource('topic', 'registered-classes'),
-             ConfigResource('topic', 'alarm-state')]
+resources = []
+
+for t in topics:
+    resources.append(ConfigResource('topic', t))
 
 fs = a.describe_configs(resources)
 

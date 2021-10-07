@@ -4,12 +4,16 @@ from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import KafkaException
 
 import os
+import json
+import pkgutil
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 a = AdminClient({'bootstrap.servers': bootstrap_servers})
 
-topics = ['registered-alarms', 'active-alarms', 'overridden-alarms', 'registered-classes', 'alarm-state']
+conf = pkgutil.get_data("jlab_jaws", "avro/topics.json")
+
+topics = json.loads(conf)
 
 new_topics = [NewTopic(topic, num_partitions=1, replication_factor=1, config={"cleanup.policy": "compact"}) for topic in topics]
 
