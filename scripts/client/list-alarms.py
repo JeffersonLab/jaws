@@ -32,7 +32,7 @@ def get_row(msg):
         row = [key, None]
     else:
         row = [key,
-               value.state.name]
+               value.state.name, value.overrides, value.effective_registration]
 
     row_header = get_row_header(headers, timestamp)
 
@@ -42,7 +42,7 @@ def get_row(msg):
 
 
 def disp_table(records):
-    head = ["Alarm Name", "State"]
+    head = ["Alarm Name", "State", "Overrides", "Effective Registration"]
     table = []
 
     head = ["Timestamp", "User", "Host", "Produced By"] + head
