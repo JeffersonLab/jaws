@@ -11,7 +11,7 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringSerializer
 from jlab_jaws.avro.entities import Alarm, AlarmState, AlarmOverrideSet, ProcessorTransitions, OverriddenAlarmType, \
     DisabledOverride, FilteredOverride, LatchedOverride, MaskedOverride, OnDelayedOverride, OffDelayedOverride, \
-    ShelvedOverride, ShelvedReason
+    ShelvedOverride, ShelvedReason, AlarmRegistration, AlarmLocation, AlarmCategory, AlarmPriority, SimpleProducer
 from jlab_jaws.avro.serde import AlarmSerde
 
 from common import delivery_report
@@ -63,6 +63,23 @@ def get_overrides(override):
     return overrides
 
 
+def get_effective_registration():
+    return AlarmRegistration(AlarmLocation.INJ,
+                             AlarmCategory.RF,
+                             AlarmPriority.P4_INCIDENTAL,
+                             "testing",
+                             "fix it",
+                             "tester",
+                             True,
+                             True,
+                             5,
+                             5,
+                             "alarm1",
+                             "/tmp",
+                             "base",
+                             SimpleProducer())
+
+
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear state, missing to set state")
 @click.option('--state', required=True, type=click.Choice(AlarmState._member_names_), help="The state")
@@ -79,10 +96,11 @@ def cli(unset, state, override, name):
         params.value = None
     else:
         overrides = get_overrides(override)
+        effective_registration = get_effective_registration()
 
         params.value = Alarm(None,
                              None,
-                             None,
+                             effective_registration,
                              None,
                              overrides,
                              ProcessorTransitions(False, False, False, False,

@@ -32,7 +32,13 @@ def get_row(msg):
         row = [key, None]
     else:
         row = [key,
-               value.state.name, value.overrides, value.effective_registration]
+               value.state.name]
+
+        if params.overrides:
+            row.append(value.overrides)
+
+        if params.effective:
+            row.append(value.effective_registration)
 
     row_header = get_row_header(headers, timestamp)
 
@@ -42,8 +48,14 @@ def get_row(msg):
 
 
 def disp_table(records):
-    head = ["Alarm Name", "State", "Overrides", "Effective Registration"]
+    head = ["Alarm Name", "State"]
     table = []
+
+    if params.overrides:
+        head.append("Overrides")
+
+    if params.effective:
+        head.append("Effective Registration")
 
     head = ["Timestamp", "User", "Host", "Produced By"] + head
 
@@ -79,12 +91,16 @@ def list_records():
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
-def cli(monitor):
+@click.option('--overrides', is_flag=True, help="Show overrides")
+@click.option('--effective', is_flag=True, help="Show effective registration")
+def cli(monitor, overrides, effective):
     global params
 
     params = types.SimpleNamespace()
 
     params.monitor = monitor
+    params.overrides = overrides
+    params.effective = effective
 
     list_records()
 
