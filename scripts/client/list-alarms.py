@@ -32,7 +32,7 @@ def get_row(msg):
         row = [key, None]
     else:
         row = [key,
-               value.type.name if value is not None else None]
+               value.state.name]
 
     row_header = get_row_header(headers, timestamp)
 
