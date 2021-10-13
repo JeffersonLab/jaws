@@ -24,6 +24,10 @@ The JAWS alarm system is composed primarily of three subsystems: _registrations_
 - [jaws-admin-gui](https://github.com/JeffersonLab/jaws-web-admin): GUI for managing alarm registrations
 - [jaws-operator-gui](https://github.com/JeffersonLab/graphical-alarm-client): GUI for monitoring alarms and managing overrides
 
+**APIs**
+- [jaws-libj](https://github.com/JeffersonLab/jaws-libj): Java API library for JAWS
+- [jaws-libp](https://github.com/JeffersonLab/jaws-libp): Python API library for JAWS
+
 **Plugins**
 - [jaws-epics2kafka](https://github.com/JeffersonLab/epics2kafka-alarms): Connects EPICS alarms to JAWS
 
