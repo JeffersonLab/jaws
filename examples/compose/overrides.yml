@@ -34,20 +34,10 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: registry
 
-  state:
-    image: slominskir/alarm-state-processor:1.1.0
-    hostname: state
-    container_name: state
-    depends_on:
-      - jaws
-    environment:
-      BOOTSTRAP_SERVERS: "kafka:9092"
-      SCHEMA_REGISTRY: "http://registry:8081"
-
-  auto:
-    image: slominskir/jaws-auto-override-processor:1.2.0
-    hostname: auto
-    container_name: auto
+  alarms:
+    image: slominskir/jaws-alarm-processor:2.0.0
+    hostname: alarms
+    container_name: alarms
     depends_on:
       - jaws
     environment:
@@ -55,7 +45,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:2.6.1
+    image: slominskir/jaws:2.7.0
     tty: true
     stdin_open: true
     hostname: jaws
