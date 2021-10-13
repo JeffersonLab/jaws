@@ -21,9 +21,9 @@ echo "---------------------------------------"
 /scripts/registry/create-alarm-schemas.py
 
 
-echo "-----------------------------------------------------------------"
-echo "Step 4: Adding class definitions to the registered-classes topic "
-echo "-----------------------------------------------------------------"
+echo "------------------------------------------------------------"
+echo "Step 4: Adding class definitions to the alarm-classes topic "
+echo "------------------------------------------------------------"
 if [[ -z "${CLASS_DEFINITIONS}" ]]; then
   echo "No class definitions specified"
 elif [[ -f "$CLASS_DEFINITIONS" ]]; then
@@ -54,9 +54,9 @@ else
 fi
 
 
-echo "----------------------------------------------------------------"
-echo "Step 5: Adding alarm definitions to the registered-alarms topic "
-echo "----------------------------------------------------------------"
+echo "------------------------------------------------------------------"
+echo "Step 5: Adding alarm definitions to the alarm-registrations topic "
+echo "------------------------------------------------------------------"
 if [[ -z "${ALARM_DEFINITIONS}" ]]; then
   echo "No alarm definitions specified"
 elif [[ -f "$ALARM_DEFINITIONS" ]]; then
