@@ -29,7 +29,7 @@ The JAWS alarm system is composed primarily of three subsystems: _registrations_
 - [jaws-libp](https://github.com/JeffersonLab/jaws-libp): Python API library for JAWS
 
 **Plugins**
-- [jaws-epics2kafka](https://github.com/JeffersonLab/epics2kafka-alarms): Connects EPICS alarms to JAWS
+- [jaws-epics2kafka](https://github.com/JeffersonLab/jaws-epics2kafka): Connects EPICS alarms to JAWS
 
 ## Quick Start with Compose 
 1. Grab project
