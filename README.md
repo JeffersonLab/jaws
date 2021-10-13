@@ -19,7 +19,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ## Overview
 The JAWS alarm system is composed primarily of three subsystems: _registrations_, _activations_, and _overrides_.   The inventory of all possible alarms is maintained by registering or unregistering alarm definitions on the _alarm-registrations_ topic (the master alarm database).   Alarms are triggered active by producing messages on the _alarm-activations_ topic.     An alarm can be overridden to either suppress or incite the active state by placing a message on the _alarm-overrides_ topic.  
 
-**JAWS Services**
+**Services**
 - [jaws-alarm-processor](https://github.com/JeffersonLab/jaws-alarm-processor): Process overrides and provide effective state of alarms on the _alarms_ topic
 - [jaws-admin-gui](https://github.com/JeffersonLab/jaws-web-admin): GUI for managing alarm registrations
 - [jaws-operator-gui](https://github.com/JeffersonLab/graphical-alarm-client): GUI for monitoring alarms and managing overrides
