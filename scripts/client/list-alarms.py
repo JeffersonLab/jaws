@@ -79,7 +79,7 @@ def handle_state_update(record):
 def list_records():
     ts = time.time()
 
-    config = {'topic': 'alarms',
+    config = {'topic': 'effective-alarms',
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': key_deserializer,

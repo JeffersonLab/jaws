@@ -29,7 +29,7 @@ producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'value.serializer': value_serializer}
 producer = SerializingProducer(producer_conf)
 
-topic = 'alarms'
+topic = 'effective-alarms'
 
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-alarms.py'),('host',os.uname().nodename)]
 
