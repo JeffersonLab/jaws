@@ -9,29 +9,31 @@ import time
 from confluent_kafka import SerializingProducer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringSerializer
-from jlab_jaws.avro.entities import Alarm, AlarmState, AlarmOverrideSet, ProcessorTransitions, OverriddenAlarmType, \
+from jlab_jaws.avro.entities import AlarmState, AlarmOverrideSet, \
+    OverriddenAlarmType, EffectiveActivation, \
     DisabledOverride, FilteredOverride, LatchedOverride, MaskedOverride, OnDelayedOverride, OffDelayedOverride, \
     ShelvedOverride, ShelvedReason, AlarmRegistration, AlarmLocation, AlarmCategory, AlarmPriority, SimpleProducer
-from jlab_jaws.avro.serde import AlarmSerde
+from jlab_jaws.avro.serde import EffectiveActivationSerde
 
 from common import delivery_report
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
-sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
+sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 key_serializer = StringSerializer()
-value_serializer = AlarmSerde.serializer(schema_registry_client)
+value_serializer = EffectiveActivationSerde.serializer(schema_registry_client)
 
 producer_conf = {'bootstrap.servers': bootstrap_servers,
                  'key.serializer': key_serializer,
                  'value.serializer': value_serializer}
 producer = SerializingProducer(producer_conf)
 
-topic = 'effective-alarms'
+topic = 'effective-activations'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-alarms.py'),('host',os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-effective-activations.py'),
+        ('host', os.uname().nodename)]
 
 
 def send():
@@ -57,27 +59,10 @@ def get_overrides(override):
         overrides.filtered = FilteredOverride("testing")
     elif override == "Masked":
         overrides.masked = MaskedOverride()
-    else: # assume Latched
+    elif override == "Latched":
         overrides.latched = LatchedOverride()
 
     return overrides
-
-
-def get_effective_registration():
-    return AlarmRegistration(AlarmLocation.INJ,
-                             AlarmCategory.RF,
-                             AlarmPriority.P4_INCIDENTAL,
-                             "testing",
-                             "fix it",
-                             "tester",
-                             True,
-                             True,
-                             5,
-                             5,
-                             "alarm1",
-                             "/tmp",
-                             "base",
-                             SimpleProducer())
 
 
 @click.command()
@@ -96,16 +81,8 @@ def cli(unset, state, override, name):
         params.value = None
     else:
         overrides = get_overrides(override)
-        effective_registration = get_effective_registration()
 
-        params.value = Alarm(None,
-                             None,
-                             effective_registration,
-                             None,
-                             overrides,
-                             ProcessorTransitions(False, False, False, False,
-                                                  False, False, False, False),
-                             AlarmState[state])
+        params.value = EffectiveActivation(None, overrides, AlarmState[state])
 
     send()
 
