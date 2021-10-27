@@ -35,7 +35,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: registry
 
   alarms:
-    image: slominskir/jaws-alarm-processor:2.0.0
+    image: slominskir/jaws-alarm-processor:2.1.0
     hostname: alarms
     container_name: alarms
     depends_on:
@@ -45,7 +45,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:2.7.1
+    image: slominskir/jaws:2.9.0
     tty: true
     stdin_open: true
     hostname: jaws
