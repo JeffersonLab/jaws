@@ -82,6 +82,14 @@ The following environment variables are required by the scripts:
 | BOOTSTRAP_SERVER | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
 | SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
 
+The Docker container requires the script environment variables, plus can optionally handle the following environment variables as well:
+
+| Name | Description |
+|----------|---------|
+| ALARM_CLASSES | Path to an alarm-classes file to import else a comma separated list of class definitions with fields separated by the pipe symbol.  Example: `name\|location\|category\|priority\|rationale\|correctiveaction\|pointofcontactusername\|screenpath` |
+| ALARM_REGISTRATIONS | Path to an alarm-registrations file to import else a comma separated list of registration definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example: `name\|epicspv\|location\|category\|screenpath` |
+
+
 ## Docker
 ```
 docker pull slominskir/jaws
