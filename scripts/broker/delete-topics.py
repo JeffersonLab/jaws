@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from confluent_kafka.admin import AdminClient
-from confluent_kafka import KafkaException
 
 import os
 import json

@@ -12,13 +12,13 @@ done
 echo "------------------------"
 echo "Step 2: Creating Topics "
 echo "------------------------"
-/scripts/broker/create-alarm-topics.py
+/scripts/broker/create-topics.py
 
 
 echo "---------------------------------------"
 echo "Step 3: Adding Schemas to the registry "
 echo "---------------------------------------"
-/scripts/registry/create-alarm-schemas.py
+/scripts/registry/create-schemas.py
 
 
 echo "------------------------------------------------------------"
