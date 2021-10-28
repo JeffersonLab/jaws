@@ -87,7 +87,7 @@ The Docker container requires the script environment variables, plus can optiona
 | Name | Description |
 |----------|---------|
 | ALARM_CLASSES | Path to an alarm-classes file to import else a comma separated list of class definitions with fields separated by the pipe symbol.  Example: `name\|location\|category\|priority\|rationale\|correctiveaction\|pointofcontactusername\|screenpath` |
-| ALARM_REGISTRATIONS | Path to an alarm-registrations file to import else a comma separated list of registration definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example: `name\|epicspv\|location\|category\|screenpath` |
+| ALARM_REGISTRATIONS | Path to an alarm-registrations file to import else a comma separated list of registration definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example: `name\|class\|epicspv\|location\|category\|screenpath` |
 
 
 ## Docker
