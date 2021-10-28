@@ -71,15 +71,16 @@ else
       IFS='|'
       read -a def <<< "$defStr"
       name="${def[0]}"
-      pv="${def[1]}"
-      location="${def[2]}"
-      category="${def[3]}"
-      screenpath="${def[4]}"
-      echo "Creating registration ${name} ${pv} ${location}" "${category}" "${screenpath}"
+      class="${def[1]}"
+      pv="${def[2]}"
+      location="${def[3]}"
+      category="${def[4]}"
+      screenpath="${def[5]}"
+      echo "Creating registration ${name} ${class} ${pv} ${location}" "${category}" "${screenpath}"
       if [[ -z "${pv}" ]]; then
-        /scripts/client/set-registration.py "${name}" --producersimple --location "${location}" --category "${category}" --screenpath "${screenpath}"
+        /scripts/client/set-registration.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
       else
-        /scripts/client/set-registration.py "${name}" --producerpv "${pv}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
+        /scripts/client/set-registration.py "${name}" --producerpv "${pv}" --alarmclass "${class}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
       fi
     done
 fi
