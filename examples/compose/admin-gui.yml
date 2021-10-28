@@ -61,6 +61,9 @@ services:
     image: slominskir/jaws-admin-gui:1.0.0
     hostname: admin
     container_name: admin
+    ports:
+      - 8080:8080
+      - 9990:9990
     depends_on:
       - jaws
     environment:
