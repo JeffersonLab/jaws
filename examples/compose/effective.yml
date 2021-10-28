@@ -45,7 +45,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:2.9.0
+    image: slominskir/jaws:3.0.0
     tty: true
     stdin_open: true
     hostname: jaws
@@ -55,4 +55,5 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-      ALARM_DEFINITIONS: "alarm1|channel1|INJ|RF|/,alarm2|channel2|INJ|RF|/,alarm3|channel3|INJ|RF|/"
+      ALARM_CLASSES: "base|INJ|RF|P3_MINOR|Timely operator action required|Call expert|helpdesk|/"
+      ALARM_REGISTRATIONS: "alarm1|base|channel1|INJ|RF|/,alarm2|base|channel2|INJ|RF|/,alarm3|special||INJ|RF|/"
