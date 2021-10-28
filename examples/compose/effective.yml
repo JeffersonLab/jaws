@@ -34,10 +34,10 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: registry
 
-  alarms:
+  effective:
     image: slominskir/jaws-alarm-processor:2.1.0
-    hostname: alarms
-    container_name: alarms
+    hostname: effective
+    container_name: effective
     depends_on:
       - jaws
     environment:

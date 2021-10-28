@@ -34,10 +34,10 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: registry
 
-  alarms:
-    image: slominskir/jaws-alarm-processor:2.0.0
-    hostname: alarms
-    container_name: alarms
+  effective:
+    image: slominskir/jaws-alarm-processor:2.1.0
+    hostname: effective
+    container_name: effective
     depends_on:
       - jaws
     environment:
@@ -83,7 +83,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:2.7.1
+    image: slominskir/jaws:2.9.0
     tty: true
     stdin_open: true
     hostname: jaws
@@ -93,4 +93,18 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
+      CLASS_DEFINITIONS: "base|INJ|RF|P3_MINOR|Timely operator action required|Call expert|helpdesk|/"
       ALARM_DEFINITIONS: "alarm1|channel1|INJ|RF|/,alarm2|channel2|INJ|RF|/,alarm3|channel3|INJ|RF|/"
+
+  admin:
+    image: slominskir/jaws-admin-gui:1.0.0
+    hostname: admin
+    container_name: admin
+    ports:
+      - 8080:8080
+      - 9990:9990
+    depends_on:
+      - jaws
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
