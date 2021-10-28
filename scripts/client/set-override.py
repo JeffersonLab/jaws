@@ -31,7 +31,7 @@ producer = SerializingProducer(producer_conf)
 
 topic = 'alarm-overrides'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-overridden.py'),('host',os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-override.py'),('host',os.uname().nodename)]
 
 
 def send() :

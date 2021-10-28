@@ -32,7 +32,7 @@ producer = SerializingProducer(producer_conf)
 
 topic = 'effective-activations'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-effective-active.py'),
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-effective-activation.py'),
         ('host', os.uname().nodename)]
 
 

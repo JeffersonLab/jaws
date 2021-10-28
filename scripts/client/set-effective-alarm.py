@@ -32,7 +32,7 @@ producer = SerializingProducer(producer_conf)
 
 topic = 'effective-alarms'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-effective-alarms.py'),
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-effective-alarm.py'),
         ('host', os.uname().nodename)]
 
 

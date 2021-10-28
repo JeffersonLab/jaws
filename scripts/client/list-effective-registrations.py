@@ -72,7 +72,7 @@ def list_records():
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': key_deserializer,
               'value.deserializer': value_deserializer,
-              'group.id': 'list-effective-registered.py' + str(ts)}
+              'group.id': 'list-effective-registrations.py' + str(ts)}
     etable = EventSourceTable(config, handle_initial_state, handle_state_update)
     etable.start()
 

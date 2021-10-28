@@ -29,7 +29,7 @@ producer = SerializingProducer(producer_conf)
 
 topic = 'alarm-activations'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-active.py'),('host',os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-activation.py'),('host',os.uname().nodename)]
 
 
 def send():

@@ -6,7 +6,8 @@ import click
 import time
 
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from jlab_jaws.avro.serde import AlarmOverrideKeySerde, AlarmOverrideUnionSerde
+from confluent_kafka.serialization import StringDeserializer
+from jlab_jaws.avro.serde import AlarmActivationUnionSerde
 from jlab_jaws.eventsource.table import EventSourceTable
 from tabulate import tabulate
 
@@ -17,9 +18,8 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-
-key_deserializer = AlarmOverrideKeySerde.deserializer(schema_registry_client)
-value_deserializer = AlarmOverrideUnionSerde.deserializer(schema_registry_client)
+key_deserializer = StringDeserializer()
+value_deserializer = AlarmActivationUnionSerde.deserializer(schema_registry_client)
 
 
 def get_row(msg):
@@ -29,10 +29,9 @@ def get_row(msg):
     value = msg.value()
 
     if value is None:
-        row = [key.name, key.type, None]
+        row = [key, None]
     else:
-        row = [key.name,
-               key.type.name,
+        row = [key,
                value]
 
     row_header = get_row_header(headers, timestamp)
@@ -43,7 +42,7 @@ def get_row(msg):
 
 
 def disp_table(records):
-    head = ["Alarm Name", "Override Type", "Value"]
+    head = ["Alarm Name", "Value"]
     table = []
 
     head = ["Timestamp", "User", "Host", "Produced By"] + head
@@ -68,12 +67,12 @@ def handle_state_update(record):
 def list_records():
     ts = time.time()
 
-    config = {'topic': "alarm-overrides",
+    config = {'topic': 'alarm-activations',
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': key_deserializer,
               'value.deserializer': value_deserializer,
-              'group.id': 'list-overridden.py' + str(ts)}
+              'group.id': 'list-activations.py' + str(ts)}
     etable = EventSourceTable(config, handle_initial_state, handle_state_update)
     etable.start()
 

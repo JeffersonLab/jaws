@@ -6,8 +6,7 @@ import click
 import time
 
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.serde import EffectiveActivationSerde
+from jlab_jaws.avro.serde import AlarmOverrideKeySerde, AlarmOverrideUnionSerde
 from jlab_jaws.eventsource.table import EventSourceTable
 from tabulate import tabulate
 
@@ -18,8 +17,9 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-key_deserializer = StringDeserializer()
-value_deserializer = EffectiveActivationSerde.deserializer(schema_registry_client)
+
+key_deserializer = AlarmOverrideKeySerde.deserializer(schema_registry_client)
+value_deserializer = AlarmOverrideUnionSerde.deserializer(schema_registry_client)
 
 
 def get_row(msg):
@@ -29,13 +29,11 @@ def get_row(msg):
     value = msg.value()
 
     if value is None:
-        row = [key, None]
+        row = [key.name, key.type, None]
     else:
-        row = [key,
-               value.state.name]
-
-        if params.overrides:
-            row.append(value.overrides)
+        row = [key.name,
+               key.type.name,
+               value]
 
     row_header = get_row_header(headers, timestamp)
 
@@ -45,11 +43,8 @@ def get_row(msg):
 
 
 def disp_table(records):
-    head = ["Alarm Name", "State"]
+    head = ["Alarm Name", "Override Type", "Value"]
     table = []
-
-    if params.overrides:
-        head.append("Overrides")
 
     head = ["Timestamp", "User", "Host", "Produced By"] + head
 
@@ -73,26 +68,24 @@ def handle_state_update(record):
 def list_records():
     ts = time.time()
 
-    config = {'topic': 'effective-activations',
+    config = {'topic': "alarm-overrides",
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': key_deserializer,
               'value.deserializer': value_deserializer,
-              'group.id': 'list-effective-active.py' + str(ts)}
+              'group.id': 'list-overrides.py' + str(ts)}
     etable = EventSourceTable(config, handle_initial_state, handle_state_update)
     etable.start()
 
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
-@click.option('--overrides', is_flag=True, help="Show overrides")
-def cli(monitor, overrides):
+def cli(monitor):
     global params
 
     params = types.SimpleNamespace()
 
     params.monitor = monitor
-    params.overrides = overrides
 
     list_records()
 

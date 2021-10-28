@@ -196,7 +196,7 @@ def list_alarms():
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': alarms_key_deserializer,
               'value.deserializer': alarms_value_deserializer,
-              'group.id': 'list-registered.py' + str(ts)}
+              'group.id': 'list-registrations.py' + str(ts)}
     etable = EventSourceTable(config, alarms_initial_state, alarms_state_update)
     etable.start()
 
@@ -209,7 +209,7 @@ def list_classes():
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': classes_key_deserializer,
               'value.deserializer': classes_value_deserializer,
-              'group.id': 'list-registered.py' + str(ts)}
+              'group.id': 'list-classes.py' + str(ts)}
     etable = EventSourceTable(config, classes_initial_state, classes_state_update)
     etable.start()
 
@@ -218,7 +218,7 @@ def list_classes():
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True,
-              help="Dump records in AVRO JSON format such that they can be imported by set-registered.py; implies --nometa")
+              help="Dump records in AVRO JSON format such that they can be imported by set-registration.py; implies --nometa")
 @click.option('--category', type=click.Choice(categories), help="Only show registered alarms in the specified category")
 @click.option('--display', default="alarms_with_class_defaults",  type=click.Choice(["alarms", "classes", "alarms_with_class_defaults"]), help="Whether to display alarms, classes, or alarms with class defaults applied")
 def cli(monitor, nometa, export, category, display):
