@@ -21,7 +21,7 @@ The JAWS alarm system is composed primarily of four subsystems: _classes_, _regi
 
 **Services**
 - [jaws-alarm-processor](https://github.com/JeffersonLab/jaws-alarm-processor): Process classes and overrides and provide effective state on the _effective-registrations_, _effective-activations_, and _effective-alarms_ topics
-- [jaws-admin-gui](https://github.com/JeffersonLab/jaws-web-admin): GUI for managing alarm registrations
+- [jaws-admin-gui](https://github.com/JeffersonLab/jaws-admin-gui): GUI for managing alarm registrations
 - [jaws-operator-gui](https://github.com/JeffersonLab/graphical-alarm-client): GUI for monitoring alarms and managing overrides
 
 **APIs**
