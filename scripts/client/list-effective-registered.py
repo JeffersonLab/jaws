@@ -7,7 +7,7 @@ import time
 
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.serde import EffectiveActivationSerde
+from jlab_jaws.avro.serde import EffectiveRegistrationSerde
 from jlab_jaws.eventsource.table import EventSourceTable
 from tabulate import tabulate
 
@@ -19,7 +19,7 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 key_deserializer = StringDeserializer()
-value_deserializer = EffectiveActivationSerde.deserializer(schema_registry_client)
+value_deserializer = EffectiveRegistrationSerde.deserializer(schema_registry_client)
 
 
 def get_row(msg):
@@ -32,10 +32,7 @@ def get_row(msg):
         row = [key, None]
     else:
         row = [key,
-               value.state.name]
-
-        if params.overrides:
-            row.append(value.overrides)
+               value.calculated]
 
     row_header = get_row_header(headers, timestamp)
 
@@ -45,11 +42,8 @@ def get_row(msg):
 
 
 def disp_table(records):
-    head = ["Alarm Name", "State"]
+    head = ["Alarm Name", "Effective Registration"]
     table = []
-
-    if params.overrides:
-        head.append("Overrides")
 
     head = ["Timestamp", "User", "Host", "Produced By"] + head
 
@@ -73,26 +67,24 @@ def handle_state_update(record):
 def list_records():
     ts = time.time()
 
-    config = {'topic': 'effective-activations',
+    config = {'topic': 'effective-registrations',
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': key_deserializer,
               'value.deserializer': value_deserializer,
-              'group.id': 'list-effective-activations.py' + str(ts)}
+              'group.id': 'list-effective-registered.py' + str(ts)}
     etable = EventSourceTable(config, handle_initial_state, handle_state_update)
     etable.start()
 
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
-@click.option('--overrides', is_flag=True, help="Show overrides")
-def cli(monitor, overrides):
+def cli(monitor):
     global params
 
     params = types.SimpleNamespace()
 
     params.monitor = monitor
-    params.overrides = overrides
 
     list_records()
 

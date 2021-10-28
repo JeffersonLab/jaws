@@ -30,7 +30,7 @@ producer = SerializingProducer(producer_conf)
 
 topic = 'effective-registrations'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-effective-registrations.py'),
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-effective-registered.py'),
         ('host', os.uname().nodename)]
 
 
