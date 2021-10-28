@@ -67,7 +67,7 @@ def classes_import(file):
 
 @click.command()
 @click.option('--file', is_flag=True,
-              help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the registered-alarms-value schema")
+              help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the alarm-classes-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
 @click.option('--location', type=click.Choice(locations), help="The alarm location")
 @click.option('--category', type=click.Choice(categories), help="The alarm category")
