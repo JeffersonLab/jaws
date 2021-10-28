@@ -21,18 +21,18 @@ echo "---------------------------------------"
 /scripts/registry/create-schemas.py
 
 
-echo "------------------------------------------------------------"
-echo "Step 4: Adding class definitions to the alarm-classes topic "
-echo "------------------------------------------------------------"
-if [[ -z "${CLASS_DEFINITIONS}" ]]; then
+echo "-----------------------"
+echo "Step 4: Adding classes "
+echo "-----------------------"
+if [[ -z "${ALARM_CLASSES}" ]]; then
   echo "No class definitions specified"
-elif [[ -f "$CLASS_DEFINITIONS" ]]; then
-  echo "Attempting to setup class definitions from file $CLASS_DEFINITIONS"
-  /scripts/client/set-registered.py --editclass --file "$CLASS_DEFINITIONS"
+elif [[ -f "$ALARM_CLASSES" ]]; then
+  echo "Attempting to setup class definitions from file $ALARM_CLASSES"
+  /scripts/client/set-class.py --file "$ALARM_CLASSES"
 else
-  echo "Attempting to setup class definitions"
+  echo "Attempting to setup classes"
   IFS=','
-  read -a definitions <<< "$CLASS_DEFINITIONS"
+  read -a definitions <<< "$ALARM_CLASSES"
   for defStr in "${definitions[@]}";
     do
       IFS='|'
@@ -45,27 +45,27 @@ else
       correctiveaction="${def[5]}"
       pointofcontactusername="${def[6]}"
       screenpath="${def[7]}"
-      echo "Creating class definition ${name} ${location}" "${category}" "${priority}" \
+      echo "Creating class ${name} ${location}" "${category}" "${priority}" \
           "${rationale}" "${correctiveaction}" "${pointofcontactusername}" "${screenpath}"
-      /scripts/client/set-registered.py --editclass "${name}" --location "${location}" --category "${category}" \
+      /scripts/client/set-class.py "${name}" --location "${location}" --category "${category}" \
           --priority "${priority}" --rationale "${rationale}" --correctiveaction "${correctiveaction}" \
           --pointofcontactusername "${pointofcontactusername}" --screenpath "${screenpath}"
     done
 fi
 
 
-echo "------------------------------------------------------------------"
-echo "Step 5: Adding alarm definitions to the alarm-registrations topic "
-echo "------------------------------------------------------------------"
-if [[ -z "${ALARM_DEFINITIONS}" ]]; then
+echo "-----------------------------------"
+echo "Step 5: Adding alarm registrations "
+echo "-----------------------------------"
+if [[ -z "${ALARM_REGISTRATIONS}" ]]; then
   echo "No alarm definitions specified"
-elif [[ -f "$ALARM_DEFINITIONS" ]]; then
-  echo "Attempting to setup alarm definitions from file $ALARM_DEFINITIONS"
-  /scripts/client/set-registered.py --file "$ALARM_DEFINITIONS"
+elif [[ -f "$ALARM_REGISTRATIONS" ]]; then
+  echo "Attempting to setup alarm definitions from file $ALARM_REGISTRATIONS"
+  /scripts/client/set-registration.py --file "$ALARM_REGISTRATIONS"
 else
-  echo "Attempting to setup alarm definitions"
+  echo "Attempting to setup registrations"
   IFS=','
-  read -a definitions <<< "$ALARM_DEFINITIONS"
+  read -a definitions <<< "$ALARM_REGISTRATIONS"
   for defStr in "${definitions[@]}";
     do
       IFS='|'
@@ -75,8 +75,12 @@ else
       location="${def[2]}"
       category="${def[3]}"
       screenpath="${def[4]}"
-      echo "Creating alarm definition ${name} ${pv} ${location}" "${category}" "${screenpath}"
-      /scripts/client/set-registered.py "${name}" --producerpv "${pv}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
+      echo "Creating registration ${name} ${pv} ${location}" "${category}" "${screenpath}"
+      if [[ -z "${pv}" ]]; then
+        /scripts/client/set-registration.py "${name}" --producersimple --location "${location}" --category "${category}" --screenpath "${screenpath}"
+      else
+        /scripts/client/set-registration.py "${name}" --producerpv "${pv}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
+      fi
     done
 fi
 

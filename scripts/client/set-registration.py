@@ -11,8 +11,8 @@ from confluent_kafka import SerializingProducer
 from confluent_kafka.serialization import StringSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
-from jlab_jaws.avro.serde import AlarmRegistrationSerde, AlarmClassSerde
-from jlab_jaws.avro.entities import AlarmRegistration, AlarmClass, \
+from jlab_jaws.avro.serde import AlarmRegistrationSerde
+from jlab_jaws.avro.entities import AlarmRegistration, \
     SimpleProducer, EPICSProducer, CALCProducer
 from jlab_jaws.avro.entities import AlarmLocation, AlarmCategory, AlarmPriority
 
@@ -23,25 +23,18 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-alarm_value_serializer = AlarmRegistrationSerde.serializer(schema_registry_client)
-class_value_serializer = AlarmClassSerde.serializer(schema_registry_client)
+registrations_value_serializer = AlarmRegistrationSerde.serializer(schema_registry_client)
 
 locations = AlarmLocation._member_names_
 categories = AlarmCategory._member_names_
 priorities = AlarmPriority._member_names_
 
-alarm_producer_conf = {'bootstrap.servers': bootstrap_servers,
-                       'key.serializer': StringSerializer('utf_8'),
-                       'value.serializer': alarm_value_serializer}
-alarm_producer = SerializingProducer(alarm_producer_conf)
+registrations_producer_conf = {'bootstrap.servers': bootstrap_servers,
+                               'key.serializer': StringSerializer('utf_8'),
+                               'value.serializer': registrations_value_serializer}
+alarm_producer = SerializingProducer(registrations_producer_conf)
 
-class_producer_conf = {'bootstrap.servers': bootstrap_servers,
-                       'key.serializer': StringSerializer('utf_8'),
-                       'value.serializer': class_value_serializer}
-class_producer = SerializingProducer(class_producer_conf)
-
-alarm_topic = 'alarm-registrations'
-class_topic = 'alarm-classes'
+registrations_topic = 'alarm-registrations'
 
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-registration.py'), ('host', os.uname().nodename)]
 
@@ -51,7 +44,7 @@ def send(producer, topic):
     producer.flush()
 
 
-def alarms_import(file):
+def registrations_import(file):
     print("Loading file", file)
     handle = open(file, 'r')
     lines = handle.readlines()
@@ -65,36 +58,12 @@ def alarms_import(file):
 
         value_obj = AlarmRegistrationSerde.from_dict(v)
 
-        alarm_producer.produce(topic=alarm_topic, value=value_obj, key=key, headers=hdrs)
+        alarm_producer.produce(topic=registrations_topic, value=value_obj, key=key, headers=hdrs)
 
     alarm_producer.flush()
 
 
-def classes_import(file):
-    print("Loading file", file)
-    handle = open(file, 'r')
-    lines = handle.readlines()
-
-    for line in lines:
-        tokens = line.split("=", 1)
-        key = tokens[0]
-        value = tokens[1]
-        v = json.loads(value)
-        print("{}={}".format(key, v))
-
-        key_obj = key
-        value_obj = AlarmClassSerde.from_dict(v)
-
-        print('Message: {}={}'.format(key_obj, value_obj))
-
-        class_producer.produce(topic=class_topic, value=value_obj, key=key_obj, headers=hdrs)
-
-    class_producer.flush()
-
-
 @click.command()
-@click.option('--editclass', is_flag=True,
-              help='Edit class definition instead of alarm definition (edit class defaults)')
 @click.option('--file', is_flag=True,
               help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the registered-alarms-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
@@ -116,7 +85,7 @@ def classes_import(file):
 @click.option('--ondelayseconds', type=int, default=None, help="Number of on delay seconds")
 @click.option('--offdelayseconds', type=int, default=None, help="Number of off delay seconds")
 @click.argument('name')
-def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producerexpression, location, category,
+def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression, location, category,
         priority, filterable, latching, screenpath, pointofcontactusername, rationale,
         correctiveaction, maskedby, ondelayseconds, offdelayseconds, name):
     global params
@@ -125,92 +94,35 @@ def cli(editclass, file, unset, alarmclass, producersimple, producerpv, producer
 
     params.key = name
 
-    if editclass:
-        if file:
-            classes_import(name)
-        else:
-            if unset:
-                params.value = None
-            else:
-                if location is None:
-                    raise click.ClickException("--location required")
-
-                if category is None:
-                    raise click.ClickException("--category required")
-
-                if priority is None:
-                    raise click.ClickException("--priority required")
-
-                if rationale is None:
-                    raise click.ClickException("--rationale required")
-
-                if correctiveaction is None:
-                    raise click.ClickException("--correctiveaction required")
-
-                if pointofcontactusername is None:
-                    raise click.ClickException("--pointofcontactusername required")
-
-                if screenpath is None:
-                    raise click.ClickException("--screenpath required")
-
-                # TODO: filterable and latching should be required in registered-class-value schema
-                if filterable is None:
-                    filterable = True
-
-                if latching is None:
-                    latching = True
-
-                # TODO: None not allowed right now for both delay ints...
-                if ondelayseconds is None:
-                    ondelayseconds = 0
-
-                if offdelayseconds is None:
-                    offdelayseconds = 0
-
-                params.value = AlarmClass(AlarmLocation[location],
-                                               AlarmCategory[category],
-                                               AlarmPriority[priority],
-                                               rationale,
-                                               correctiveaction,
-                                               pointofcontactusername,
-                                               latching,
-                                               filterable,
-                                               ondelayseconds,
-                                               offdelayseconds,
-                                               maskedby,
-                                               screenpath)
-
-            send(class_producer, class_topic)
+    if file:
+        registrations_import(name)
     else:
-        if file:
-            alarms_import(name)
+        if unset:
+            params.value = None
         else:
-            if unset:
-                params.value = None
+            if producersimple is False and producerpv is None and producerexpression is None:
+                raise click.ClickException(
+                    "Must specify one of --producersimple, --producerpv, --producerexpression")
+
+            if producersimple:
+                p = SimpleProducer()
+            elif producerpv:
+                p = EPICSProducer(producerpv)
             else:
-                if producersimple is False and producerpv is None and producerexpression is None:
-                    raise click.ClickException(
-                        "Must specify one of --producersimple, --producerpv, --producerexpression")
+                p = CALCProducer(producerexpression)
 
-                if producersimple:
-                    p = SimpleProducer()
-                elif producerpv:
-                    p = EPICSProducer(producerpv)
-                else:
-                    p = CALCProducer(producerexpression)
+            if alarmclass is None:
+                alarmclass = "base"
 
-                if alarmclass is None:
-                    alarmclass = "base"
+            params.value = AlarmRegistration(AlarmLocation[location] if location is not None else None,
+                                             AlarmCategory[category] if category is not None else None,
+                                             AlarmPriority[priority] if priority is not None else None,
+                                             rationale, correctiveaction,
+                                             pointofcontactusername, latching, filterable,
+                                             ondelayseconds, offdelayseconds, maskedby, screenpath,
+                                             alarmclass, p)
 
-                params.value = AlarmRegistration(AlarmLocation[location] if location is not None else None,
-                                               AlarmCategory[category] if category is not None else None,
-                                               AlarmPriority[priority] if priority is not None else None,
-                                               rationale, correctiveaction,
-                                               pointofcontactusername, latching, filterable,
-                                               ondelayseconds, offdelayseconds, maskedby, screenpath,
-                                               alarmclass, p)
-
-            send(alarm_producer, alarm_topic)
+        send(alarm_producer, registrations_topic)
 
 
 cli()

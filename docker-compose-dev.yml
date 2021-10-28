@@ -9,9 +9,9 @@ services:
       args:
         - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
     environment:
-      CLASS_DEFINITIONS: /registrations/class-registrations
-      ALARM_DEFINITIONS: /registrations/alarm-registrations
+      ALARM_CLASSES: /data/alarm-classes
+      ALARM_REGISTRATIONS: /data/alarm-registrations
     volumes:
       - ./docker-entrypoint.sh:/docker-entrypoint.sh
       - ./scripts:/scripts
-      - ./examples/registrations:/registrations
+      - ./examples/data:/data
