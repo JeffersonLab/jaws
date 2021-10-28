@@ -3,7 +3,7 @@ version: '3.8'
 
 services:
   jaws:
-    image: slominskir/jaws:2.8.0
+    image: slominskir/jaws:3.0.0
     environment:
       ALARM_CLASSES: "base|INJ|RF|P3_MINOR|Timely operator action required|Call expert|helpdesk|/"
       ALARM_REGISTRATIONS: "alarm1|base|channel1|INJ|RF|/,alarm2|base|channel2|INJ|RF|/,alarm3|special||INJ|RF|/"
