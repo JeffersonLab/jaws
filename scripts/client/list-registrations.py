@@ -11,7 +11,7 @@ from jlab_jaws.avro.serde import AlarmRegistrationSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.entities import AlarmCategory
+from jlab_jaws.avro.entities import AlarmCategory, UnionEncoding
 
 from common import get_row_header
 
@@ -83,7 +83,7 @@ def registrations_export(records):
         value = msg.value()
 
         if params.category is None or (value is not None and params.category == value.category.name):
-            v = json.dumps(AlarmRegistrationSerde.to_dict(value))
+            v = json.dumps(AlarmRegistrationSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE))
             print(key + '=' + v)
 
 
