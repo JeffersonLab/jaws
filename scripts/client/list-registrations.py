@@ -52,7 +52,7 @@ def registrations_get_row(msg):
 
     row_header = get_row_header(headers, timestamp)
 
-    if params.category is None or (value is not None and params.category == value['category']):
+    if params.category is None or (value is not None and params.category == value.category.name):
         if not params.nometa:
             row = row_header + row
     else:
@@ -82,7 +82,7 @@ def registrations_export(records):
         key = msg.key()
         value = msg.value()
 
-        if params.category is None or (value is not None and params.category == value['category']):
+        if params.category is None or (value is not None and params.category == value.category.name):
             v = json.dumps(AlarmRegistrationSerde.to_dict(value))
             print(key + '=' + v)
 

@@ -49,7 +49,7 @@ def classes_get_row(msg):
 
     row_header = get_row_header(headers, timestamp)
 
-    if params.category is None or (value is not None and params.category == value['category']):
+    if params.category is None or (value is not None and params.category == value.category.name):
         if not params.nometa:
             row = row_header + row
     else:
@@ -79,7 +79,7 @@ def classes_export(records):
         key = msg.key()
         value = msg.value()
 
-        if params.category is None or (value is not None and params.category == value['category']):
+        if params.category is None or (value is not None and params.category == value.category.name):
             k = key
             v = json.dumps(AlarmClassSerde.to_dict(value))
             print(k + '=' + v)
