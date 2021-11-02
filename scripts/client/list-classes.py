@@ -39,8 +39,8 @@ def classes_get_row(msg):
                value.location.name if value.location is not None else None,
                value.category.name if value.category is not None else None,
                value.priority.name if value.priority is not None else None,
-               value.rationale,
-               value.corrective_action,
+               value.rationale.replace("\n", "\\n ") if value.rationale is not None else None,
+               value.corrective_action.replace("\n", "\\n") if value.corrective_action is not None else None,
                value.point_of_contact_username,
                value.latching,
                value.filterable,
@@ -70,6 +70,9 @@ def classes_disp_table(records):
         row = classes_get_row(msg)
         if row is not None:
             table.append(row)
+
+    # Truncate long cells
+    table = [[(c if len(str(c)) < 20 else str(c)[:17] + "...") for c in row] for row in table]
 
     print(tabulate(table, head))
 
