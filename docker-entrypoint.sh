@@ -21,11 +21,18 @@ echo "---------------------------------------"
 /scripts/registry/create-schemas.py
 
 
+beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
+
+
 echo "-----------------------"
 echo "Step 4: Adding classes "
 echo "-----------------------"
 if [[ -z "${ALARM_CLASSES}" ]]; then
   echo "No class definitions specified"
+elif beginswith 'https://' "${ALARM_CLASSES}"; then
+  echo "HTTPS URL specified: $ALARM_CLASSES"
+  wget -O /tmp/classes "$ALARM_CLASSES"
+  /scripts/client/set-class.py --file /tmp/classes
 elif [[ -f "$ALARM_CLASSES" ]]; then
   echo "Attempting to setup class definitions from file $ALARM_CLASSES"
   /scripts/client/set-class.py --file "$ALARM_CLASSES"
@@ -59,6 +66,10 @@ echo "Step 5: Adding alarm registrations "
 echo "-----------------------------------"
 if [[ -z "${ALARM_REGISTRATIONS}" ]]; then
   echo "No alarm definitions specified"
+elif beginswith 'https://' "${ALARM_REGISTRATIONS}"; then
+  echo "HTTPS URL specified: $ALARM_REGISTRATIONS"
+  wget -O /tmp/registrations "$ALARM_REGISTRATIONS"
+  /scripts/client/set-registration.py --file /tmp/registrations
 elif [[ -f "$ALARM_REGISTRATIONS" ]]; then
   echo "Attempting to setup alarm definitions from file $ALARM_REGISTRATIONS"
   /scripts/client/set-registration.py --file "$ALARM_REGISTRATIONS"
