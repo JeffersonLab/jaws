@@ -33,30 +33,30 @@ def registrations_get_row(msg):
     key = msg.key()
     value = msg.value()
 
-    if value is None:
-        row = [key, None]
-    else:
-        row = [key,
-               value.alarm_class,
-               value.producer,
-               value.location.name if value.location is not None else None,
-               value.category.name if value.category is not None else None,
-               value.priority.name if value.priority is not None else None,
-               value.rationale,
-               value.corrective_action,
-               value.point_of_contact_username,
-               value.latching,
-               value.filterable,
-               value.masked_by,
-               value.screen_path]
-
-    row_header = get_row_header(headers, timestamp)
+    row = None
 
     if params.category is None or (value is not None and params.category == value.category.name):
-        if not params.nometa:
-            row = row_header + row
-    else:
-        row = None
+        if params.alarm_class is None or (value is not None and params.alarm_class == value.alarm_class):
+            if value is None:
+                row = [key, None]
+            else:
+                row = [key,
+                       value.alarm_class,
+                       value.producer,
+                       value.location.name if value.location is not None else None,
+                       value.category.name if value.category is not None else None,
+                       value.priority.name if value.priority is not None else None,
+                       value.rationale,
+                       value.corrective_action,
+                       value.point_of_contact_username,
+                       value.latching,
+                       value.filterable,
+                       value.masked_by,
+                       value.screen_path]
+
+            if not params.nometa:
+                row_header = get_row_header(headers, timestamp)
+                row = row_header + row
 
     return row
 
@@ -83,8 +83,9 @@ def registrations_export(records):
         value = msg.value()
 
         if params.category is None or (value is not None and params.category == value.category.name):
-            v = json.dumps(AlarmRegistrationSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE))
-            print(key + '=' + v)
+            if params.alarm_class is None or (value is not None and params.alarm_class == value.alarm_class):
+                v = json.dumps(AlarmRegistrationSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE))
+                print(key + '=' + v)
 
 
 def registrations_initial_state(records):
@@ -117,8 +118,9 @@ def list_registrations():
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True,
               help="Dump records in AVRO JSON format such that they can be imported by set-registration.py; implies --nometa")
-@click.option('--category', type=click.Choice(categories), help="Only show registered alarms in the specified category")
-def cli(monitor, nometa, export, category):
+@click.option('--category', type=click.Choice(categories), help="Only show registrations in the specified category")
+@click.option('--alarm_class', help="Only show registrations in the specified class")
+def cli(monitor, nometa, export, category, alarm_class):
     global params
 
     params = types.SimpleNamespace()
@@ -127,6 +129,7 @@ def cli(monitor, nometa, export, category):
     params.nometa = nometa
     params.export = export
     params.category = category
+    params.alarm_class = alarm_class
 
     list_registrations()
 
