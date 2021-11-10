@@ -2,20 +2,35 @@
 
 import os
 import json
+import pkgutil
 
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
 sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
 
+conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
+
+records = json.loads(conf)
+
+lookup = {}
+
+for r in records:
+    lookup[r['subject']] = r['file']
+
 subjects = client.get_subjects()
 
 for subject in subjects:
     registered = client.get_latest_version(subject)
 
-    filename = "/tmp/schemas/" + registered.subject + ".avsc"
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, "w") as text_file:
+    filename = 'avro/schemas/' + registered.subject + '.avsc'
+
+    if registered.subject in lookup:
+        filename = lookup[registered.subject]
+
+    path = "/tmp/" + filename
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as text_file:
         print(json.dumps(json.loads(registered.schema.schema_str), indent=4), file=text_file)
 
-    print("ID: {}, Subject: {}, Version: {}, File: {}".format(registered.schema_id, registered.subject, registered.version, filename))
+    print("ID: {}, Subject: {}, Version: {}, File: {}".format(registered.schema_id, registered.subject, registered.version, path))
