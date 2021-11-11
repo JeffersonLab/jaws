@@ -50,7 +50,7 @@ services:
       - ../softioc-db:/db
 
   epics2kafka:
-    image: slominskir/jaws-epics2kafka:2.0.0
+    image: slominskir/jaws-epics2kafka:2.1.0
     hostname: epics2kafka
     container_name: epics2kafka
     ports:
@@ -64,7 +64,7 @@ services:
       - ../connect-config:/config
 
   registrations2epics:
-    image: slominskir/registrations2epics:2.0.0
+    image: slominskir/registrations2epics:2.1.0
     hostname: registrations2epics
     container_name: registrations2epics
     depends_on:
@@ -77,7 +77,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:2.7.1
+    image: slominskir/jaws:3.2.0
     tty: true
     stdin_open: true
     hostname: jaws
