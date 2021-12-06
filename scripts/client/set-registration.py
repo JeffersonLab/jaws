@@ -74,9 +74,10 @@ def registrations_import(file):
 @click.option('--location', type=click.Choice(locations), help="The alarm location")
 @click.option('--category', type=click.Choice(categories), help="The alarm category")
 @click.option('--priority', type=click.Choice(priorities), help="The alarm priority")
-@click.option('--filterable', is_flag=True, default=None, help="True if alarm can be filtered out of view")
-@click.option('--latching', is_flag=True, default=None,
-              help="Indicate that the alarm latches and requires acknowledgement to clear")
+@click.option('--filterable/--not-filterable', is_flag=True, default=None,
+              help="True if alarm can be filtered out of view; inherits from class if None")
+@click.option('--latching/--not-latching', is_flag=True, default=None,
+              help="Indicate that the alarm latches and requires acknowledgement to clear; inherits from class if None")
 @click.option('--screenpath', help="The path the alarm screen display")
 @click.option('--pointofcontactusername', help="The point of contact user name")
 @click.option('--rationale', help="The alarm rationale")
