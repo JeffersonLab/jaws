@@ -81,13 +81,16 @@ def registrations_disp_table(records):
 
 
 def registrations_export(records):
-    for msg in records.values():
-        key = msg.key()
-        value = msg.value()
+    sortedtable = sorted(records.items())
+
+    for msg in sortedtable:
+        key = msg[0];
+        value = msg[1].value()
 
         if params.category is None or (value is not None and params.category == value.category.name):
             if params.alarm_class is None or (value is not None and params.alarm_class == value.alarm_class):
-                v = json.dumps(AlarmRegistrationSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE))
+                sortedrow = dict(sorted(AlarmRegistrationSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE).items()))
+                v = json.dumps(sortedrow)
                 print(key + '=' + v)
 
 
