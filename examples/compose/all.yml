@@ -97,7 +97,7 @@ services:
       ALARM_REGISTRATIONS: "alarm1|base|channel1|INJ|RF|/,alarm2|base|channel2|INJ|RF|/,alarm3|special||INJ|RF|/"
 
   admin:
-    image: slominskir/jaws-admin-gui:1.0.0
+    image: slominskir/jaws-admin-gui:1.1.0
     hostname: admin
     container_name: admin
     ports:
