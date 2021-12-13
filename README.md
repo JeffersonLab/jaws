@@ -28,6 +28,9 @@ The JAWS alarm system is composed primarily of four subsystems: _classes_, _regi
 - [jaws-libj](https://github.com/JeffersonLab/jaws-libj): Java API library for JAWS
 - [jaws-libp](https://github.com/JeffersonLab/jaws-libp): Python API library for JAWS
 
+**Data**
+- [JLab Alarms](https://github.com/JeffersonLab/alarms)
+
 **Plugins**
 - [jaws-epics2kafka](https://github.com/JeffersonLab/jaws-epics2kafka): Connects EPICS alarms to JAWS
 
