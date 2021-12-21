@@ -7,7 +7,7 @@ import time
 import json
 
 from jlab_jaws.eventsource.table import EventSourceTable
-from jlab_jaws.avro.serde import AlarmRegistrationSerde
+from jlab_jaws.avro.serde import AlarmInstanceSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
@@ -22,7 +22,7 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 
 registrations_key_deserializer = StringDeserializer('utf_8')
 
-registrations_value_deserializer = AlarmRegistrationSerde.deserializer(schema_registry_client)
+registrations_value_deserializer = AlarmInstanceSerde.deserializer(schema_registry_client)
 
 categories = AlarmCategory._member_names_
 
@@ -89,7 +89,7 @@ def registrations_export(records):
 
         if params.category is None or (value is not None and params.category == value.category.name):
             if params.alarm_class is None or (value is not None and params.alarm_class == value.alarm_class):
-                sortedrow = dict(sorted(AlarmRegistrationSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE).items()))
+                sortedrow = dict(sorted(AlarmInstanceSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE).items()))
                 v = json.dumps(sortedrow)
                 print(key + '=' + v)
 
@@ -109,7 +109,7 @@ def registrations_state_update(record):
 def list_registrations():
     ts = time.time()
 
-    config = {'topic': 'alarm-registrations',
+    config = {'topic': 'alarm-instances',
               'monitor': params.monitor,
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': registrations_key_deserializer,

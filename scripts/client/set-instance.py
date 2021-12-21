@@ -11,8 +11,8 @@ from confluent_kafka import SerializingProducer
 from confluent_kafka.serialization import StringSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
-from jlab_jaws.avro.serde import AlarmRegistrationSerde
-from jlab_jaws.avro.entities import AlarmRegistration, \
+from jlab_jaws.avro.serde import AlarmInstanceSerde
+from jlab_jaws.avro.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 from jlab_jaws.avro.entities import AlarmLocation, AlarmCategory, AlarmPriority
 
@@ -34,7 +34,7 @@ registrations_producer_conf = {'bootstrap.servers': bootstrap_servers,
                                'value.serializer': registrations_value_serializer}
 alarm_producer = SerializingProducer(registrations_producer_conf)
 
-registrations_topic = 'alarm-registrations'
+registrations_topic = 'alarm-instances'
 
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-instance.py'), ('host', os.uname().nodename)]
 
@@ -56,7 +56,7 @@ def registrations_import(file):
         v = json.loads(value)
         print("{}={}".format(key, v))
 
-        value_obj = AlarmRegistrationSerde.from_dict(v)
+        value_obj = AlarmInstanceSerde.from_dict(v)
 
         alarm_producer.produce(topic=registrations_topic, value=value_obj, key=key, headers=hdrs)
 
@@ -65,7 +65,7 @@ def registrations_import(file):
 
 @click.command()
 @click.option('--file', is_flag=True,
-              help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the alarm-registrations-value schema")
+              help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the alarm-instances-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
 @click.option('--alarmclass', help="The alarm class")
 @click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")
@@ -115,7 +115,7 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
             if alarmclass is None:
                 alarmclass = "base"
 
-            params.value = AlarmRegistration(AlarmLocation[location] if location is not None else None,
+            params.value = AlarmInstance(AlarmLocation[location] if location is not None else None,
                                              AlarmCategory[category] if category is not None else None,
                                              AlarmPriority[priority] if priority is not None else None,
                                              rationale, correctiveaction,

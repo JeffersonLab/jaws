@@ -10,7 +10,7 @@ from confluent_kafka import SerializingProducer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringSerializer
 from jlab_jaws.avro.entities import EffectiveRegistration, \
-    AlarmRegistration, AlarmLocation, AlarmCategory, AlarmPriority, SimpleProducer
+    AlarmInstance, AlarmLocation, AlarmCategory, AlarmPriority, SimpleProducer
 from jlab_jaws.avro.serde import EffectiveRegistrationSerde
 
 from common import delivery_report
@@ -40,7 +40,7 @@ def send():
 
 
 def get_effective_registration():
-    return AlarmRegistration(AlarmLocation.INJ,
+    return AlarmInstance(AlarmLocation.INJ,
                              AlarmCategory.RF,
                              AlarmPriority.P4_INCIDENTAL,
                              "testing",
