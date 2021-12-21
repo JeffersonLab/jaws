@@ -69,10 +69,10 @@ if [[ -z "${ALARM_REGISTRATIONS}" ]]; then
 elif beginswith 'https://' "${ALARM_REGISTRATIONS}"; then
   echo "HTTPS URL specified: $ALARM_REGISTRATIONS"
   wget -O /tmp/instances "$ALARM_REGISTRATIONS"
-  /scripts/client/set-registration.py --file /tmp/instances
+  /scripts/client/set-instance.py --file /tmp/instances
 elif [[ -f "$ALARM_REGISTRATIONS" ]]; then
   echo "Attempting to setup alarm definitions from file $ALARM_REGISTRATIONS"
-  /scripts/client/set-registration.py --file "$ALARM_REGISTRATIONS"
+  /scripts/client/set-instance.py --file "$ALARM_REGISTRATIONS"
 else
   echo "Attempting to setup registrations"
   IFS=','
@@ -89,9 +89,9 @@ else
       screenpath="${def[5]}"
       echo "Creating registration ${name} ${class} ${pv} ${location}" "${category}" "${screenpath}"
       if [[ -z "${pv}" ]]; then
-        /scripts/client/set-registration.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
+        /scripts/client/set-instance.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
       else
-        /scripts/client/set-registration.py "${name}" --producerpv "${pv}" --alarmclass "${class}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
+        /scripts/client/set-instance.py "${name}" --producerpv "${pv}" --alarmclass "${class}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
       fi
     done
 fi

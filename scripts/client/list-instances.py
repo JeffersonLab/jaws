@@ -114,7 +114,7 @@ def list_registrations():
               'bootstrap.servers': bootstrap_servers,
               'key.deserializer': registrations_key_deserializer,
               'value.deserializer': registrations_value_deserializer,
-              'group.id': 'list-registrations.py' + str(ts)}
+              'group.id': 'list-instances.py' + str(ts)}
     etable = EventSourceTable(config, registrations_initial_state, registrations_state_update)
     etable.start()
 
@@ -123,7 +123,7 @@ def list_registrations():
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True,
-              help="Dump records in AVRO JSON format such that they can be imported by set-registration.py; implies --nometa")
+              help="Dump records in AVRO JSON format such that they can be imported by set-instance.py; implies --nometa")
 @click.option('--category', type=click.Choice(categories), help="Only show registrations in the specified category")
 @click.option('--alarm_class', help="Only show registrations in the specified class")
 def cli(monitor, nometa, export, category, alarm_class):

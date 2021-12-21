@@ -36,7 +36,7 @@ alarm_producer = SerializingProducer(registrations_producer_conf)
 
 registrations_topic = 'alarm-registrations'
 
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-registration.py'), ('host', os.uname().nodename)]
+hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-instance.py'), ('host', os.uname().nodename)]
 
 
 def send(producer, topic):
