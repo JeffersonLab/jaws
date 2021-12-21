@@ -17,7 +17,9 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 
 ## Overview
-The JAWS alarm system is composed primarily of four subsystems: _classes_, _registrations_, _activations_, and _overrides_.   Alarm classes are persisted on the _alarm-classes_ topic and provide a set of inheritable properties for class members.  The inventory of all possible alarms is maintained by registering alarm definitions on the _alarm-registrations_ topic (the master alarm database).   Alarms are triggered active by producing messages on the _alarm-activations_ topic.     An alarm can be overridden to either suppress or incite the active state by placing a message on the _alarm-overrides_ topic.  
+The JAWS alarm system is composed primarily of two subsystems: registrations and activations.  Effective registrations are calculated from _classes_ and _instances_.   Alarm classes are persisted on the _alarm-classes_ topic and provide a set of inheritable properties for class members.  The alarm instances are maintained by registering alarm definitions on the _alarm-instances_ topic.  The inventory of all possible alarms (the master alarm database) is computed by applying class defaults to instances to form effective alarm registrations on the _effective-registrations_ topic.   
+
+Effective activations are calculated from _activations_ and _overrides_.  Alarms are triggered active by producing messages on the _alarm-activations_ topic.  An alarm can be overridden to either suppress or incite the active state by placing a message on the _alarm-overrides_ topic.  The effective activation state considering both actual activations and overrides is calculated by JAWS and made available on the _effective-activations_ topic. 
 
 **Services**
 - [jaws-effective-processor](https://github.com/JeffersonLab/jaws-effective-processor): Process classes and overrides and provide effective state on the _effective-registrations_, _effective-activations_, and _effective-alarms_ topics
