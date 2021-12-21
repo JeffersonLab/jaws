@@ -24,9 +24,9 @@ echo "---------------------------------------"
 beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
 
 
-echo "-----------------------"
-echo "Step 4: Adding classes "
-echo "-----------------------"
+echo "------------------------------------"
+echo "Step 4: Adding registration classes "
+echo "------------------------------------"
 if [[ -z "${ALARM_CLASSES}" ]]; then
   echo "No class definitions specified"
 elif beginswith 'https://' "${ALARM_CLASSES}"; then
@@ -61,15 +61,15 @@ else
 fi
 
 
-echo "-----------------------------------"
-echo "Step 5: Adding alarm registrations "
-echo "-----------------------------------"
+echo "--------------------------------------"
+echo "Step 5: Adding registration instances "
+echo "--------------------------------------"
 if [[ -z "${ALARM_REGISTRATIONS}" ]]; then
   echo "No alarm definitions specified"
 elif beginswith 'https://' "${ALARM_REGISTRATIONS}"; then
   echo "HTTPS URL specified: $ALARM_REGISTRATIONS"
-  wget -O /tmp/registrations "$ALARM_REGISTRATIONS"
-  /scripts/client/set-registration.py --file /tmp/registrations
+  wget -O /tmp/instances "$ALARM_REGISTRATIONS"
+  /scripts/client/set-registration.py --file /tmp/instances
 elif [[ -f "$ALARM_REGISTRATIONS" ]]; then
   echo "Attempting to setup alarm definitions from file $ALARM_REGISTRATIONS"
   /scripts/client/set-registration.py --file "$ALARM_REGISTRATIONS"

@@ -56,7 +56,7 @@ services:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
       ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/classes
-      ALARM_REGISTRATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/main/registrations/box
+      ALARM_REGISTRATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
 
   admin:
     image: slominskir/jaws-admin-gui:1.1.0
