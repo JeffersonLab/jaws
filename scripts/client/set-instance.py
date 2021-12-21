@@ -23,7 +23,7 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-registrations_value_serializer = AlarmRegistrationSerde.serializer(schema_registry_client)
+registrations_value_serializer = AlarmInstanceSerde.serializer(schema_registry_client)
 
 locations = AlarmLocation._member_names_
 categories = AlarmCategory._member_names_
