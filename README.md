@@ -87,10 +87,10 @@ The following environment variables are required by the scripts:
 
 The Docker container requires the script environment variables, plus can optionally handle the following environment variables as well:
 
-| Name | Description |
-|----------|---------|
-| ALARM_CLASSES | Path to an alarm-classes file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/classes)), else an https URL to a file, else a comma separated list of class definitions with fields separated by the pipe symbol.  Example Inline CSV: `name\|location\|category\|priority\|rationale\|correctiveaction\|pointofcontactusername\|screenpath` |
-| ALARM_REGISTRATIONS | Path to an alarm-registrations file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/registrations)), else an https URL to a file, else a comma separated list of registration definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example Inline CSV: `name\|class\|epicspv\|location\|category\|screenpath` |
+| Name            | Description                                                                                                                                                                                                                                                                                                                                             |
+|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ALARM_CLASSES   | Path to an alarm registration classes file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/classes)), else an https URL to a file, else a comma separated list of class definitions with fields separated by the pipe symbol.  Example Inline CSV: `name\                                                      |location\|category\|priority\|rationale\|correctiveaction\|pointofcontactusername\|screenpath` |
+| ALARM_INSTANCES | Path to an alarm registration instances file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/instances)), else an https URL to a file, else a comma separated list of instance definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example Inline CSV: `name\ |class\|epicspv\|location\|category\|screenpath` |
 
 
 ## Docker

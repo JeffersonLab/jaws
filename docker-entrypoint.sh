@@ -64,19 +64,19 @@ fi
 echo "--------------------------------------"
 echo "Step 5: Adding registration instances "
 echo "--------------------------------------"
-if [[ -z "${ALARM_REGISTRATIONS}" ]]; then
+if [[ -z "${ALARM_INSTANCES}" ]]; then
   echo "No alarm definitions specified"
-elif beginswith 'https://' "${ALARM_REGISTRATIONS}"; then
-  echo "HTTPS URL specified: $ALARM_REGISTRATIONS"
-  wget -O /tmp/instances "$ALARM_REGISTRATIONS"
+elif beginswith 'https://' "${ALARM_INSTANCES}"; then
+  echo "HTTPS URL specified: $ALARM_INSTANCES"
+  wget -O /tmp/instances "$ALARM_INSTANCES"
   /scripts/client/set-instance.py --file /tmp/instances
-elif [[ -f "$ALARM_REGISTRATIONS" ]]; then
-  echo "Attempting to setup alarm definitions from file $ALARM_REGISTRATIONS"
-  /scripts/client/set-instance.py --file "$ALARM_REGISTRATIONS"
+elif [[ -f "$ALARM_INSTANCES" ]]; then
+  echo "Attempting to setup alarm definitions from file $ALARM_INSTANCES"
+  /scripts/client/set-instance.py --file "$ALARM_INSTANCES"
 else
   echo "Attempting to setup registrations"
   IFS=','
-  read -a definitions <<< "$ALARM_REGISTRATIONS"
+  read -a definitions <<< "$ALARM_INSTANCES"
   for defStr in "${definitions[@]}";
     do
       IFS='|'
