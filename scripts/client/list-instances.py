@@ -124,8 +124,8 @@ def list_registrations():
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True,
               help="Dump records in AVRO JSON format such that they can be imported by set-instance.py; implies --nometa")
-@click.option('--category', type=click.Choice(categories), help="Only show registrations in the specified category")
-@click.option('--alarm_class', help="Only show registrations in the specified class")
+@click.option('--category', type=click.Choice(categories), help="Only show instances in the specified category")
+@click.option('--alarm_class', help="Only show instances in the specified class")
 def cli(monitor, nometa, export, category, alarm_class):
     global params
 
