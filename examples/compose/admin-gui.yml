@@ -35,7 +35,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: registry
 
   effective:
-    image: slominskir/jaws-effective-processor:3.2.0
+    image: slominskir/jaws-effective-processor:3.2.1
     hostname: effective
     container_name: effective
     depends_on:
