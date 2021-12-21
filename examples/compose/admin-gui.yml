@@ -59,7 +59,7 @@ services:
       ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
 
   admin:
-    image: slominskir/jaws-admin-gui:1.1.0
+    image: slominskir/jaws-admin-gui:1.2.0
     hostname: admin
     container_name: admin
     ports:
