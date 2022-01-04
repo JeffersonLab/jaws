@@ -11,7 +11,6 @@ from jlab_jaws.avro.serde import AlarmClassSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.entities import AlarmCategory
 
 from common import get_row_header
 
@@ -23,7 +22,7 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 classes_key_deserializer = StringDeserializer('utf_8')
 classes_value_deserializer = AlarmClassSerde.deserializer(schema_registry_client)
 
-categories = AlarmCategory._member_names_
+categories = []
 
 
 def classes_get_row(msg):
@@ -36,20 +35,18 @@ def classes_get_row(msg):
         row = [key, None]
     else:
         row = [key,
-               value.location.name if value.location is not None else None,
-               value.category.name if value.category is not None else None,
+               value.category,
                value.priority.name if value.priority is not None else None,
                value.rationale.replace("\n", "\\n ") if value.rationale is not None else None,
                value.corrective_action.replace("\n", "\\n") if value.corrective_action is not None else None,
                value.point_of_contact_username,
                value.latching,
                value.filterable,
-               value.masked_by,
                value.screen_path]
 
     row_header = get_row_header(headers, timestamp)
 
-    if params.category is None or (value is not None and params.category == value.category.name):
+    if params.category is None or (value is not None and params.category == value.category):
         if not params.nometa:
             row = row_header + row
     else:
@@ -59,8 +56,8 @@ def classes_get_row(msg):
 
 
 def classes_disp_table(records):
-    head = ["Class Name", "Location", "Category", "Priority", "Rationale", "Corrective Action",
-            "P.O.C. Username", "Latching", "Filterable", "Masked By", "Screen Path"]
+    head = ["Class Name", "Category", "Priority", "Rationale", "Corrective Action",
+            "P.O.C. Username", "Latching", "Filterable", "Screen Path"]
     table = []
 
     if not params.nometa:
@@ -84,7 +81,7 @@ def classes_export(records):
         key = msg[0];
         value = msg[1].value()
 
-        if params.category is None or (value is not None and params.category == value.category.name):
+        if params.category is None or (value is not None and params.category == value.category):
             k = key
             sortedrow = dict(sorted(AlarmClassSerde.to_dict(value).items()))
             v = json.dumps(sortedrow)

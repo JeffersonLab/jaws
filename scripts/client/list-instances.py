@@ -11,7 +11,7 @@ from jlab_jaws.avro.serde import AlarmInstanceSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.entities import AlarmCategory, UnionEncoding
+from jlab_jaws.avro.entities import UnionEncoding
 
 from common import get_row_header
 
@@ -24,8 +24,6 @@ registrations_key_deserializer = StringDeserializer('utf_8')
 
 registrations_value_deserializer = AlarmInstanceSerde.deserializer(schema_registry_client)
 
-categories = AlarmCategory._member_names_
-
 
 def registrations_get_row(msg):
     timestamp = msg.timestamp()
@@ -35,35 +33,27 @@ def registrations_get_row(msg):
 
     row = None
 
-    if params.category is None or (value is not None and params.category == value.category.name):
-        if params.alarm_class is None or (value is not None and params.alarm_class == value.alarm_class):
-            if value is None:
-                row = [key, None]
-            else:
-                row = [key,
-                       value.alarm_class,
-                       value.producer,
-                       value.location.name if value.location is not None else None,
-                       value.category.name if value.category is not None else None,
-                       value.priority.name if value.priority is not None else None,
-                       value.rationale.replace("\n", "\\n") if value.rationale is not None else None,
-                       value.corrective_action.replace("\n", "\\n ") if value.corrective_action is not None else None,
-                       value.point_of_contact_username,
-                       value.latching,
-                       value.filterable,
-                       value.masked_by,
-                       value.screen_path]
+    if params.alarm_class is None or (value is not None and params.alarm_class == value.alarm_class):
+        if value is None:
+            row = [key, None]
+        else:
+            row = [key,
+                   value.alarm_class,
+                   value.producer,
+                   value.location,
+                   value.masked_by,
+                   value.screen_path]
 
-            if not params.nometa:
-                row_header = get_row_header(headers, timestamp)
-                row = row_header + row
+        if not params.nometa:
+            row_header = get_row_header(headers, timestamp)
+            row = row_header + row
 
     return row
 
 
 def registrations_disp_table(records):
-    head = ["Alarm Name", "Class", "Producer", "Location", "Category", "Priority", "Rationale", "Corrective Action",
-            "P.O.C. Username", "Latching", "Filterable", "Masked By", "Screen Path"]
+    head = ["Alarm Name", "Class", "Producer", "Location",
+            "Masked By", "Screen Path"]
     table = []
 
     if not params.nometa:
@@ -87,11 +77,10 @@ def registrations_export(records):
         key = msg[0];
         value = msg[1].value()
 
-        if params.category is None or (value is not None and params.category == value.category.name):
-            if params.alarm_class is None or (value is not None and params.alarm_class == value.alarm_class):
-                sortedrow = dict(sorted(AlarmInstanceSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE).items()))
-                v = json.dumps(sortedrow)
-                print(key + '=' + v)
+        if params.alarm_class is None or (value is not None and params.alarm_class == value.alarm_class):
+            sortedrow = dict(sorted(AlarmInstanceSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE).items()))
+            v = json.dumps(sortedrow)
+            print(key + '=' + v)
 
 
 def registrations_initial_state(records):
@@ -124,9 +113,8 @@ def list_registrations():
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True,
               help="Dump records in AVRO JSON format such that they can be imported by set-instance.py; implies --nometa")
-@click.option('--category', type=click.Choice(categories), help="Only show instances in the specified category")
 @click.option('--alarm_class', help="Only show instances in the specified class")
-def cli(monitor, nometa, export, category, alarm_class):
+def cli(monitor, nometa, export, alarm_class):
     global params
 
     params = types.SimpleNamespace()
@@ -134,7 +122,6 @@ def cli(monitor, nometa, export, category, alarm_class):
     params.monitor = monitor
     params.nometa = nometa
     params.export = export
-    params.category = category
     params.alarm_class = alarm_class
 
     list_registrations()
