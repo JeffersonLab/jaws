@@ -13,7 +13,7 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 
 from jlab_jaws.avro.serde import AlarmClassSerde
 from jlab_jaws.avro.entities import AlarmClass
-from jlab_jaws.avro.entities import AlarmLocation, AlarmCategory, AlarmPriority
+from jlab_jaws.avro.entities import AlarmPriority
 
 from common import delivery_report
 
@@ -24,8 +24,7 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 
 class_value_serializer = AlarmClassSerde.serializer(schema_registry_client)
 
-locations = AlarmLocation._member_names_
-categories = AlarmCategory._member_names_
+categories = []
 priorities = AlarmPriority._member_names_
 
 class_producer_conf = {'bootstrap.servers': bootstrap_servers,
@@ -69,7 +68,6 @@ def classes_import(file):
 @click.option('--file', is_flag=True,
               help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the alarm-classes-value schema")
 @click.option('--unset', is_flag=True, help="Remove the class")
-@click.option('--location', type=click.Choice(locations), help="The alarm location")
 @click.option('--category', type=click.Choice(categories), help="The alarm category")
 @click.option('--priority', type=click.Choice(priorities), help="The alarm priority")
 @click.option('--filterable/--not-filterable', is_flag=True, default=True,
@@ -80,13 +78,12 @@ def classes_import(file):
 @click.option('--pointofcontactusername', help="The point of contact user name")
 @click.option('--rationale', help="The alarm rationale")
 @click.option('--correctiveaction', help="The corrective action")
-@click.option('--maskedby', help="The optional parent alarm that masks this one")
 @click.option('--ondelayseconds', type=int, default=None, help="Number of on delay seconds")
 @click.option('--offdelayseconds', type=int, default=None, help="Number of off delay seconds")
 @click.argument('name')
-def cli(file, unset, location, category,
+def cli(file, unset, category,
         priority, filterable, latching, screenpath, pointofcontactusername, rationale,
-        correctiveaction, maskedby, ondelayseconds, offdelayseconds, name):
+        correctiveaction, ondelayseconds, offdelayseconds, name):
     global params
 
     params = types.SimpleNamespace()
@@ -99,9 +96,6 @@ def cli(file, unset, location, category,
         if unset:
             params.value = None
         else:
-            if location is None:
-                raise click.ClickException("--location required")
-
             if category is None:
                 raise click.ClickException("--category required")
 
@@ -120,22 +114,7 @@ def cli(file, unset, location, category,
             if screenpath is None:
                 raise click.ClickException("--screenpath required")
 
-            # TODO: filterable and latching should be required in alarm-classes-value schema?
-            if filterable is None:
-                filterable = True
-
-            if latching is None:
-                latching = True
-
-            # TODO: None not allowed right now for both delay ints...
-            if ondelayseconds is None:
-                ondelayseconds = 0
-
-            if offdelayseconds is None:
-                offdelayseconds = 0
-
-            params.value = AlarmClass(AlarmLocation[location],
-                                      AlarmCategory[category],
+            params.value = AlarmClass(category,
                                       AlarmPriority[priority],
                                       rationale,
                                       correctiveaction,
@@ -144,7 +123,6 @@ def cli(file, unset, location, category,
                                       filterable,
                                       ondelayseconds,
                                       offdelayseconds,
-                                      maskedby,
                                       screenpath)
 
         send(class_producer, class_topic)
