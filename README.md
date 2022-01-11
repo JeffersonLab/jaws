@@ -71,7 +71,7 @@ docker exec jaws /scripts/client/set-activation.py alarm1
 ### Python Environment
 Scripts tested with Python 3.7
 
-Generally recommended to use a Python virtual environment to avoid dependency conflicts.  You can use the requirements.txt file to ensure the Python module dependences are installed:
+Generally recommended to use a Python virtual environment to avoid dependency conflicts.  You can use the requirements.txt file to ensure the Python module dependencies are installed:
 
 ```bash
 python3 -m venv env
@@ -84,10 +84,10 @@ pip install -r requirements.txt
 ### Configure
 The following environment variables are required by the scripts:
 
-| Name | Description |
-|----------|---------|
-| BOOTSTRAP_SERVER | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
-| SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
+| Name             | Description                                                                                                                |
+|------------------|----------------------------------------------------------------------------------------------------------------------------|
+| BOOTSTRAP_SERVER | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluster; example: `kafka:9092` |
+| SCHEMA_REGISTRY  | URL to Confluent Schema Registry; example: `http://registry:8081`                                                          |
 
 The Docker container requires the script environment variables, plus can optionally handle the following environment variables as well:
 
