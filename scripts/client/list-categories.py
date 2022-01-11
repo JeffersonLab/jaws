@@ -97,6 +97,10 @@ def list_records():
     etable.start()
 
 
+def get_categories():
+    return ['Hi']
+
+
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
