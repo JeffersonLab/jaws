@@ -3,13 +3,9 @@
 import os
 import types
 import click
-import time
 
 from jlab_jaws.eventsource.cached_table import ActivationCachedTable
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.serde import AlarmActivationUnionSerde
-from jlab_jaws.eventsource.table import EventSourceTable
 from tabulate import tabulate
 
 from common import get_row_header, ShellTable
