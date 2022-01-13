@@ -3,29 +3,24 @@
 import os
 import types
 import click
-import time
 import json
 
-from jlab_jaws.eventsource.table import EventSourceTable
+from jlab_jaws.eventsource.cached_table import ClassCachedTable
 from jlab_jaws.avro.serde import AlarmClassSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from confluent_kafka.serialization import StringDeserializer
 
-from common import get_row_header
+from common import get_row_header, ShellTable
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
-classes_key_deserializer = StringDeserializer('utf_8')
-classes_value_deserializer = AlarmClassSerde.deserializer(schema_registry_client)
-
 categories = []
 
 
-def classes_get_row(msg):
+def get_row(msg):
     timestamp = msg.timestamp()
     headers = msg.headers()
     key = msg.key()
@@ -55,7 +50,7 @@ def classes_get_row(msg):
     return row
 
 
-def classes_disp_table(records):
+def disp_table(records):
     head = ["Class Name", "Category", "Priority", "Rationale", "Corrective Action",
             "P.O.C. Username", "Latching", "Filterable", "Screen Path"]
     table = []
@@ -64,7 +59,7 @@ def classes_disp_table(records):
         head = ["Timestamp", "User", "Host", "Produced By"] + head
 
     for msg in records.values():
-        row = classes_get_row(msg)
+        row = get_row(msg)
         if row is not None:
             table.append(row)
 
@@ -74,7 +69,7 @@ def classes_disp_table(records):
     print(tabulate(table, head))
 
 
-def classes_export(records):
+def export_msgs(records):
     sortedtable = sorted(records.items())
 
     for msg in sortedtable:
@@ -86,36 +81,6 @@ def classes_export(records):
             sortedrow = dict(sorted(AlarmClassSerde.to_dict(value).items()))
             v = json.dumps(sortedrow)
             print(k + '=' + v)
-
-
-classes = {}
-
-
-def classes_initial_state(records):
-    global classes
-
-    if params.export:
-        classes_export(records)
-    else:
-        classes_disp_table(records)
-
-
-def classes_state_update(record):
-    row = classes_get_row(record)
-    print(row)
-
-
-def list_classes():
-    ts = time.time()
-
-    config = {'topic': 'alarm-classes',
-              'monitor': params.monitor,
-              'bootstrap.servers': bootstrap_servers,
-              'key.deserializer': classes_key_deserializer,
-              'value.deserializer': classes_value_deserializer,
-              'group.id': 'list-classes.py' + str(ts)}
-    etable = EventSourceTable(config, classes_initial_state, classes_state_update)
-    etable.start()
 
 
 @click.command()
@@ -133,8 +98,12 @@ def cli(monitor, nometa, export, category):
     params.nometa = nometa
     params.export = export
     params.category = category
+    params.export_msgs = export_msgs
+    params.disp_table = disp_table
 
-    list_classes()
+    etable = ClassCachedTable(bootstrap_servers, schema_registry_client)
+
+    ShellTable(etable, params)
 
 
 cli()
