@@ -4,12 +4,10 @@ import logging
 import os
 import signal
 import types
-from typing import Dict, Any
-
 import click
 import json
 
-import sys
+from typing import Dict, Any
 from confluent_kafka.cimpl import Message
 from jlab_jaws.eventsource.cached_table import InstanceCachedTable, log_exception
 from jlab_jaws.avro.serde import AlarmInstanceSerde
@@ -130,7 +128,8 @@ def list_msgs():
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True,
-              help="Dump records in AVRO JSON format such that they can be imported by set-instance.py; implies --nometa")
+              help="Dump records in AVRO JSON format such that they can be imported by set-instance.py; implies "
+                   "--nometa")
 @click.option('--alarm_class', help="Only show instances in the specified class")
 def cli(monitor, nometa, export, alarm_class):
     global params
