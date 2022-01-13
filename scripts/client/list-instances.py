@@ -7,6 +7,7 @@ import json
 
 from jlab_jaws.eventsource.cached_table import InstanceCachedTable
 from jlab_jaws.avro.serde import AlarmInstanceSerde
+from jlab_jaws.eventsource.table import TimeoutException
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from jlab_jaws.avro.entities import UnionEncoding
@@ -91,7 +92,10 @@ def registrations_state_update(record):
 def list_registrations():
     etable = InstanceCachedTable(bootstrap_servers, schema_registry_client)
 
-    msgs = etable.await_get(5)
+    try:
+        msgs = etable.await_get(5)
+    except TimeoutException:
+        print("Took too long to obtain list");
 
 
 @click.command()
