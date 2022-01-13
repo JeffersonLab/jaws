@@ -95,7 +95,7 @@ def list_registrations():
     try:
         msgs = etable.await_get(5)
     except TimeoutException:
-        print("Took too long to obtain list");
+        print("Took too long to obtain list")
 
 
 @click.command()
