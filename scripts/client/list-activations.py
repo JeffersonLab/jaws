@@ -5,21 +5,19 @@ import types
 import click
 import time
 
+from jlab_jaws.eventsource.cached_table import ActivationCachedTable
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringDeserializer
 from jlab_jaws.avro.serde import AlarmActivationUnionSerde
 from jlab_jaws.eventsource.table import EventSourceTable
 from tabulate import tabulate
 
-from common import get_row_header
+from common import get_row_header, ShellTable
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
-
-key_deserializer = StringDeserializer()
-value_deserializer = AlarmActivationUnionSerde.deserializer(schema_registry_client)
 
 
 def get_row(msg):
@@ -55,28 +53,6 @@ def disp_table(records):
     print(tabulate(table, head))
 
 
-def handle_initial_state(records):
-    disp_table(records)
-
-
-def handle_state_update(record):
-    row = get_row(record)
-    print(row)
-
-
-def list_records():
-    ts = time.time()
-
-    config = {'topic': 'alarm-activations',
-              'monitor': params.monitor,
-              'bootstrap.servers': bootstrap_servers,
-              'key.deserializer': key_deserializer,
-              'value.deserializer': value_deserializer,
-              'group.id': 'list-activations.py' + str(ts)}
-    etable = EventSourceTable(config, handle_initial_state, handle_state_update)
-    etable.start()
-
-
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 def cli(monitor):
@@ -85,8 +61,12 @@ def cli(monitor):
     params = types.SimpleNamespace()
 
     params.monitor = monitor
+    params.export = False
+    params.disp_table = disp_table
 
-    list_records()
+    etable = ActivationCachedTable(bootstrap_servers, schema_registry_client)
+
+    ShellTable(etable, params)
 
 
 cli()
