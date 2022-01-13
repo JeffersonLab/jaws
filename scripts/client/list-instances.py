@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 
+import logging
 import os
 import types
+from typing import Dict, Any
+
 import click
 import json
 
-from jlab_jaws.eventsource.cached_table import InstanceCachedTable
+from confluent_kafka.cimpl import Message
+from jlab_jaws.eventsource.cached_table import InstanceCachedTable, log_exception
 from jlab_jaws.avro.serde import AlarmInstanceSerde
+from jlab_jaws.eventsource.listener import EventSourceListener
 from jlab_jaws.eventsource.table import TimeoutException
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
@@ -14,10 +19,14 @@ from jlab_jaws.avro.entities import UnionEncoding
 
 from common import get_row_header
 
+LOGLEVEL = os.environ.get('LOGLEVEL', 'DEBUG').upper()
+logging.basicConfig(level=LOGLEVEL)
+
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
+
 
 def registrations_get_row(msg):
     timestamp = msg.timestamp()
@@ -45,7 +54,7 @@ def registrations_get_row(msg):
     return row
 
 
-def registrations_disp_table(records):
+def registrations_disp_table(msgs: Dict[str, Message]):
     head = ["Alarm Name", "Class", "Producer", "Location",
             "Masked By", "Screen Path"]
     table = []
@@ -53,7 +62,7 @@ def registrations_disp_table(records):
     if not params.nometa:
         head = ["Timestamp", "User", "Host", "Produced By"] + head
 
-    for msg in records.values():
+    for msg in msgs.values():
         row = registrations_get_row(msg)
         if row is not None:
             table.append(row)
@@ -64,8 +73,8 @@ def registrations_disp_table(records):
     print(tabulate(table, head))
 
 
-def registrations_export(records):
-    sortedtable = sorted(records.items())
+def registrations_export(msgs: Dict[str, Message]):
+    sortedtable = sorted(msgs.items())
 
     for msg in sortedtable:
         key = msg[0];
@@ -77,11 +86,11 @@ def registrations_export(records):
             print(key + '=' + v)
 
 
-def registrations_initial_state(records):
+def initial_records(msgs: Dict[str, Message]):
     if params.export:
-        registrations_export(records)
+        registrations_export(msgs)
     else:
-        registrations_disp_table(records)
+        registrations_disp_table(msgs)
 
 
 def registrations_state_update(record):
@@ -89,11 +98,33 @@ def registrations_state_update(record):
     print(row)
 
 
+class MonitorListener(EventSourceListener):
+
+    def on_highwater_timeout(self) -> None:
+        pass
+
+    def on_batch(self, msgs: Dict[Any, Message]) -> None:
+        for msg in msgs.values():
+            print("{}={}".format(msg.key(), msg.value()))
+
+    def on_highwater(self) -> None:
+        pass
+
+
 def list_registrations():
     etable = InstanceCachedTable(bootstrap_servers, schema_registry_client)
 
     try:
-        msgs = etable.await_get(5)
+        if params.monitor:
+            etable.add_listener(MonitorListener())
+            etable.start(log_exception)
+        else:
+            etable.start(log_exception)
+            msgs: Dict[str, Message] = etable.await_get(5)
+            print("Messages: {}".format(msgs))
+            initial_records(msgs)
+            etable.stop()
+
     except TimeoutException:
         print("Took too long to obtain list")
 
