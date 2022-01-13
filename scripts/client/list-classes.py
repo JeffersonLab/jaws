@@ -86,6 +86,7 @@ categories_table.start(log_exception)
 categories = categories_table.await_get(5).values()
 categories_table.stop()
 
+
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
