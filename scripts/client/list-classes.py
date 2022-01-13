@@ -5,7 +5,7 @@ import types
 import click
 import json
 
-from jlab_jaws.eventsource.cached_table import ClassCachedTable
+from jlab_jaws.eventsource.cached_table import ClassCachedTable, CategoryCachedTable, log_exception
 from jlab_jaws.avro.serde import AlarmClassSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
@@ -16,8 +16,6 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
-
-categories = []
 
 
 def get_row(msg):
@@ -82,6 +80,11 @@ def export_msgs(records):
             v = json.dumps(sortedrow)
             print(k + '=' + v)
 
+
+categories_table = CategoryCachedTable(bootstrap_servers)
+categories_table.start(log_exception)
+categories = categories_table.await_get(5).values()
+categories_table.stop()
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
