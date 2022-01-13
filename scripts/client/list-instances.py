@@ -3,14 +3,12 @@
 import os
 import types
 import click
-import time
 import json
 
-from jlab_jaws.eventsource.table import EventSourceTable
+from jlab_jaws.eventsource.cached_table import InstanceCachedTable
 from jlab_jaws.avro.serde import AlarmInstanceSerde
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from confluent_kafka.serialization import StringDeserializer
 from jlab_jaws.avro.entities import UnionEncoding
 
 from common import get_row_header
@@ -19,11 +17,6 @@ bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
-
-registrations_key_deserializer = StringDeserializer('utf_8')
-
-registrations_value_deserializer = AlarmInstanceSerde.deserializer(schema_registry_client)
-
 
 def registrations_get_row(msg):
     timestamp = msg.timestamp()
@@ -96,16 +89,9 @@ def registrations_state_update(record):
 
 
 def list_registrations():
-    ts = time.time()
+    etable = InstanceCachedTable(bootstrap_servers, schema_registry_client)
 
-    config = {'topic': 'alarm-instances',
-              'monitor': params.monitor,
-              'bootstrap.servers': bootstrap_servers,
-              'key.deserializer': registrations_key_deserializer,
-              'value.deserializer': registrations_value_deserializer,
-              'group.id': 'list-instances.py' + str(ts)}
-    etable = EventSourceTable(config, registrations_initial_state, registrations_state_update)
-    etable.start()
+    msgs = etable.await_get(5)
 
 
 @click.command()
