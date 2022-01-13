@@ -2,12 +2,14 @@
 
 import logging
 import os
+import signal
 import types
 from typing import Dict, Any
 
 import click
 import json
 
+import sys
 from confluent_kafka.cimpl import Message
 from jlab_jaws.eventsource.cached_table import InstanceCachedTable, log_exception
 from jlab_jaws.avro.serde import AlarmInstanceSerde
@@ -19,7 +21,7 @@ from jlab_jaws.avro.entities import UnionEncoding
 
 from common import get_row_header
 
-LOGLEVEL = os.environ.get('LOGLEVEL', 'DEBUG').upper()
+LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
@@ -28,7 +30,7 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 
-def registrations_get_row(msg):
+def get_row(msg):
     timestamp = msg.timestamp()
     headers = msg.headers()
     key = msg.key()
@@ -54,7 +56,7 @@ def registrations_get_row(msg):
     return row
 
 
-def registrations_disp_table(msgs: Dict[str, Message]):
+def disp_table(msgs: Dict[str, Message]):
     head = ["Alarm Name", "Class", "Producer", "Location",
             "Masked By", "Screen Path"]
     table = []
@@ -63,7 +65,7 @@ def registrations_disp_table(msgs: Dict[str, Message]):
         head = ["Timestamp", "User", "Host", "Produced By"] + head
 
     for msg in msgs.values():
-        row = registrations_get_row(msg)
+        row = get_row(msg)
         if row is not None:
             table.append(row)
 
@@ -73,7 +75,7 @@ def registrations_disp_table(msgs: Dict[str, Message]):
     print(tabulate(table, head))
 
 
-def registrations_export(msgs: Dict[str, Message]):
+def export(msgs: Dict[str, Message]):
     sortedtable = sorted(msgs.items())
 
     for msg in sortedtable:
@@ -88,14 +90,9 @@ def registrations_export(msgs: Dict[str, Message]):
 
 def initial_records(msgs: Dict[str, Message]):
     if params.export:
-        registrations_export(msgs)
+        export(msgs)
     else:
-        registrations_disp_table(msgs)
-
-
-def registrations_state_update(record):
-    row = registrations_get_row(record)
-    print(row)
+        disp_table(msgs)
 
 
 class MonitorListener(EventSourceListener):
@@ -111,7 +108,8 @@ class MonitorListener(EventSourceListener):
         pass
 
 
-def list_registrations():
+def list_msgs():
+    global etable
     etable = InstanceCachedTable(bootstrap_servers, schema_registry_client)
 
     try:
@@ -120,8 +118,7 @@ def list_registrations():
             etable.start(log_exception)
         else:
             etable.start(log_exception)
-            msgs: Dict[str, Message] = etable.await_get(5)
-            print("Messages: {}".format(msgs))
+            msgs: Dict[Any, Message] = etable.await_get(5)
             initial_records(msgs)
             etable.stop()
 
@@ -145,7 +142,14 @@ def cli(monitor, nometa, export, alarm_class):
     params.export = export
     params.alarm_class = alarm_class
 
-    list_registrations()
+    list_msgs()
 
+
+def signal_handler(sig, frame):
+    print('Stopping from Ctrl+C!')
+    etable.stop()
+
+
+signal.signal(signal.SIGINT, signal_handler)
 
 cli()
