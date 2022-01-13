@@ -3,26 +3,17 @@
 import os
 import types
 import click
-import time
 
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.serde import EffectiveRegistrationSerde
-from jlab_jaws.eventsource.table import EventSourceTable
-from jlab_jaws.avro.entities import AlarmCategory
+from jlab_jaws.eventsource.cached_table import CategoryCachedTable, EffectiveRegistrationCachedTable, log_exception
 from tabulate import tabulate
 
-from common import get_row_header
-
-categories = AlarmCategory._member_names_
+from common import get_row_header, ShellTable
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
 sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
-
-key_deserializer = StringDeserializer()
-value_deserializer = EffectiveRegistrationSerde.deserializer(schema_registry_client)
 
 
 def get_row(msg):
@@ -62,26 +53,10 @@ def disp_table(records):
     print(tabulate(table, head))
 
 
-def handle_initial_state(records):
-    disp_table(records)
-
-
-def handle_state_update(record):
-    row = get_row(record)
-    print(row)
-
-
-def list_records():
-    ts = time.time()
-
-    config = {'topic': 'effective-registrations',
-              'monitor': params.monitor,
-              'bootstrap.servers': bootstrap_servers,
-              'key.deserializer': key_deserializer,
-              'value.deserializer': value_deserializer,
-              'group.id': 'list-effective-registrations.py' + str(ts)}
-    etable = EventSourceTable(config, handle_initial_state, handle_state_update)
-    etable.start()
+categories_table = CategoryCachedTable(bootstrap_servers)
+categories_table.start(log_exception)
+categories = categories_table.await_get(5).values()
+categories_table.stop()
 
 
 @click.command()
@@ -98,8 +73,12 @@ def cli(monitor, nometa, category, alarm_class):
     params.nometa = nometa
     params.category = category
     params.alarm_class = alarm_class
+    params.export = False
+    params.disp_table = disp_table
 
-    list_records()
+    etable = EffectiveRegistrationCachedTable(bootstrap_servers, schema_registry_client)
+
+    ShellTable(etable, params)
 
 
 cli()
