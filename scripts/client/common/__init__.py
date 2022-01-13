@@ -1,5 +1,61 @@
+import logging
+import os
+import signal
+from typing import Dict, Any
 
 import time
+from confluent_kafka.cimpl import Message
+from jlab_jaws.eventsource.cached_table import CachedTable, log_exception
+from jlab_jaws.eventsource.listener import EventSourceListener
+from jlab_jaws.eventsource.table import TimeoutException
+
+
+class MonitorListener(EventSourceListener):
+
+    def on_highwater_timeout(self) -> None:
+        pass
+
+    def on_batch(self, msgs: Dict[Any, Message]) -> None:
+        for msg in msgs.values():
+            print("{}={}".format(msg.key(), msg.value()))
+
+    def on_highwater(self) -> None:
+        pass
+
+
+class ShellTable:
+
+    def __init__(self, etable: CachedTable, params):
+        self._etable = etable
+
+        level = os.environ.get('LOGLEVEL', 'WARNING').upper()
+        logging.basicConfig(level=level)
+
+        signal.signal(signal.SIGINT, self.__signal_handler)
+
+        try:
+            if params.monitor:
+                etable.add_listener(MonitorListener())
+                etable.start(log_exception)
+            else:
+                etable.start(log_exception)
+                msgs: Dict[Any, Message] = etable.await_get(5)
+                self.initial_msgs(msgs, params)
+                etable.stop()
+
+        except TimeoutException:
+            print("Took too long to obtain list")
+
+    def __signal_handler(self, sig, frame):
+        print('Stopping from Ctrl+C!')
+        self._etable.stop()
+
+    @staticmethod
+    def initial_msgs(msgs: Dict[Any, Message], params):
+        if params.export:
+            params.export_msgs(msgs)
+        else:
+            params.disp_table(msgs)
 
 
 def get_row_header(headers, timestamp):

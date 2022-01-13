@@ -1,26 +1,19 @@
 #!/usr/bin/env python3
 
-import logging
 import os
-import signal
 import types
 import click
 import json
 
 from typing import Dict, Any
 from confluent_kafka.cimpl import Message
-from jlab_jaws.eventsource.cached_table import InstanceCachedTable, log_exception
+from jlab_jaws.eventsource.cached_table import InstanceCachedTable
 from jlab_jaws.avro.serde import AlarmInstanceSerde
-from jlab_jaws.eventsource.listener import EventSourceListener
-from jlab_jaws.eventsource.table import TimeoutException
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from jlab_jaws.avro.entities import UnionEncoding
 
-from common import get_row_header
-
-LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
-logging.basicConfig(level=LOGLEVEL)
+from common import get_row_header, ShellTable
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -54,7 +47,7 @@ def get_row(msg):
     return row
 
 
-def disp_table(msgs: Dict[str, Message]):
+def disp_table(msgs: Dict[Any, Message]):
     head = ["Alarm Name", "Class", "Producer", "Location",
             "Masked By", "Screen Path"]
     table = []
@@ -73,7 +66,7 @@ def disp_table(msgs: Dict[str, Message]):
     print(tabulate(table, head))
 
 
-def export(msgs: Dict[str, Message]):
+def export_msgs(msgs: Dict[Any, Message]):
     sortedtable = sorted(msgs.items())
 
     for msg in sortedtable:
@@ -84,44 +77,6 @@ def export(msgs: Dict[str, Message]):
             sortedrow = dict(sorted(AlarmInstanceSerde.to_dict(value, UnionEncoding.DICT_WITH_TYPE).items()))
             v = json.dumps(sortedrow)
             print(key + '=' + v)
-
-
-def initial_records(msgs: Dict[str, Message]):
-    if params.export:
-        export(msgs)
-    else:
-        disp_table(msgs)
-
-
-class MonitorListener(EventSourceListener):
-
-    def on_highwater_timeout(self) -> None:
-        pass
-
-    def on_batch(self, msgs: Dict[Any, Message]) -> None:
-        for msg in msgs.values():
-            print("{}={}".format(msg.key(), msg.value()))
-
-    def on_highwater(self) -> None:
-        pass
-
-
-def list_msgs():
-    global etable
-    etable = InstanceCachedTable(bootstrap_servers, schema_registry_client)
-
-    try:
-        if params.monitor:
-            etable.add_listener(MonitorListener())
-            etable.start(log_exception)
-        else:
-            etable.start(log_exception)
-            msgs: Dict[Any, Message] = etable.await_get(5)
-            initial_records(msgs)
-            etable.stop()
-
-    except TimeoutException:
-        print("Took too long to obtain list")
 
 
 @click.command()
@@ -140,15 +95,12 @@ def cli(monitor, nometa, export, alarm_class):
     params.nometa = nometa
     params.export = export
     params.alarm_class = alarm_class
+    params.export_msgs = export_msgs
+    params.disp_table = disp_table
 
-    list_msgs()
+    etable = InstanceCachedTable(bootstrap_servers, schema_registry_client)
 
+    ShellTable(etable, params)
 
-def signal_handler(sig, frame):
-    print('Stopping from Ctrl+C!')
-    etable.stop()
-
-
-signal.signal(signal.SIGINT, signal_handler)
 
 cli()
