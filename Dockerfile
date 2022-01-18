@@ -2,11 +2,12 @@ FROM python:3.7-alpine3.12
 
 ARG CUSTOM_CRT_URL
 
+ENV TZ=UTC
 ENV LIBRDKAFKA_VERSION v1.6.1
 ENV BUILD_DEPS git make gcc g++ curl pkgconfig bsd-compat-headers zlib-dev openssl-dev cyrus-sasl-dev curl-dev zstd-dev yajl-dev python3-dev
 ENV RUN_DEPS bash libcurl cyrus-sasl-gssapiv2 ca-certificates libsasl heimdal-libs krb5 zstd-libs zstd-static yajl python3 py3-pip
 
-RUN apk add --no-cache git bash curl jq $RUN_DEPS
+RUN apk add --no-cache tzdata git bash curl jq $RUN_DEPS
 
 RUN \
     apk update && \
