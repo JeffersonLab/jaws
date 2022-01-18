@@ -62,7 +62,7 @@ def disp_table(records):
             table.append(row)
 
     # Truncate long cells
-    table = [[(c if len(str(c)) < 20 else str(c)[:17] + "...") for c in row] for row in table]
+    table = [[(c if len(str(c)) < 30 else str(c)[:27] + "...") for c in row] for row in table]
 
     print(tabulate(table, head))
 
