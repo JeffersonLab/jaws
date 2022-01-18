@@ -9,5 +9,7 @@ client = SchemaRegistryClient(sr_conf)
 
 subjects = client.get_subjects()
 
+subjects.sort()
+
 for subject in subjects:
     print(subject)
