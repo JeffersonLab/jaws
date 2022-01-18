@@ -24,8 +24,64 @@ echo "---------------------------------------"
 beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
 
 
+
+echo "--------------------------------------"
+echo "Step 4: Adding registration locations "
+echo "--------------------------------------"
+if [[ -z "${ALARM_LOCATIONS}" ]]; then
+  echo "No locations specified"
+elif beginswith 'https://' "${ALARM_LOCATIONS}"; then
+  echo "HTTPS URL specified: $ALARM_LOCATIONS"
+  wget -O /tmp/locations "$ALARM_LOCATIONS"
+  /scripts/client/set-location.py --file /tmp/locations
+elif [[ -f "$ALARM_LOCATIONS" ]]; then
+  echo "Attempting to setup locations from file $ALARM_LOCATIONS"
+  /scripts/client/set-location.py --file "$ALARM_LOCATIONS"
+else
+  echo "Attempting to setup locations"
+  IFS=','
+  read -a definitions <<< "$ALARM_LOCATIONS"
+  for defStr in "${definitions[@]}";
+    do
+      IFS='|'
+      read -a def <<< "$defStr"
+      name="${def[0]}"
+      parent="${def[1]}"
+      echo "Creating location ${name} ${parent}"
+      /scripts/client/set-location.py "${name}" --parent "${parent}"
+    done
+fi
+
+
+echo "---------------------------------------"
+echo "Step 5: Adding registration categories "
+echo "---------------------------------------"
+if [[ -z "${ALARM_CATEGORIES}" ]]; then
+  echo "No categories specified"
+elif beginswith 'https://' "${ALARM_CATEGORIES}"; then
+  echo "HTTPS URL specified: $ALARM_CATEGORIES"
+  wget -O /tmp/categories "$ALARM_CATEGORIES"
+  /scripts/client/set-category.py --file /tmp/categories
+elif [[ -f "$ALARM_CATEGORIES" ]]; then
+  echo "Attempting to setup categories from file $ALARM_CATEGORIES"
+  /scripts/client/set-category.py --file "$ALARM_CATEGORIES"
+else
+  echo "Attempting to setup categories"
+  IFS=','
+  read -a definitions <<< "$ALARM_CATEGORIES"
+  for defStr in "${definitions[@]}";
+    do
+      IFS='|'
+      read -a def <<< "$defStr"
+      name="${def[0]}"
+      echo "Creating category ${name}"
+      /scripts/client/set-category.py "${name}"
+    done
+fi
+
+
 echo "------------------------------------"
-echo "Step 4: Adding registration classes "
+echo "Step 6: Adding registration classes "
 echo "------------------------------------"
 if [[ -z "${ALARM_CLASSES}" ]]; then
   echo "No class definitions specified"
@@ -62,7 +118,7 @@ fi
 
 
 echo "--------------------------------------"
-echo "Step 5: Adding registration instances "
+echo "Step 7: Adding registration instances "
 echo "--------------------------------------"
 if [[ -z "${ALARM_INSTANCES}" ]]; then
   echo "No alarm definitions specified"

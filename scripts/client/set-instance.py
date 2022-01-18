@@ -14,6 +14,7 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from jlab_jaws.avro.serde import AlarmInstanceSerde
 from jlab_jaws.avro.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
+from jlab_jaws.eventsource.cached_table import LocationCachedTable, log_exception
 
 from common import delivery_report
 
@@ -23,8 +24,6 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 schema_registry_client = SchemaRegistryClient(sr_conf)
 
 registrations_value_serializer = AlarmInstanceSerde.serializer(schema_registry_client)
-
-locations = ['NL', 'SL']
 
 registrations_producer_conf = {'bootstrap.servers': bootstrap_servers,
                                'key.serializer': StringSerializer('utf_8'),
@@ -58,6 +57,12 @@ def registrations_import(file):
         alarm_producer.produce(topic=registrations_topic, value=value_obj, key=key, headers=hdrs)
 
     alarm_producer.flush()
+
+
+locations_table = LocationCachedTable(bootstrap_servers, schema_registry_client)
+locations_table.start(log_exception)
+locations = locations_table.await_get(5).values()
+locations_table.stop()
 
 
 @click.command()
