@@ -80,7 +80,6 @@ categories_table.stop()
               help="True if alarm can be filtered out of view")
 @click.option('--latching/--not-latching', is_flag=True, default=True,
               help="Indicate that the alarm latches and requires acknowledgement to clear")
-@click.option('--screenpath', help="The path the alarm screen display")
 @click.option('--pointofcontactusername', help="The point of contact user name")
 @click.option('--rationale', help="The alarm rationale")
 @click.option('--correctiveaction', help="The corrective action")
@@ -88,7 +87,7 @@ categories_table.stop()
 @click.option('--offdelayseconds', type=int, default=None, help="Number of off delay seconds")
 @click.argument('name')
 def cli(file, unset, category,
-        priority, filterable, latching, screenpath, pointofcontactusername, rationale,
+        priority, filterable, latching, pointofcontactusername, rationale,
         correctiveaction, ondelayseconds, offdelayseconds, name):
     global params
 
@@ -117,9 +116,6 @@ def cli(file, unset, category,
             if pointofcontactusername is None:
                 raise click.ClickException("--pointofcontactusername required")
 
-            if screenpath is None:
-                raise click.ClickException("--screenpath required")
-
             params.value = AlarmClass(category,
                                       AlarmPriority[priority],
                                       rationale,
@@ -128,8 +124,7 @@ def cli(file, unset, category,
                                       latching,
                                       filterable,
                                       ondelayseconds,
-                                      offdelayseconds,
-                                      screenpath)
+                                      offdelayseconds)
 
         send(class_producer, class_topic)
 

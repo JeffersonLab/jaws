@@ -35,7 +35,8 @@ def get_row(msg):
                value.point_of_contact_username,
                value.latching,
                value.filterable,
-               value.screen_path]
+               value.on_delay_seconds,
+               value.off_delay_seconds]
 
     row_header = get_row_header(headers, timestamp)
 
@@ -50,7 +51,7 @@ def get_row(msg):
 
 def disp_table(records):
     head = ["Class Name", "Category", "Priority", "Rationale", "Corrective Action",
-            "P.O.C. Username", "Latching", "Filterable", "Screen Path"]
+            "P.O.C. Username", "Latching", "Filterable", "On Delay", "Off Delay"]
     table = []
 
     if not params.nometa:

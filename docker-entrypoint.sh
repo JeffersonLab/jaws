@@ -28,9 +28,9 @@ beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
 
 
 
-echo "--------------------------------------"
-echo "Step 4: Adding registration locations "
-echo "--------------------------------------"
+echo "-------------------------"
+echo "Step 4: Adding locations "
+echo "-------------------------"
 if [[ -z "${ALARM_LOCATIONS}" ]]; then
   echo "No locations specified"
 elif beginswith 'https://' "${ALARM_LOCATIONS}"; then
@@ -56,9 +56,9 @@ else
 fi
 
 
-echo "---------------------------------------"
-echo "Step 5: Adding registration categories "
-echo "---------------------------------------"
+echo "--------------------------"
+echo "Step 5: Adding categories "
+echo "--------------------------"
 if [[ -z "${ALARM_CATEGORIES}" ]]; then
   echo "No categories specified"
 elif beginswith 'https://' "${ALARM_CATEGORIES}"; then
@@ -83,9 +83,9 @@ else
 fi
 
 
-echo "------------------------------------"
-echo "Step 6: Adding registration classes "
-echo "------------------------------------"
+echo "-----------------------"
+echo "Step 6: Adding classes "
+echo "-----------------------"
 if [[ -z "${ALARM_CLASSES}" ]]; then
   echo "No class definitions specified"
 elif beginswith 'https://' "${ALARM_CLASSES}"; then
@@ -104,25 +104,29 @@ else
       IFS='|'
       read -a def <<< "$defStr"
       name="${def[0]}"
-      location="${def[1]}"
-      category="${def[2]}"
-      priority="${def[3]}"
-      rationale="${def[4]}"
-      correctiveaction="${def[5]}"
-      pointofcontactusername="${def[6]}"
-      screenpath="${def[7]}"
-      echo "Creating class ${name} ${location}" "${category}" "${priority}" \
-          "${rationale}" "${correctiveaction}" "${pointofcontactusername}" "${screenpath}"
-      /scripts/client/set-class.py "${name}" --location "${location}" --category "${category}" \
+      category="${def[1]}"
+      priority="${def[2]}"
+      rationale="${def[3]}"
+      correctiveaction="${def[4]}"
+      pointofcontactusername="${def[5]}"
+      latching="${def[6]}"
+      filterable="${def[7]}"
+      ondelayseconds="${def[8]}"
+      offdelayseconds="${def[9]}"
+      echo "Creating class ${name} "${category}" "${priority}" \
+          "${rationale}" "${correctiveaction}" "${pointofcontactusername}" "${latching}" "${filterable}" \
+          "${ondelayseconds}" "${offdelayseconds}"
+      /scripts/client/set-class.py "${name}" --category "${category}" \
           --priority "${priority}" --rationale "${rationale}" --correctiveaction "${correctiveaction}" \
-          --pointofcontactusername "${pointofcontactusername}" --screenpath "${screenpath}"
+          --pointofcontactusername "${pointofcontactusername}" --latching "${latching}" --filterable "${filterable}" \
+          --ondelayseconds "${ondelayseconds}" --offdelayseconds "${offdelayseconds}"
     done
 fi
 
 
-echo "--------------------------------------"
-echo "Step 7: Adding registration instances "
-echo "--------------------------------------"
+echo "-------------------------"
+echo "Step 7: Adding instances "
+echo "-------------------------"
 if [[ -z "${ALARM_INSTANCES}" ]]; then
   echo "No alarm definitions specified"
 elif beginswith 'https://' "${ALARM_INSTANCES}"; then
@@ -144,13 +148,15 @@ else
       class="${def[1]}"
       pv="${def[2]}"
       location="${def[3]}"
-      category="${def[4]}"
+      maskedby="${def[4]}"
       screenpath="${def[5]}"
       echo "Creating registration ${name} ${class} ${pv} ${location}" "${category}" "${screenpath}"
       if [[ -z "${pv}" ]]; then
-        /scripts/client/set-instance.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
+        /scripts/client/set-instance.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" \
+         --maskedby "${maskedby}" --screenpath "${screenpath}"
       else
-        /scripts/client/set-instance.py "${name}" --producerpv "${pv}" --alarmclass "${class}" --location "${location}" --category "${category}" --screenpath "${screenpath}"
+        /scripts/client/set-instance.py "${name}" --producerpv "${pv}" --alarmclass "${class}" \
+         --location "${location}" --maskedby "${maskedby}" --screenpath "${screenpath}"
       fi
     done
 fi

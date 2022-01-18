@@ -38,7 +38,7 @@ def get_row(msg):
                    value.producer,
                    value.location,
                    value.masked_by,
-                   value.screen_path]
+                   value.screen_command]
 
         if not params.nometa:
             row_header = get_row_header(headers, timestamp)
@@ -49,7 +49,7 @@ def get_row(msg):
 
 def disp_table(msgs: Dict[Any, Message]):
     head = ["Alarm Name", "Class", "Producer", "Location",
-            "Masked By", "Screen Path"]
+            "Masked By", "Screen Command"]
     table = []
 
     if not params.nometa:

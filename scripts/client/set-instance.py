@@ -74,11 +74,11 @@ locations_table.stop()
 @click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm")
 @click.option('--producerexpression', help="The CALC expression used to generate this alarm")
 @click.option('--location', '-l', type=click.Choice(locations), multiple=True, help="The alarm location")
-@click.option('--screenpath', help="The path the alarm screen display")
+@click.option('--screencommand', help="The command to open the related control system screen")
 @click.option('--maskedby', help="The optional parent alarm that masks this one")
 @click.argument('name')
 def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression, location,
-        screenpath, maskedby, name):
+        screencommand, maskedby, name):
     global params
 
     params = types.SimpleNamespace()
@@ -109,7 +109,7 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
                                          p,
                                          location,
                                          maskedby,
-                                         screenpath)
+                                         screencommand)
 
         send(alarm_producer, registrations_topic)
 
