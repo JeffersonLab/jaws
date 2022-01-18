@@ -93,8 +93,10 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-      ALARM_CLASSES: "base|INJ|RF|P3_MINOR|Timely operator action required|Call expert|helpdesk|/"
-      ALARM_INSTANCES: "alarm1|base|channel1|INJ|RF|/,alarm2|base|channel2|INJ|RF|/,alarm3|special||INJ|RF|/"
+      ALARM_LOCATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/main/locations
+      ALARM_CATEGORIES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/categories
+      ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/classes
+      ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
 
   admin:
     image: slominskir/jaws-admin-gui:1.2.0
