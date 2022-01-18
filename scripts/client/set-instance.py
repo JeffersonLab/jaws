@@ -61,7 +61,7 @@ def registrations_import(file):
 
 locations_table = LocationCachedTable(bootstrap_servers, schema_registry_client)
 locations_table.start(log_exception)
-locations = locations_table.await_get(5).values()
+locations = locations_table.await_get(5).keys()
 locations_table.stop()
 
 

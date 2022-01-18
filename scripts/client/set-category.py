@@ -41,7 +41,7 @@ def import_records(file):
     lines = handle.readlines()
 
     for line in lines:
-        key = line
+        key = line.rstrip()
         value = ""
 
         producer.produce(topic=topic, value=value, key=key, headers=hdrs)

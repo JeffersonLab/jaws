@@ -83,7 +83,7 @@ def export_msgs(records):
 
 categories_table = CategoryCachedTable(bootstrap_servers)
 categories_table.start(log_exception)
-categories = categories_table.await_get(5).values()
+categories = categories_table.await_get(5).keys()
 categories_table.stop()
 
 

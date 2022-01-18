@@ -14,6 +14,7 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from jlab_jaws.avro.serde import AlarmClassSerde
 from jlab_jaws.avro.entities import AlarmClass
 from jlab_jaws.avro.entities import AlarmPriority
+from jlab_jaws.eventsource.cached_table import CategoryCachedTable, log_exception
 
 from common import delivery_report
 
@@ -24,7 +25,6 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 
 class_value_serializer = AlarmClassSerde.serializer(schema_registry_client)
 
-categories = []
 priorities = AlarmPriority._member_names_
 
 class_producer_conf = {'bootstrap.servers': bootstrap_servers,
@@ -62,6 +62,12 @@ def classes_import(file):
         class_producer.produce(topic=class_topic, value=value_obj, key=key_obj, headers=hdrs)
 
     class_producer.flush()
+
+
+categories_table = CategoryCachedTable(bootstrap_servers)
+categories_table.start(log_exception)
+categories = categories_table.await_get(5).keys()
+categories_table.stop()
 
 
 @click.command()
