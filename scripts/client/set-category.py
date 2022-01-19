@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import logging
 import os
 
 import pwd
@@ -33,6 +33,7 @@ hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-category.
 
 
 def send():
+    logging.debug("{}={}".format(params.key, params.value))
     producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
     producer.flush()
 
@@ -46,6 +47,7 @@ def import_records(file):
         key = line.rstrip()
         value = ""
 
+        logging.debug("{}={}".format(key, value))
         producer.produce(topic=topic, value=value, key=key, headers=hdrs, on_delivery=delivery_report)
 
     producer.flush()

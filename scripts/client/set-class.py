@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import logging
 import os
 
 import pwd
@@ -40,6 +40,7 @@ hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-class.py'
 
 
 def send(producer, topic):
+    logging.debug("{}={}".format(params.key, params.value))
     producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
     producer.flush()
 
@@ -52,14 +53,12 @@ def classes_import(file):
     for line in lines:
         tokens = line.split("=", 1)
         key = tokens[0]
-        value = tokens[1]
-        v = json.loads(value)
-        print("{}={}".format(key, v))
+        value_obj = tokens[1]
+        value_dict = json.loads(value_obj)
+        value = AlarmClassSerde.from_dict(value_dict)
 
-        key_obj = key
-        value_obj = AlarmClassSerde.from_dict(v)
-
-        class_producer.produce(topic=class_topic, value=value_obj, key=key_obj, headers=hdrs,
+        logging.debug("{}={}".format(key, value))
+        class_producer.produce(topic=class_topic, value=value, key=key, headers=hdrs,
                                on_delivery=delivery_report)
 
     class_producer.flush()

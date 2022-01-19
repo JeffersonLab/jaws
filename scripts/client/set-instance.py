@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import logging
 import os
 
 import pwd
@@ -38,6 +38,7 @@ hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-instance.
 
 
 def send(producer, topic):
+    logging.debug("{}={}".format(params.key, params.value))
     producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
     producer.flush()
 
@@ -50,12 +51,12 @@ def registrations_import(file):
     for line in lines:
         tokens = line.split("=", 1)
         key = tokens[0]
-        value = tokens[1]
-        v = json.loads(value)
+        value_obj = tokens[1]
+        value_dict = json.loads(value_obj)
+        value = AlarmInstanceSerde.from_dict(value_dict)
 
-        value_obj = AlarmInstanceSerde.from_dict(v)
-
-        alarm_producer.produce(topic=registrations_topic, value=value_obj, key=key, headers=hdrs,
+        logging.debug("{}={}".format(key, value))
+        alarm_producer.produce(topic=registrations_topic, value=value, key=key, headers=hdrs,
                                on_delivery=delivery_report)
 
     alarm_producer.flush()

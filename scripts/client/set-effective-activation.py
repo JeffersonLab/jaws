@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import logging
 import os
 import pwd
 import types
@@ -39,6 +39,7 @@ hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-effective
 
 
 def send():
+    logging.debug("{}={}".format(params.key, params.value))
     producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
     producer.flush()
 
