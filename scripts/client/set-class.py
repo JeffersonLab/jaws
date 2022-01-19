@@ -16,7 +16,9 @@ from jlab_jaws.avro.entities import AlarmClass
 from jlab_jaws.avro.entities import AlarmPriority
 from jlab_jaws.eventsource.cached_table import CategoryCachedTable, log_exception
 
-from common import delivery_report
+from common import delivery_report, set_log_level_from_env
+
+set_log_level_from_env()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -57,9 +59,8 @@ def classes_import(file):
         key_obj = key
         value_obj = AlarmClassSerde.from_dict(v)
 
-        print('Message: {}={}'.format(key_obj, value_obj))
-
-        class_producer.produce(topic=class_topic, value=value_obj, key=key_obj, headers=hdrs)
+        class_producer.produce(topic=class_topic, value=value_obj, key=key_obj, headers=hdrs,
+                               on_delivery=delivery_report)
 
     class_producer.flush()
 
@@ -72,7 +73,8 @@ categories_table.stop()
 
 @click.command()
 @click.option('--file', is_flag=True,
-              help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the alarm-classes-value schema")
+              help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON "
+                   "encoded AVRO formatted per the alarm-classes-value schema")
 @click.option('--unset', is_flag=True, help="Remove the class")
 @click.option('--category', type=click.Choice(categories), help="The alarm category")
 @click.option('--priority', type=click.Choice(priorities), help="The alarm priority")

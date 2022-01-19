@@ -10,6 +10,7 @@ services:
         - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
     environment:
       TZ: "America/New_York"
+      LOGLEVEL: "DEBUG"
       ALARM_LOCATIONS: /data/locations
       ALARM_CATEGORIES: /data/categories
       ALARM_CLASSES: /data/classes

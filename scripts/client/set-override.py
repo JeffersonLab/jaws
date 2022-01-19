@@ -14,7 +14,9 @@ from jlab_jaws.avro.entities import AlarmOverrideUnion, LatchedOverride, Filtere
     ShelvedReason
 from jlab_jaws.avro.serde import AlarmOverrideKeySerde, AlarmOverrideUnionSerde
 
-from common import delivery_report
+from common import delivery_report, set_log_level_from_env
+
+set_log_level_from_env()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -34,7 +36,7 @@ topic = 'alarm-overrides'
 hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-override.py'),('host',os.uname().nodename)]
 
 
-def send() :
+def send():
     producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
     producer.flush()
 
@@ -42,8 +44,10 @@ def send() :
 @click.command()
 @click.option('--override', type=click.Choice(OverriddenAlarmType._member_names_), help="The type of override")
 @click.option('--unset', is_flag=True, help="Remove the override")
-@click.option('--expirationseconds', type=int, help="The number of seconds until the shelved status expires, None for indefinite")
-@click.option('--reason', type=click.Choice(ShelvedReason._member_names_), help="The explanation for why this alarm has been shelved")
+@click.option('--expirationseconds', type=int, help="The number of seconds until the shelved status expires, None for "
+                                                    "indefinite")
+@click.option('--reason', type=click.Choice(ShelvedReason._member_names_), help="The explanation for why this alarm "
+                                                                                "has been shelved")
 @click.option('--oneshot', is_flag=True, help="Whether shelving is one-shot or continuous")
 @click.option('--comments', help="Operator explanation for why suppressed")
 @click.option('--filtername', help="Name of filter rule associated with this override")

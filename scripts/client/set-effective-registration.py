@@ -4,16 +4,17 @@ import os
 import pwd
 import types
 import click
-import time
 
 from confluent_kafka import SerializingProducer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringSerializer
 from jlab_jaws.avro.entities import EffectiveRegistration, \
-    AlarmInstance, AlarmLocation, AlarmCategory, AlarmPriority, SimpleProducer
+    AlarmInstance, SimpleProducer
 from jlab_jaws.avro.serde import EffectiveRegistrationSerde
 
-from common import delivery_report
+from common import delivery_report, set_log_level_from_env
+
+set_log_level_from_env()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -39,21 +40,12 @@ def send():
     producer.flush()
 
 
-def get_effective_registration():
-    return AlarmInstance(AlarmLocation.INJ,
-                             AlarmCategory.RF,
-                             AlarmPriority.P4_INCIDENTAL,
-                             "testing",
-                             "fix it",
-                             "tester",
-                             True,
-                             True,
-                             5,
-                             5,
-                             "alarm1",
-                             "/tmp",
-                             "base",
-                             SimpleProducer())
+def get_instance():
+    return AlarmInstance("base",
+                         SimpleProducer(),
+                         ["INJ"],
+                         "alarm1",
+                         "command1")
 
 
 @click.command()
@@ -70,10 +62,9 @@ def cli(unset, name):
         params.value = None
     else:
         alarm_class = None
-        actual_reg = get_effective_registration()
-        calculated_reg = get_effective_registration()
+        alarm_instance = get_instance()
 
-        params.value = EffectiveRegistration(alarm_class, actual_reg, calculated_reg)
+        params.value = EffectiveRegistration(alarm_class, alarm_instance)
 
     send()
 

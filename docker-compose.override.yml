@@ -6,6 +6,7 @@ services:
     image: slominskir/jaws:3.4.0
     environment:
       TZ: "America/New_York"
+      LOGLEVEL: "INFO"
       ALARM_LOCATIONS: "INJ|CEBAF,NL|CEBAF,SL|CEBAF,CEBAF|"
       ALARM_CATEGORIES: "Vacuum|RF|RADCON"
       ALARM_CLASSES: "base|RF|P3_MINOR|Timely operator action required|Call expert|helpdesk|True|False||10"

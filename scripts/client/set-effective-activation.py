@@ -12,10 +12,12 @@ from confluent_kafka.serialization import StringSerializer
 from jlab_jaws.avro.entities import AlarmState, AlarmOverrideSet, \
     OverriddenAlarmType, EffectiveActivation, \
     DisabledOverride, FilteredOverride, LatchedOverride, MaskedOverride, OnDelayedOverride, OffDelayedOverride, \
-    ShelvedOverride, ShelvedReason, AlarmRegistration, AlarmLocation, AlarmCategory, AlarmPriority, SimpleProducer
+    ShelvedOverride, ShelvedReason
 from jlab_jaws.avro.serde import EffectiveActivationSerde
 
-from common import delivery_report
+from common import delivery_report, set_log_level_from_env
+
+set_log_level_from_env()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 

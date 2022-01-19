@@ -16,7 +16,9 @@ from jlab_jaws.avro.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 from jlab_jaws.eventsource.cached_table import LocationCachedTable, log_exception
 
-from common import delivery_report
+from common import delivery_report, set_log_level_from_env
+
+set_log_level_from_env()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -50,11 +52,11 @@ def registrations_import(file):
         key = tokens[0]
         value = tokens[1]
         v = json.loads(value)
-        print("{}={}".format(key, v))
 
         value_obj = AlarmInstanceSerde.from_dict(v)
 
-        alarm_producer.produce(topic=registrations_topic, value=value_obj, key=key, headers=hdrs)
+        alarm_producer.produce(topic=registrations_topic, value=value_obj, key=key, headers=hdrs,
+                               on_delivery=delivery_report)
 
     alarm_producer.flush()
 
@@ -67,7 +69,8 @@ locations_table.stop()
 
 @click.command()
 @click.option('--file', is_flag=True,
-              help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the alarm-instances-value schema")
+              help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON "
+                   "encoded AVRO formatted per the alarm-instances-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
 @click.option('--alarmclass', help="The alarm class")
 @click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")

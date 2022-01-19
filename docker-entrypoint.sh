@@ -50,7 +50,6 @@ else
       read -a def <<< "$defStr"
       name="${def[0]}"
       parent="${def[1]}"
-      echo "Creating location ${name} ${parent}"
       /scripts/client/set-location.py "${name}" --parent "${parent}"
     done
 fi
@@ -77,7 +76,6 @@ else
       IFS='|'
       read -a def <<< "$defStr"
       name="${def[0]}"
-      echo "Creating category ${name}"
       /scripts/client/set-category.py "${name}"
     done
 fi
@@ -113,9 +111,6 @@ else
       filterable="${def[7]}"
       ondelayseconds="${def[8]}"
       offdelayseconds="${def[9]}"
-      echo "Creating class ${name} ${category} ${priority}" \
-          "${rationale}" "${correctiveaction}" "${pointofcontactusername}" "${latching}" "${filterable}" \
-          "${ondelayseconds}" "${offdelayseconds}"
       /scripts/client/set-class.py "${name}" --category "${category}" \
           --priority "${priority}" --rationale "${rationale}" --correctiveaction "${correctiveaction}" \
           --pointofcontactusername "${pointofcontactusername}" --latching "${latching}" --filterable "${filterable}" \
@@ -137,7 +132,7 @@ elif [[ -f "$ALARM_INSTANCES" ]]; then
   echo "Attempting to setup alarm definitions from file $ALARM_INSTANCES"
   /scripts/client/set-instance.py --file "$ALARM_INSTANCES"
 else
-  echo "Attempting to setup registrations"
+  echo "Attempting to setup instances"
   IFS=','
   read -a definitions <<< "$ALARM_INSTANCES"
   for defStr in "${definitions[@]}";
@@ -150,7 +145,6 @@ else
       location="${def[3]}"
       maskedby="${def[4]}"
       screencommand="${def[5]}"
-      echo "Creating registration ${name} ${class} ${pv} ${location} ${category} ${screenpath}"
       if [[ -z "${pv}" ]]; then
         /scripts/client/set-instance.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" \
          --maskedby "${maskedby}" --screenpath "${screenpath}"

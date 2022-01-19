@@ -28,8 +28,7 @@ class ShellTable:
     def __init__(self, etable: CachedTable, params):
         self._etable = etable
 
-        level = os.environ.get('LOGLEVEL', 'WARNING').upper()
-        logging.basicConfig(level=level)
+        set_log_level_from_env()
 
         signal.signal(signal.SIGINT, self.__signal_handler)
 
@@ -58,6 +57,11 @@ class ShellTable:
             params.disp_table(msgs)
 
 
+def set_log_level_from_env():
+    level = os.environ.get('LOGLEVEL', 'WARNING').upper()
+    logging.basicConfig(level=level)
+
+
 def get_row_header(headers, timestamp):
     ts = time.ctime(timestamp[1] / 1000)
 
@@ -79,6 +83,6 @@ def get_row_header(headers, timestamp):
 
 def delivery_report(err, msg):
     if err is not None:
-        print('Message delivery failed: {}'.format(err))
+        logging.error('Failed: {}'.format(err))
     else:
-        print('Message delivered')
+        logging.debug('Delivered')

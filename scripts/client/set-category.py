@@ -10,7 +10,9 @@ from confluent_kafka import SerializingProducer
 from confluent_kafka.serialization import StringSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
-from common import delivery_report
+from common import delivery_report, set_log_level_from_env
+
+set_log_level_from_env()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -44,14 +46,15 @@ def import_records(file):
         key = line.rstrip()
         value = ""
 
-        producer.produce(topic=topic, value=value, key=key, headers=hdrs)
+        producer.produce(topic=topic, value=value, key=key, headers=hdrs, on_delivery=delivery_report)
 
     producer.flush()
 
 
 @click.command()
 @click.option('--file', is_flag=True,
-              help="Imports a file of key=value pairs (one per line) where the key is category name and value is empty string")
+              help="Imports a file of key=value pairs (one per line) where the key is category name and value is "
+                   "empty string")
 @click.option('--unset', is_flag=True, help="Remove the category")
 @click.argument('name')
 def cli(file, unset, name):

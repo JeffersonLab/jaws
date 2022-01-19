@@ -12,10 +12,12 @@ from confluent_kafka.serialization import StringSerializer
 from jlab_jaws.avro.entities import EffectiveAlarm, AlarmState, AlarmOverrideSet, \
     OverriddenAlarmType, EffectiveRegistration, EffectiveActivation, \
     DisabledOverride, FilteredOverride, LatchedOverride, MaskedOverride, OnDelayedOverride, OffDelayedOverride, \
-    ShelvedOverride, ShelvedReason, AlarmRegistration, AlarmLocation, AlarmCategory, AlarmPriority, SimpleProducer
+    ShelvedOverride, ShelvedReason, SimpleProducer, AlarmInstance
 from jlab_jaws.avro.serde import EffectiveAlarmSerde
 
-from common import delivery_report
+from common import delivery_report, set_log_level_from_env
+
+set_log_level_from_env()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -65,21 +67,12 @@ def get_overrides(override):
     return overrides
 
 
-def get_effective_registration():
-    return AlarmRegistration(AlarmLocation.INJ,
-                             AlarmCategory.RF,
-                             AlarmPriority.P4_INCIDENTAL,
-                             "testing",
-                             "fix it",
-                             "tester",
-                             True,
-                             True,
-                             5,
-                             5,
-                             "alarm1",
-                             "/tmp",
-                             "base",
-                             SimpleProducer())
+def get_instance():
+    return AlarmInstance("base",
+                         SimpleProducer(),
+                         ["INJ"],
+                         "alarm1",
+                         "command1")
 
 
 @click.command()
@@ -98,10 +91,9 @@ def cli(unset, state, override, name):
         params.value = None
     else:
         overrides = get_overrides(override)
-        actual_reg = get_effective_registration()
-        calculated_reg = get_effective_registration()
+        alarm_instance= get_instance()
 
-        registration = EffectiveRegistration(None, actual_reg, calculated_reg)
+        registration = EffectiveRegistration(None, alarm_instance)
         activation = EffectiveActivation(None, overrides, AlarmState[state])
 
         params.value = EffectiveAlarm(registration, activation)

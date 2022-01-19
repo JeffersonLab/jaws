@@ -13,7 +13,9 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from jlab_jaws.avro.entities import AlarmLocation
 from jlab_jaws.avro.serde import AlarmLocationSerde
 
-from common import delivery_report
+from common import delivery_report, set_log_level_from_env
+
+set_log_level_from_env()
 
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
@@ -52,9 +54,7 @@ def import_records(file):
 
         value = AlarmLocationSerde.from_dict(value_dict)
 
-        print('Message: {}={}'.format(key, value))
-
-        producer.produce(topic=topic, value=value, key=key, headers=hdrs)
+        producer.produce(topic=topic, value=value, key=key, headers=hdrs, on_delivery=delivery_report)
 
     producer.flush()
 
