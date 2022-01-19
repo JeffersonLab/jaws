@@ -9,4 +9,4 @@ services:
       ALARM_LOCATIONS: "INJ|CEBAF,NL|CEBAF,SL|CEBAF,CEBAF|"
       ALARM_CATEGORIES: "Vacuum|RF|RADCON"
       ALARM_CLASSES: "base|RF|P3_MINOR|Timely operator action required|Call expert|helpdesk"
-      ALARM_INSTANCES: "alarm1|base|channel1|INJ|/|,alarm2|base|channel2|NL|command2|alarm1,alarm3|special||INJ|/|"
+      ALARM_INSTANCES: "alarm1|base|channel1|INJ||command1,alarm2|base|channel2|NL|alarm1|command2,alarm3|special||INJ||command3"
