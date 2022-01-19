@@ -149,14 +149,14 @@ else
       pv="${def[2]}"
       location="${def[3]}"
       maskedby="${def[4]}"
-      screenpath="${def[5]}"
+      screencommand="${def[5]}"
       echo "Creating registration ${name} ${class} ${pv} ${location}" "${category}" "${screenpath}"
       if [[ -z "${pv}" ]]; then
         /scripts/client/set-instance.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" \
          --maskedby "${maskedby}" --screenpath "${screenpath}"
       else
         /scripts/client/set-instance.py "${name}" --producerpv "${pv}" --alarmclass "${class}" \
-         --location "${location}" --maskedby "${maskedby}" --screenpath "${screenpath}"
+         --location "${location}" --maskedby "${maskedby}" --screencommand "${screencommand}"
       fi
     done
 fi
