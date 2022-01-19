@@ -113,7 +113,7 @@ else
       filterable="${def[7]}"
       ondelayseconds="${def[8]}"
       offdelayseconds="${def[9]}"
-      echo "Creating class ${name} "${category}" "${priority}" \
+      echo "Creating class ${name} ${category} ${priority}" \
           "${rationale}" "${correctiveaction}" "${pointofcontactusername}" "${latching}" "${filterable}" \
           "${ondelayseconds}" "${offdelayseconds}"
       /scripts/client/set-class.py "${name}" --category "${category}" \
@@ -150,7 +150,7 @@ else
       location="${def[3]}"
       maskedby="${def[4]}"
       screencommand="${def[5]}"
-      echo "Creating registration ${name} ${class} ${pv} ${location}" "${category}" "${screenpath}"
+      echo "Creating registration ${name} ${class} ${pv} ${location} ${category} ${screenpath}"
       if [[ -z "${pv}" ]]; then
         /scripts/client/set-instance.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" \
          --maskedby "${maskedby}" --screenpath "${screenpath}"
