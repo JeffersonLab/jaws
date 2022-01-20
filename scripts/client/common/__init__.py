@@ -68,6 +68,8 @@ class JAWSProducer:
 
         Sensible defaults are used to determine BOOTSTRAP_SERVERS (look in env)
         and to handle errors (log them).
+
+        This producer also knows how to import records from a file using the JAWS expected file format.
     """
     def __init__(self, topic, producer_name, key_serializer, value_serializer):
         set_log_level_from_env()
