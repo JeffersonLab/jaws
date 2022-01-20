@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
-import logging
-import os
-import pwd
-import types
+
 import click
 import time
 
-from confluent_kafka import SerializingProducer
-from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.serialization import StringSerializer
 from jlab_jaws.avro.entities import AlarmState, AlarmOverrideSet, \
     OverriddenAlarmType, EffectiveActivation, \
@@ -15,33 +10,7 @@ from jlab_jaws.avro.entities import AlarmState, AlarmOverrideSet, \
     ShelvedOverride, ShelvedReason
 from jlab_jaws.avro.serde import EffectiveActivationSerde
 
-from common import delivery_report, set_log_level_from_env
-
-set_log_level_from_env()
-
-bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-
-sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry_client = SchemaRegistryClient(sr_conf)
-
-key_serializer = StringSerializer()
-value_serializer = EffectiveActivationSerde.serializer(schema_registry_client)
-
-producer_conf = {'bootstrap.servers': bootstrap_servers,
-                 'key.serializer': key_serializer,
-                 'value.serializer': value_serializer}
-producer = SerializingProducer(producer_conf)
-
-topic = 'effective-activations'
-
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-effective-activation.py'),
-        ('host', os.uname().nodename)]
-
-
-def send():
-    logging.debug("{}={}".format(params.key, params.value))
-    producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
-    producer.flush()
+from common import JAWSProducer, get_registry_client
 
 
 def get_overrides(override):
@@ -74,20 +43,23 @@ def get_overrides(override):
 @click.option('--override', type=click.Choice(OverriddenAlarmType._member_names_), help="The state")
 @click.argument('name')
 def cli(unset, state, override, name):
-    global params
+    schema_registry_client = get_registry_client()
 
-    params = types.SimpleNamespace()
+    key_serializer = StringSerializer()
+    value_serializer = EffectiveActivationSerde.serializer(schema_registry_client)
 
-    params.key = name
+    producer = JAWSProducer('effective-activations', 'set-effective-activation.py', key_serializer, value_serializer)
+
+    key = name
 
     if unset:
-        params.value = None
+        value = None
     else:
         overrides = get_overrides(override)
 
-        params.value = EffectiveActivation(None, overrides, AlarmState[state])
+        value = EffectiveActivation(None, overrides, AlarmState[state])
 
-    send()
+    producer.send(key, value)
 
 
 cli()

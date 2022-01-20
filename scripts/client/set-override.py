@@ -1,45 +1,14 @@
 #!/usr/bin/env python3
-import logging
-import os
 
-import pwd
-import types
 import click
 import time
 
-from confluent_kafka import SerializingProducer
-from confluent_kafka.schema_registry import SchemaRegistryClient
 from jlab_jaws.avro.entities import AlarmOverrideUnion, LatchedOverride, FilteredOverride, MaskedOverride, \
     DisabledOverride, OnDelayedOverride, OffDelayedOverride, ShelvedOverride, AlarmOverrideKey, OverriddenAlarmType, \
     ShelvedReason
 from jlab_jaws.avro.serde import AlarmOverrideKeySerde, AlarmOverrideUnionSerde
 
-from common import delivery_report, set_log_level_from_env
-
-set_log_level_from_env()
-
-bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-
-sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry_client = SchemaRegistryClient(sr_conf)
-
-key_serializer = AlarmOverrideKeySerde.serializer(schema_registry_client)
-value_serializer = AlarmOverrideUnionSerde.serializer(schema_registry_client)
-
-producer_conf = {'bootstrap.servers': bootstrap_servers,
-                 'key.serializer': key_serializer,
-                 'value.serializer': value_serializer}
-producer = SerializingProducer(producer_conf)
-
-topic = 'alarm-overrides'
-
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name),('producer','set-override.py'),('host',os.uname().nodename)]
-
-
-def send():
-    logging.debug("{}={}".format(params.key, params.value))
-    producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
-    producer.flush()
+from common import JAWSProducer, get_registry_client
 
 
 @click.command()
@@ -54,21 +23,24 @@ def send():
 @click.option('--filtername', help="Name of filter rule associated with this override")
 @click.argument('name')
 def cli(override, unset, expirationseconds, reason, oneshot, comments, filtername, name):
-    global params
+    schema_registry_client = get_registry_client()
 
-    params = types.SimpleNamespace()
+    key_serializer = AlarmOverrideKeySerde.serializer(schema_registry_client)
+    value_serializer = AlarmOverrideUnionSerde.serializer(schema_registry_client)
+
+    producer = JAWSProducer('alarm-overrides', 'set-override.py', key_serializer, value_serializer)
 
     if override is None:
         raise click.ClickException("--override is required")
 
-    params.key = AlarmOverrideKey(name, OverriddenAlarmType[override])
+    key = AlarmOverrideKey(name, OverriddenAlarmType[override])
 
     if expirationseconds is not None:
         timestamp_seconds = time.time() + expirationseconds;
         timestamp_millis = int(timestamp_seconds * 1000);
 
     if unset:
-        params.value = None
+        value = None
     else:
         if override == "Shelved":
             if reason is None:
@@ -101,11 +73,9 @@ def cli(override, unset, expirationseconds, reason, oneshot, comments, filternam
         else: # assume Latched
             msg = LatchedOverride()
 
-        params.value = AlarmOverrideUnion(msg)
+        value = AlarmOverrideUnion(msg)
 
-    print(params.value)
-
-    send()
+    producer.send(key, value)
 
 
 cli()

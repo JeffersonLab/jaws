@@ -1,67 +1,31 @@
 #!/usr/bin/env python3
-import logging
-import os
 
-import pwd
-import types
+import os
 import click
 import json
 
-from confluent_kafka import SerializingProducer
 from confluent_kafka.serialization import StringSerializer
-from confluent_kafka.schema_registry import SchemaRegistryClient
 
 from jlab_jaws.avro.serde import AlarmInstanceSerde
 from jlab_jaws.avro.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 from jlab_jaws.eventsource.cached_table import LocationCachedTable, log_exception
 
-from common import delivery_report, set_log_level_from_env
+from common import JAWSProducer, get_registry_client
 
-set_log_level_from_env()
 
+def line_to_kv(line):
+    tokens = line.split("=", 1)
+    key = tokens[0]
+    value_obj = tokens[1]
+    value_dict = json.loads(value_obj)
+    value = AlarmInstanceSerde.from_dict(value_dict)
+
+    return key, value
+
+
+schema_registry_client = get_registry_client()
 bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-
-sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry_client = SchemaRegistryClient(sr_conf)
-
-registrations_value_serializer = AlarmInstanceSerde.serializer(schema_registry_client)
-
-registrations_producer_conf = {'bootstrap.servers': bootstrap_servers,
-                               'key.serializer': StringSerializer('utf_8'),
-                               'value.serializer': registrations_value_serializer}
-alarm_producer = SerializingProducer(registrations_producer_conf)
-
-registrations_topic = 'alarm-instances'
-
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-instance.py'), ('host', os.uname().nodename)]
-
-
-def send(producer, topic):
-    logging.debug("{}={}".format(params.key, params.value))
-    producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
-    producer.flush()
-
-
-def registrations_import(file):
-    print("Loading file", file)
-    handle = open(file, 'r')
-    lines = handle.readlines()
-
-    for line in lines:
-        tokens = line.split("=", 1)
-        key = tokens[0]
-        value_obj = tokens[1]
-        value_dict = json.loads(value_obj)
-        value = AlarmInstanceSerde.from_dict(value_dict)
-
-        logging.debug("{}={}".format(key, value))
-        alarm_producer.produce(topic=registrations_topic, value=value, key=key, headers=hdrs,
-                               on_delivery=delivery_report)
-
-    alarm_producer.flush()
-
-
 locations_table = LocationCachedTable(bootstrap_servers, schema_registry_client)
 locations_table.start(log_exception)
 locations = locations_table.await_get(5).keys()
@@ -83,17 +47,18 @@ locations_table.stop()
 @click.argument('name')
 def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression, location,
         screencommand, maskedby, name):
-    global params
+    key_serializer = StringSerializer()
+    value_serializer = AlarmInstanceSerde.serializer(schema_registry_client)
 
-    params = types.SimpleNamespace()
+    producer = JAWSProducer('alarm-instances', 'set-instance.py', key_serializer, value_serializer)
 
-    params.key = name
+    key = name
 
     if file:
-        registrations_import(name)
+        producer.import_records(name, line_to_kv)
     else:
         if unset:
-            params.value = None
+            value = None
         else:
             if producersimple is False and producerpv is None and producerexpression is None:
                 raise click.ClickException(
@@ -109,13 +74,13 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
             if alarmclass is None:
                 alarmclass = "base"
 
-            params.value = AlarmInstance(alarmclass,
-                                         p,
-                                         location,
-                                         maskedby,
-                                         screencommand)
+            value = AlarmInstance(alarmclass,
+                                  p,
+                                  location,
+                                  maskedby,
+                                  screencommand)
 
-        send(alarm_producer, registrations_topic)
+        producer.send(key, value)
 
 
 cli()
