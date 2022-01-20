@@ -4,10 +4,8 @@ from typing import List
 
 import click
 from confluent_kafka import Message
-from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.serde import AlarmActivationUnionSerde
 
-from common import JAWSConsumer, get_registry_client
+from common import JAWSConsumer, get_registry_client, StringSerde, ActivationSerde
 
 
 def msg_to_list(msg: Message) -> List[str]:
@@ -30,15 +28,13 @@ def msg_to_list(msg: Message) -> List[str]:
 def cli(monitor, nometa, export):
     schema_registry_client = get_registry_client()
 
-    key_deserializer = StringDeserializer('utf_8')
-    value_deserializer = AlarmActivationUnionSerde.deserializer(schema_registry_client)
-
-    consumer = JAWSConsumer('alarm-activations', 'list-activations.py', key_deserializer, value_deserializer)
+    consumer = JAWSConsumer('alarm-activations', 'list-activations.py', StringSerde(),
+                            ActivationSerde(schema_registry_client))
 
     if monitor:
         consumer.print_records_continuous()
     elif export:
-        consumer.export_records(AlarmActivationUnionSerde)
+        consumer.export_records()
     else:
         consumer.print_table(msg_to_list, ["Alarm Name", "Value"], nometa)
 

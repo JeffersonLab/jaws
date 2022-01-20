@@ -1,16 +1,26 @@
 import json
 import logging
 import os
+import pkgutil
 import pwd
 import signal
+from abc import ABC, abstractmethod
 from typing import Dict, Any
 
+import fastavro
 import time
+from avro.schema import Schema
 from confluent_kafka import SerializingProducer
 from confluent_kafka.cimpl import Message
-from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry import SchemaRegistryClient, SchemaReference
+from confluent_kafka.schema_registry.avro import AvroSerializer, AvroDeserializer
+from confluent_kafka.serialization import StringDeserializer, StringSerializer
+from jlab_jaws.avro.entities import AlarmClass, AlarmPriority, UnionEncoding, NoteAlarming, EPICSAlarming, \
+    SimpleAlarming, EPICSSEVR, EPICSSTAT, AlarmActivationUnion
+from jlab_jaws.avro.serde import _unwrap_enum
 from jlab_jaws.eventsource.cached_table import CachedTable, log_exception
 from jlab_jaws.eventsource.listener import EventSourceListener
+from jlab_jaws.serde.avro import AvroDeserializerWithReferences, AvroSerializerWithReferences
 from tabulate import tabulate
 
 logger = logging.getLogger(__name__)
@@ -29,14 +39,305 @@ class MonitorListener(EventSourceListener):
         pass
 
 
-class StringSerde:
-    def to_dict(self, value):
-        return {"value": value}
+class Serde(ABC):
+    @abstractmethod
+    def from_json(self, data):
+        pass
+
+    @abstractmethod
+    def to_json(self, data):
+        pass
+
+    @abstractmethod
+    def serializer(self):
+        pass
+
+    @abstractmethod
+    def deserializer(self):
+        pass
+
+
+class StringSerde(Serde):
+    def from_json(self, data):
+        return data
+
+    def to_json(self, data):
+        return data
+
+    def serializer(self):
+        return StringSerializer('utf_8')
+
+    def deserializer(self):
+        return StringDeserializer('utf_8')
+
+
+class RegistryAvroSerde(Serde):
+    _schema: Schema = None
+    _schema_str: str = None
+
+    def __init__(self, schema_registry_client):
+        self._schema_registry_client = schema_registry_client
+
+    @abstractmethod
+    def from_dict(self, data):
+        pass
+
+    def _from_dict_with_ctx(self, data, ctx):
+        return self.from_dict(data)
+
+    @abstractmethod
+    def to_dict(self, data):
+        pass
+
+    def _to_dict_with_ctx(self, data, ctx):
+        return self.to_dict(data)
+
+    def from_json(self, data):
+        pass
+
+    def to_json(self, data):
+        sorteddata = dict(sorted(self.to_dict(data).items()))
+        jsondata = json.dumps(sorteddata)
+        return jsondata
+
+    def get_schema(self) -> Schema:
+        return self._schema
+
+    def get_schema_str(self) -> str:
+        return self._schema_str
+
+    def serializer(self):
+        """
+            Return a serializer.
+
+            :return: Serializer
+        """
+
+        return AvroSerializer(self._schema_registry_client,
+                              self._schema_str,
+                              self._to_dict_with_ctx,
+                              None)
+
+    def deserializer(self):
+        """
+            Return an AlarmActivationUnion deserializer.
+
+            :return: Deserializer
+        """
+
+        return AvroDeserializer(self._schema_registry_client,
+                                None,
+                                self._from_dict_with_ctx,
+                                True)
+
+
+class RegistryAvroWithReferencesSerde(RegistryAvroSerde):
+    _references = []
+    _named_schemas = {}
+
+    def __init__(self, schema_registry_client):
+        super().__init__(schema_registry_client)
+
+    @abstractmethod
+    def from_dict(self, data):
+        pass
+
+    @abstractmethod
+    def to_dict(self, data):
+        pass
+
+    def references(self):
+        return self._references
+
+    def named_schemas(self):
+        return self._named_schemas
+
+    def serializer(self):
+        """
+                Return a serializer.
+
+                :return: Serializer
+            """
+        return AvroSerializerWithReferences(self._schema_registry_client,
+                                            self.get_schema(),
+                                            self._to_dict_with_ctx,
+                                            None,
+                                            self.named_schemas())
+
+    def deserializer(self):
+        """
+                Return a deserializer.
+
+                :return: Deserializer
+            """
+        return AvroDeserializerWithReferences(self._schema_registry_client,
+                                              None,
+                                              self._from_dict_with_ctx,
+                                              True,
+                                              self.named_schemas())
+
+
+class ClassSerde(RegistryAvroWithReferencesSerde):
+    """
+        Provides AlarmClass serde utilities
+    """
+
+    def __init__(self, schema_registry_client):
+
+        super().__init__(schema_registry_client)
+
+        priority_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmPriority.avsc")
+        priority_schema_str = priority_bytes.decode('utf-8')
+
+        ref_dict = json.loads(priority_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=self._named_schemas)
+
+        priority_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmPriority", "alarm-priority", 1)
+        self._references = [priority_schema_ref]
+
+        schema_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmClass.avsc")
+        schema_str = schema_bytes.decode('utf-8')
+
+        self._schema_str = schema_str
+        self._schema = Schema(schema_str, "AVRO",
+                              self._references)
+
+    def to_dict(self, data):
+        """
+            Converts an AlarmClass to a dict.
+
+            :param data: The AlarmClass
+            :return: A dict
+        """
+
+        if data is None:
+            return None
+
+        return {
+            "category": data.category,
+            "priority": data.priority.name,
+            "rationale": data.rationale,
+            "correctiveaction": data.corrective_action,
+            "pointofcontactusername": data.point_of_contact_username,
+            "latching": data.latching,
+            "filterable": data.filterable,
+            "ondelayseconds": data.on_delay_seconds,
+            "offdelayseconds": data.off_delay_seconds
+        }
+
+    def from_dict(self, data):
+        """
+            Converts a dict to an AlarmClass.
+
+            :param data: The dict
+            :return: The AlarmClass
+            """
+        if data is None:
+            return None
+
+        return AlarmClass(data.get('category'),
+                          _unwrap_enum(data.get('priority'), AlarmPriority),
+                          data.get('rationale'),
+                          data.get('correctiveaction'),
+                          data.get('pointofcontactusername'),
+                          data.get('latching'),
+                          data.get('filterable'),
+                          data.get('ondelayseconds'),
+                          data.get('offdelayseconds'))
+
+
+class ActivationSerde(RegistryAvroSerde):
+    """
+        Provides AlarmActivationUnion serde utilities
+    """
+
+    def __init__(self, schema_registry_client, union_encoding=UnionEncoding.TUPLE):
+
+        self._union_encoding = union_encoding
+
+        super().__init__(schema_registry_client)
+
+        schema_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmActivationUnion.avsc")
+        self._schema_str = schema_bytes.decode('utf-8')
+
+    def to_dict(self, data):
+        """
+        Converts an AlarmActivationUnion to a dict.
+
+        :param data: The AlarmActivationUnion
+        :return: A dict
+        """
+
+        if data is None:
+            return None
+
+        if isinstance(data.msg, SimpleAlarming):
+            uniontype = "org.jlab.jaws.entity.SimpleAlarming"
+            uniondict = {}
+        elif isinstance(data.msg, EPICSAlarming):
+            uniontype = "org.jlab.jaws.entity.EPICSAlarming"
+            uniondict = {"sevr": data.msg.sevr.name, "stat": data.msg.stat.name}
+        elif isinstance(data.msg, NoteAlarming):
+            uniontype = "org.jlab.jaws.entity.NoteAlarming"
+            uniondict = {"note": data.msg.note}
+        else:
+            raise Exception("Unknown alarming union type: {}".format(data.msg))
+
+        if self._union_encoding is UnionEncoding.TUPLE:
+            union = (uniontype, uniondict)
+        elif self._union_encoding is UnionEncoding.DICT_WITH_TYPE:
+            union = {uniontype: uniondict}
+        else:
+            union = uniondict
+
+        return {
+            "msg": union
+        }
+
+    def from_dict(self, data):
+        """
+        Converts a dict to an AlarmActivationUnion.
+
+        Note: UnionEncoding.POSSIBLY_AMBIGUOUS_DICT is not supported.
+
+        :param data: The dict
+        :return: The AlarmActivationUnion
+        """
+
+        if data is None:
+            return None
+
+        unionobj = data['msg']
+
+        if type(unionobj) is tuple:
+            uniontype = unionobj[0]
+            uniondict = unionobj[1]
+        elif type(unionobj is dict):
+            value = next(iter(unionobj.items()))
+            uniontype = value[0]
+            uniondict = value[1]
+        else:
+            raise Exception("Unsupported union encoding")
+
+        if uniontype == "org.jlab.jaws.entity.NoteAlarming":
+            obj = NoteAlarming(uniondict['note'])
+        elif uniontype == "org.jlab.jaws.entity.EPICSAlarming":
+            obj = EPICSAlarming(_unwrap_enum(uniondict['sevr'], EPICSSEVR), _unwrap_enum(uniondict['stat'],
+                                                                                         EPICSSTAT))
+        else:
+            obj = SimpleAlarming()
+
+        return AlarmActivationUnion(obj)
 
 
 class JAWSConsumer(CachedTable):
 
-    def __init__(self, topic, consumer_name, key_deserializer, value_deserializer):
+    def __init__(self, topic, consumer_name, key_serde, value_serde):
+        self._topic = topic
+        self._consumer_name = consumer_name
+        self._key_serde = key_serde
+        self._value_serde = value_serde
+
         set_log_level_from_env()
 
         signal.signal(signal.SIGINT, self.__signal_handler)
@@ -46,8 +347,8 @@ class JAWSConsumer(CachedTable):
         bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
         config = {'topic': topic,
                   'bootstrap.servers': bootstrap_servers,
-                  'key.deserializer': key_deserializer,
-                  'value.deserializer': value_deserializer,
+                  'key.deserializer': key_serde.deserializer(),
+                  'value.deserializer': value_serde.deserializer(),
                   'group.id': consumer_name + str(ts)}
 
         super().__init__(config)
@@ -74,20 +375,20 @@ class JAWSConsumer(CachedTable):
 
         print(tabulate(table, head))
 
-    def export_records(self, value_serde=StringSerde(), filter_if=lambda key, value: True):
+    def export_records(self, filter_if=lambda key, value: True):
         records = self.get_records()
 
-        sortedtable = sorted(records.items())
+        sortedtuples = sorted(records.items())
 
-        for msg in sortedtable:
-            key = msg[0];
-            value = msg[1].value()
+        for item in sortedtuples:
+            key = item[1].key()
+            value = item[1].value()
 
             if filter_if(key, value):
-                k = key
-                sortedrow = dict(sorted(value_serde.to_dict(value).items()))
-                v = json.dumps(sortedrow)
-                print(k + '=' + v)
+                key_json = self._key_serde.to_json(key)
+                value_json = self._value_serde.to_json(value)
+
+                print(key_json + '=' + value_json)
 
     def get_records(self) -> Dict[Any, Message]:
         self.start(log_exception)
@@ -145,6 +446,7 @@ class JAWSProducer:
 
         This producer also knows how to import records from a file using the JAWS expected file format.
     """
+
     def __init__(self, topic, producer_name, key_serializer, value_serializer):
         set_log_level_from_env()
 

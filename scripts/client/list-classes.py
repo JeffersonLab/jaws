@@ -5,9 +5,8 @@ import click
 from confluent_kafka import Message
 
 from confluent_kafka.serialization import StringDeserializer
-from jlab_jaws.avro.serde import AlarmClassSerde
 
-from common import JAWSConsumer, get_registry_client
+from common import JAWSConsumer, StringSerde, ClassSerde, get_registry_client
 
 
 def msg_to_list(msg: Message) -> List[str]:
@@ -39,10 +38,8 @@ class CategoryFilter:
         return self._category is None or (value is not None and self._category == value.category)
 
 
-key_deserializer = StringDeserializer('utf_8')
-value_deserializer = StringDeserializer('utf_8')
-consumer = JAWSConsumer('alarm-categories', 'list-categories.py', key_deserializer, value_deserializer)
-categories = consumer.get_records()
+cat_consumer = JAWSConsumer('alarm-categories', 'list-categories.py', StringSerde(), StringSerde())
+categories = cat_consumer.get_records()
 
 
 @click.command()
@@ -54,17 +51,14 @@ categories = consumer.get_records()
 def cli(monitor, nometa, export, category):
     schema_registry_client = get_registry_client()
 
-    key_deserializer = StringDeserializer('utf_8')
-    value_deserializer = AlarmClassSerde.deserializer(schema_registry_client)
-
-    consumer = JAWSConsumer('alarm-classes', 'list-classes.py', key_deserializer, value_deserializer)
+    consumer = JAWSConsumer('alarm-classes', 'list-classes.py', StringSerde(), ClassSerde(schema_registry_client))
 
     filter_obj = CategoryFilter(category)
 
     if monitor:
         consumer.print_records_continuous()
     elif export:
-        consumer.export_records(AlarmClassSerde, filter_obj.filter_if)
+        consumer.export_records(filter_obj.filter_if)
     else:
         consumer.print_table(msg_to_list,
                              ["Class Name", "Category", "Priority", "Rationale", "Corrective Action",
