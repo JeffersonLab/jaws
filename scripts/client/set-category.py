@@ -1,56 +1,16 @@
 #!/usr/bin/env python3
-import logging
-import os
-
-import pwd
-import types
 import click
 
-from confluent_kafka import SerializingProducer
 from confluent_kafka.serialization import StringSerializer
-from confluent_kafka.schema_registry import SchemaRegistryClient
 
-from common import delivery_report, set_log_level_from_env
-
-set_log_level_from_env()
-
-bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-
-sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry_client = SchemaRegistryClient(sr_conf)
-
-key_serializer = StringSerializer('utf_8')
-value_serializer = StringSerializer('utf_8')
-
-producer_conf = {'bootstrap.servers': bootstrap_servers,
-                 'key.serializer': key_serializer,
-                 'value.serializer': value_serializer}
-producer = SerializingProducer(producer_conf)
-
-topic = 'alarm-categories'
-
-hdrs = [('user', pwd.getpwuid(os.getuid()).pw_name), ('producer', 'set-category.py'), ('host', os.uname().nodename)]
+from common import JAWSProducer
 
 
-def send():
-    logging.debug("{}={}".format(params.key, params.value))
-    producer.produce(topic=topic, value=params.value, key=params.key, headers=hdrs, on_delivery=delivery_report)
-    producer.flush()
+def line_to_kv(line):
+    key = line.rstrip()
+    value = ""
 
-
-def import_records(file):
-    print("Loading file", file)
-    handle = open(file, 'r')
-    lines = handle.readlines()
-
-    for line in lines:
-        key = line.rstrip()
-        value = ""
-
-        logging.debug("{}={}".format(key, value))
-        producer.produce(topic=topic, value=value, key=key, headers=hdrs, on_delivery=delivery_report)
-
-    producer.flush()
+    return key, value
 
 
 @click.command()
@@ -60,21 +20,22 @@ def import_records(file):
 @click.option('--unset', is_flag=True, help="Remove the category")
 @click.argument('name')
 def cli(file, unset, name):
-    global params
+    key_serializer = StringSerializer('utf_8')
+    value_serializer = StringSerializer('utf_8')
 
-    params = types.SimpleNamespace()
+    producer = JAWSProducer('alarm-categories', 'set-category.py', key_serializer, value_serializer)
 
-    params.key = name
+    key = name
 
     if file:
-        import_records(name)
+        producer.import_records(name, line_to_kv)
     else:
         if unset:
-            params.value = None
+            value = None
         else:
-            params.value = ""
+            value = ""
 
-        send()
+        producer.send(key, value)
 
 
 cli()
