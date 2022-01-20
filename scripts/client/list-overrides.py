@@ -4,9 +4,8 @@ from typing import List
 
 import click
 from confluent_kafka import Message
-from jlab_jaws.avro.serde import AlarmOverrideKeySerde, AlarmOverrideUnionSerde
 
-from common import JAWSConsumer, get_registry_client
+from common import JAWSConsumer, get_registry_client, OverrideKeySerde, OverrideSerde
 
 
 def msg_to_list(msg: Message) -> List[str]:
@@ -32,15 +31,13 @@ def msg_to_list(msg: Message) -> List[str]:
 def cli(monitor, nometa, export):
     schema_registry_client = get_registry_client()
 
-    key_deserializer = AlarmOverrideKeySerde.deserializer(schema_registry_client)
-    value_deserializer = AlarmOverrideUnionSerde.deserializer(schema_registry_client)
-
-    consumer = JAWSConsumer('alarm-overrides', 'list-overrides.py', key_deserializer, value_deserializer)
+    consumer = JAWSConsumer('alarm-overrides', 'list-overrides.py', OverrideKeySerde(schema_registry_client),
+                            OverrideSerde(schema_registry_client))
 
     if monitor:
         consumer.print_records_continuous()
     elif export:
-        consumer.export_records(AlarmOverrideUnionSerde)
+        consumer.export_records()
     else:
         consumer.print_table(msg_to_list, ["Alarm Name", "Override Type", "Value"], nometa)
 
