@@ -59,7 +59,10 @@ class ShellTable:
 
 def set_log_level_from_env():
     level = os.environ.get('LOGLEVEL', 'WARNING').upper()
-    logging.basicConfig(level=level)
+    logging.basicConfig(
+        format='%(asctime)s %(levelname)-8s %(message)s',
+        level=level,
+        datefmt='%Y-%m-%d %H:%M:%S')
 
 
 def get_row_header(headers, timestamp):
