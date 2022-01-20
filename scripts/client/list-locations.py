@@ -6,7 +6,7 @@ import click
 import json
 
 from jlab_jaws.avro.serde import AlarmLocationSerde
-from jlab_jaws.eventsource.cached_table import LocationCachedTable, log_exception
+from jlab_jaws.eventsource.cached_table import LocationCachedTable
 from tabulate import tabulate
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
@@ -86,9 +86,9 @@ def cli(monitor, nometa, export):
     params.export_msgs = export_msgs
     params.disp_table = disp_table
 
-    etable = LocationCachedTable(bootstrap_servers, schema_registry_client)
+    table = LocationCachedTable(bootstrap_servers, schema_registry_client)
 
-    ShellTable(etable, params)
+    ShellTable(table, params)
 
 
 cli()
