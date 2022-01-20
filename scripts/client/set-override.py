@@ -36,8 +36,8 @@ def cli(override, unset, expirationseconds, reason, oneshot, comments, filternam
     key = AlarmOverrideKey(name, OverriddenAlarmType[override])
 
     if expirationseconds is not None:
-        timestamp_seconds = time.time() + expirationseconds;
-        timestamp_millis = int(timestamp_seconds * 1000);
+        timestamp_seconds = time.time() + expirationseconds
+        timestamp_millis = int(timestamp_seconds * 1000)
 
     if unset:
         value = None
