@@ -582,7 +582,6 @@ class EffectiveActivationSerde(RegistryAvroWithReferencesSerde):
 
         self._activation_serde = ActivationSerde(schema_registry_client)
         self._override_serde = OverrideSetSerde(schema_registry_client)
-        self._class_serde = ClassSerde(schema_registry_client)
 
         activation_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmActivationUnion",
                                                 "alarm-activations-value", 1)
@@ -601,9 +600,7 @@ class EffectiveActivationSerde(RegistryAvroWithReferencesSerde):
         state_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmState.avsc")
         state_schema_str = state_bytes.decode('utf-8')
 
-        named_schemas = self._class_serde.named_schemas()
-
-        named_schemas.update(self._override_serde.named_schemas())
+        named_schemas = self._override_serde.named_schemas()
 
         ref_dict = json.loads(activation_schema_str)
         fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
