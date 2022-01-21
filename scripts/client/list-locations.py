@@ -1,26 +1,14 @@
 #!/usr/bin/env python3
+from typing import List
 
-import os
-import types
 import click
-import json
 
-from jlab_jaws.avro.serde import AlarmLocationSerde
-from jlab_jaws.eventsource.cached_table import LocationCachedTable
-from tabulate import tabulate
-from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka import Message
 
-from common import get_row_header, ShellTable
-
-bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-
-sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry_client = SchemaRegistryClient(sr_conf)
+from common import get_registry_client, StringSerde, JAWSConsumer, LocationSerde
 
 
-def get_row(msg):
-    timestamp = msg.timestamp()
-    headers = msg.headers()
+def msg_to_list(msg: Message) -> List[str]:
     key = msg.key()
     value = msg.value()
 
@@ -30,65 +18,25 @@ def get_row(msg):
         row = [key,
                value.parent]
 
-    row_header = get_row_header(headers, timestamp)
-
-    if not params.nometa:
-        row = row_header + row
-
     return row
-
-
-def disp_table(records):
-    head = ["Location", "Parent"]
-    table = []
-
-    if not params.nometa:
-        head = ["Timestamp", "User", "Host", "Produced By"] + head
-
-    for msg in records.values():
-        row = get_row(msg)
-        if row is not None:
-            table.append(row)
-
-    # Truncate long cells
-    table = [[(c if len(str(c)) < 30 else str(c)[:27] + "...") for c in row] for row in table]
-
-    print(tabulate(table, head))
-
-
-def export_msgs(records):
-    sortedtable = sorted(records.items())
-
-    for msg in sortedtable:
-        key = msg[0];
-        value = msg[1].value()
-
-        k = key
-        sortedrow = dict(sorted(AlarmLocationSerde.to_dict(value).items()))
-        v = json.dumps(sortedrow)
-        print(k + '=' + v)
 
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
-@click.option('--export', is_flag=True,
-              help="Dump records in AVRO JSON format such that they can be imported by set-location.py; implies "
-                   "--nometa")
+@click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 def cli(monitor, nometa, export):
-    global params
+    schema_registry_client = get_registry_client()
 
-    params = types.SimpleNamespace()
+    consumer = JAWSConsumer('alarm-locations', 'list-locations.py', StringSerde(),
+                            LocationSerde(schema_registry_client))
 
-    params.monitor = monitor
-    params.nometa = nometa
-    params.export = export
-    params.export_msgs = export_msgs
-    params.disp_table = disp_table
-
-    table = LocationCachedTable(bootstrap_servers, schema_registry_client)
-
-    ShellTable(table, params)
+    if monitor:
+        consumer.print_records_continuous()
+    elif export:
+        consumer.export_records()
+    else:
+        consumer.print_table(msg_to_list, ["Location", "Parent"], nometa)
 
 
 cli()

@@ -17,7 +17,7 @@ from confluent_kafka.serialization import StringDeserializer, StringSerializer
 from jlab_jaws.avro.entities import AlarmClass, AlarmPriority, UnionEncoding, NoteAlarming, EPICSAlarming, \
     SimpleAlarming, EPICSSEVR, EPICSSTAT, AlarmActivationUnion, OverriddenAlarmType, AlarmOverrideKey, \
     AlarmOverrideUnion, DisabledOverride, FilteredOverride, LatchedOverride, ShelvedReason, ShelvedOverride, \
-    OffDelayedOverride, OnDelayedOverride, MaskedOverride
+    OffDelayedOverride, OnDelayedOverride, MaskedOverride, AlarmLocation
 from jlab_jaws.avro.serde import _unwrap_enum
 from jlab_jaws.eventsource.cached_table import CachedTable, log_exception
 from jlab_jaws.eventsource.listener import EventSourceListener
@@ -243,6 +243,41 @@ class ClassSerde(RegistryAvroWithReferencesSerde):
                           data.get('filterable'),
                           data.get('ondelayseconds'),
                           data.get('offdelayseconds'))
+
+
+class LocationSerde(RegistryAvroSerde):
+    """
+        Provides AlarmLocation serde utilities
+    """
+
+    def __init__(self, schema_registry_client):
+
+        schema_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmLocation.avsc")
+        schema_str = schema_bytes.decode('utf-8')
+
+        schema = Schema(schema_str, "AVRO", [])
+
+        super().__init__(schema_registry_client, schema)
+
+    def to_dict(self, data):
+        """
+        Converts AlarmLocation to a dict.
+
+        :param data: The AlarmLocation
+        :return: A dict
+        """
+        return {
+            "parent": data.parent
+        }
+
+    def from_dict(self, data):
+        """
+        Converts a dict to AlarmLocation.
+
+        :param data: The dict
+        :return: The AlarmLocation
+        """
+        return AlarmLocation(data['parent'])
 
 
 class ActivationSerde(RegistryAvroSerde):
