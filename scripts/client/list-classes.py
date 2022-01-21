@@ -45,8 +45,7 @@ categories = cat_consumer.get_records()
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
-@click.option('--export', is_flag=True,
-              help="Dump records in AVRO JSON format such that they can be imported by set-class.py; implies --nometa")
+@click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--category', type=click.Choice(categories), help="Only show registered alarms in the specified category")
 def cli(monitor, nometa, export, category):
     schema_registry_client = get_registry_client()

@@ -18,7 +18,7 @@ from jlab_jaws.avro.entities import AlarmClass, AlarmPriority, UnionEncoding, No
     SimpleAlarming, EPICSSEVR, EPICSSTAT, AlarmActivationUnion, OverriddenAlarmType, AlarmOverrideKey, \
     AlarmOverrideUnion, DisabledOverride, FilteredOverride, LatchedOverride, ShelvedReason, ShelvedOverride, \
     OffDelayedOverride, OnDelayedOverride, MaskedOverride, AlarmLocation, SimpleProducer, EPICSProducer, CALCProducer, \
-    AlarmInstance
+    AlarmInstance, AlarmState, EffectiveActivation, AlarmOverrideSet
 from jlab_jaws.avro.serde import _unwrap_enum
 from jlab_jaws.eventsource.cached_table import CachedTable, log_exception
 from jlab_jaws.eventsource.listener import EventSourceListener
@@ -458,6 +458,192 @@ class InstanceSerde(RegistryAvroSerde):
                              data.get('location'),
                              data.get('maskedby'),
                              data.get('screencommand'))
+
+
+class OverrideSetSerde(RegistryAvroWithReferencesSerde):
+    """
+        Provides OverrideSet serde utilities
+    """
+
+    def __init__(self, schema_registry_client):
+        disabled_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/DisabledOverride.avsc")
+        disabled_schema_str = disabled_bytes.decode('utf-8')
+
+        filtered_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/FilteredOverride.avsc")
+        filtered_schema_str = filtered_bytes.decode('utf-8')
+
+        latched_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/LatchedOverride.avsc")
+        latched_schema_str = latched_bytes.decode('utf-8')
+
+        masked_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/MaskedOverride.avsc")
+        masked_schema_str = masked_bytes.decode('utf-8')
+
+        off_delayed_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/OffDelayedOverride.avsc")
+        off_delayed_schema_str = off_delayed_bytes.decode('utf-8')
+
+        on_delayed_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/OnDelayedOverride.avsc")
+        on_delayed_schema_str = on_delayed_bytes.decode('utf-8')
+
+        shelved_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/ShelvedOverride.avsc")
+        shelved_schema_str = shelved_bytes.decode('utf-8')
+
+        named_schemas = {}
+
+        ref_dict = json.loads(disabled_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+        ref_dict = json.loads(filtered_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+        ref_dict = json.loads(latched_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+        ref_dict = json.loads(masked_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+        ref_dict = json.loads(off_delayed_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+        ref_dict = json.loads(on_delayed_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+        ref_dict = json.loads(shelved_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+
+        disabled_schema_ref = SchemaReference("org.jlab.jaws.entity.DisabledOverride", "disabled-override", 1)
+        filtered_schema_ref = SchemaReference("org.jlab.jaws.entity.FilteredOverride", "filtered-override", 1)
+        latched_schema_ref = SchemaReference("org.jlab.jaws.entity.LatchedOverride", "latched-override", 1)
+        masked_schema_ref = SchemaReference("org.jlab.jaws.entity.MaskedOverride", "masked-override", 1)
+        off_delayed_schema_ref = SchemaReference("org.jlab.jaws.entity.OffDelayedOverride", "off-delayed-override", 1)
+        on_delayed_schema_ref = SchemaReference("org.jlab.jaws.entity.OnDelayedOverride", "on-delayed-override", 1)
+        shelved_schema_ref = SchemaReference("org.jlab.jaws.entity.ShelvedOverride", "shelved-override", 1)
+
+        references = [disabled_schema_ref,
+                      filtered_schema_ref,
+                      latched_schema_ref,
+                      masked_schema_ref,
+                      off_delayed_schema_ref,
+                      on_delayed_schema_ref,
+                      shelved_schema_ref]
+
+        schema_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmOverrideSet.avsc")
+        schema_str = schema_bytes.decode('utf-8')
+
+        schema = Schema(schema_str, "AVRO", references)
+
+        super().__init__(schema_registry_client, schema, references, named_schemas)
+
+    def to_dict(self, data):
+        """
+        Converts AlarmOverrideSet to a dict
+
+        :param data: The AlarmOverrideSet
+        :return: A dict
+        """
+        return {
+            "disabled": {"comments": data.disabled.comments} if data.disabled is not None else None,
+            "filtered": {"filtername": data.filtered.filtername} if data.filtered is not None else None,
+            "latched": {} if data.latched is not None else None,
+            "masked": {} if data.masked is not None else None,
+            "ondelayed": {"expiration": data.ondelayed.expiration} if data.ondelayed is not None else None,
+            "offdelayed": {"expiration": data.offdelayed.expiration} if data.offdelayed is not None else None,
+            "shelved": {"expiration": data.shelved.expiration,
+                        "comments": data.shelved.comments,
+                        "oneshot": data.shelved.oneshot,
+                        "reason": data.shelved.reason.name} if data.shelved is not None else None
+        }
+
+    def from_dict(self, data):
+        """
+        Converts a dict to AlarmOverrideSet.
+
+        :param data: The dict
+        :return: The AlarmOverrideSet
+        """
+        return AlarmOverrideSet(DisabledOverride(data['disabled'][1]['comments'])
+                                if data.get('disabled') is not None else None,
+                                FilteredOverride(data['filtered'][1]['filtername'])
+                                if data.get('filtered') is not None else None,
+                                LatchedOverride()
+                                if data.get('latched') is not None else None,
+                                MaskedOverride()
+                                if data.get('masked') is not None else None,
+                                OnDelayedOverride(data['ondelayed'][1]['expiration'])
+                                if data.get('ondelayed') is not None else None,
+                                OffDelayedOverride(data['offdelayed'][1]['expiration'])
+                                if data.get('offdelayed') is not None else None,
+                                ShelvedOverride(data['shelved'][1]['expiration'],
+                                                data['shelved'][1]['comments'],
+                                                ShelvedReason[data['shelved'][1]['reason']],
+                                                data['shelved'][1]['oneshot'])
+                                if data.get('shelved') is not None else None)
+
+
+class EffectiveActivationSerde(RegistryAvroWithReferencesSerde):
+    """
+        Provides EffectiveActivation serde utilities
+    """
+
+    def __init__(self, schema_registry_client):
+
+        self._activation_serde = ActivationSerde(schema_registry_client)
+        self._override_serde = OverrideSetSerde(schema_registry_client)
+        self._class_serde = ClassSerde(schema_registry_client)
+
+        activation_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmActivationUnion",
+                                                "alarm-activations-value", 1)
+        overrides_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmOverrideSet",
+                                               "alarm-override-set", 1)
+        state_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmState", "alarm-state", 1)
+
+        references = [activation_schema_ref, overrides_schema_ref, state_schema_ref]
+
+        activation_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmActivationUnion.avsc")
+        activation_schema_str = activation_bytes.decode('utf-8')
+
+        overrides_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmOverrideSet.avsc")
+        overrides_schema_str = overrides_bytes.decode('utf-8')
+
+        state_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmState.avsc")
+        state_schema_str = state_bytes.decode('utf-8')
+
+        named_schemas = self._class_serde.named_schemas()
+
+        named_schemas.update(self._override_serde.named_schemas())
+
+        ref_dict = json.loads(activation_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+        ref_dict = json.loads(overrides_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+        ref_dict = json.loads(state_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+
+        schema_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/EffectiveActivation.avsc")
+        schema_str = schema_bytes.decode('utf-8')
+
+        schema = Schema(schema_str, "AVRO", references)
+
+        super().__init__(schema_registry_client, schema, references, named_schemas)
+
+    def to_dict(self, data):
+        """
+        Converts EffectiveActivation to a dict.
+
+        :param data: The EffectiveActivation
+        :return: A dict
+        """
+        return {
+            "actual": self._activation_serde.to_dict(data.actual),
+            "overrides": self._override_serde.to_dict(data.overrides),
+            "state": data.state.name
+        }
+
+    def from_dict(self, data):
+        """
+        Converts a dict to EffectiveActivation.
+
+        :param data: The dict
+        :return: The EffectiveActivation
+        """
+        return EffectiveActivation(
+            self._activation_serde.from_dict(data['actual'][1])
+            if data.get('actual') is not None else None,
+            self._override_serde.from_dict(data['overrides']),
+            _unwrap_enum(data['state'], AlarmState))
 
 
 class OverrideKeySerde(RegistryAvroSerde):

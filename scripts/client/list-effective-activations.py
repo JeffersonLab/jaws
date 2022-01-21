@@ -1,24 +1,14 @@
 #!/usr/bin/env python3
 
-import os
-import types
+from typing import List
+
 import click
+from confluent_kafka import Message
 
-from jlab_jaws.eventsource.cached_table import EffectiveActivationCachedTable
-from confluent_kafka.schema_registry import SchemaRegistryClient
-from tabulate import tabulate
-
-from common import get_row_header, ShellTable
-
-bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-
-sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry_client = SchemaRegistryClient(sr_conf)
+from common import JAWSConsumer, get_registry_client, StringSerde, EffectiveActivationSerde
 
 
-def get_row(msg):
-    timestamp = msg.timestamp()
-    headers = msg.headers()
+def msg_to_list(msg: Message) -> List[str]:
     key = msg.key()
     value = msg.value()
 
@@ -28,50 +18,27 @@ def get_row(msg):
         row = [key,
                value.state.name]
 
-        if params.overrides:
-            row.append(value.overrides)
-
-    row_header = get_row_header(headers, timestamp)
-
-    row = row_header + row
-
     return row
-
-
-def disp_table(records):
-    head = ["Alarm Name", "State"]
-    table = []
-
-    if params.overrides:
-        head.append("Overrides")
-
-    head = ["Timestamp", "User", "Host", "Produced By"] + head
-
-    for msg in records.values():
-        row = get_row(msg)
-        if row is not None:
-            table.append(row)
-
-    print(tabulate(table, head))
 
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
-@click.option('--overrides', is_flag=True, help="Show overrides")
-def cli(monitor, overrides):
-    global params
+@click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
+@click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
+def cli(monitor, nometa, export):
+    schema_registry_client = get_registry_client()
 
-    params = types.SimpleNamespace()
+    consumer = JAWSConsumer('effective-activations', 'list-effective-activations.py', StringSerde(),
+                            EffectiveActivationSerde(schema_registry_client))
 
-    params.monitor = monitor
-    params.overrides = overrides
-
-    params.export = False
-    params.disp_table = disp_table
-
-    etable = EffectiveActivationCachedTable(bootstrap_servers, schema_registry_client)
-
-    ShellTable(etable, params)
+    if monitor:
+        consumer.print_records_continuous()
+    elif export:
+        consumer.export_records()
+    else:
+        consumer.print_table(msg_to_list,
+                             ["Alarm Name", "State", "Overrides"],
+                             nometa)
 
 
 cli()
