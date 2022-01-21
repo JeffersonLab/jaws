@@ -1,84 +1,63 @@
 #!/usr/bin/env python3
 
-import os
-import types
 import click
 
-from confluent_kafka.schema_registry import SchemaRegistryClient
-from jlab_jaws.eventsource.cached_table import CategoryCachedTable, EffectiveRegistrationCachedTable, log_exception
-from tabulate import tabulate
-
-from common import get_row_header, ShellTable
-
-bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-
-sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry_client = SchemaRegistryClient(sr_conf)
+from confluent_kafka import Message
+from common import get_registry_client, JAWSConsumer, StringSerde, EffectiveRegistrationSerde
+from typing import List
 
 
-def get_row(msg):
-    timestamp = msg.timestamp()
-    headers = msg.headers()
+def msg_to_list(msg: Message) -> List[str]:
     key = msg.key()
     value = msg.value()
 
-    row = None
-
-    if params.category is None or (value is not None and params.category == value.category.name):
-        if params.alarm_class is None or (value is not None and params.alarm_class == value.alarm_class):
-            if value is None:
-                row = [key, None]
-            else:
-                row = [key,
-                       value.calculated]
-
-            if not params.nometa:
-                row_header = get_row_header(headers, timestamp)
-                row = row_header + row
+    if value is None:
+        row = [key, None]
+    else:
+        row = [key,
+               value.instance,
+               value.alarm_class]
 
     return row
 
 
-def disp_table(records):
-    head = ["Alarm Name", "Effective Registration"]
-    table = []
+class ClassAndCategoryFilter:
+    def __init__(self, category, alarm_class):
+        self._category = category
+        self._alarm_class = alarm_class
 
-    head = ["Timestamp", "User", "Host", "Produced By"] + head
-
-    for msg in records.values():
-        row = get_row(msg)
-        if row is not None:
-            table.append(row)
-
-    print(tabulate(table, head))
+    def filter_if(self, key, value):
+        return (self._category is None or (value is not None and self._category == value.category)) and \
+               (self._alarm_class is None or (value is not None and self._alarm_class == value.alarm_class))
 
 
-categories_table = CategoryCachedTable(bootstrap_servers)
-categories_table.start(log_exception)
-categories = categories_table.await_get(5).values()
-categories_table.stop()
+cat_consumer = JAWSConsumer('alarm-categories', 'list-categories.py', StringSerde(), StringSerde())
+categories = cat_consumer.get_records()
 
 
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
+@click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--category', type=click.Choice(categories), help="Only show registrations in the specified category")
 @click.option('--alarm_class', help="Only show registrations in the specified class")
-def cli(monitor, nometa, category, alarm_class):
-    global params
+def cli(monitor, nometa, export, category, alarm_class):
+    schema_registry_client = get_registry_client()
 
-    params = types.SimpleNamespace()
+    consumer = JAWSConsumer('effective-registrations', 'list-effective-registrations.py', StringSerde(),
+                            EffectiveRegistrationSerde(schema_registry_client))
 
-    params.monitor = monitor
-    params.nometa = nometa
-    params.category = category
-    params.alarm_class = alarm_class
-    params.export = False
-    params.disp_table = disp_table
+    filter_obj = ClassAndCategoryFilter(category, alarm_class)
 
-    etable = EffectiveRegistrationCachedTable(bootstrap_servers, schema_registry_client)
-
-    ShellTable(etable, params)
+    if monitor:
+        consumer.print_records_continuous()
+    elif export:
+        consumer.export_records(filter_obj.filter_if)
+    else:
+        consumer.print_table(msg_to_list,
+                             ["Alarm Name", "Instance", "Class"],
+                             nometa,
+                             filter_obj.filter_if)
 
 
 cli()

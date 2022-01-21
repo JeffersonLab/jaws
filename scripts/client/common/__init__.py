@@ -18,7 +18,7 @@ from jlab_jaws.avro.entities import AlarmClass, AlarmPriority, UnionEncoding, No
     SimpleAlarming, EPICSSEVR, EPICSSTAT, AlarmActivationUnion, OverriddenAlarmType, AlarmOverrideKey, \
     AlarmOverrideUnion, DisabledOverride, FilteredOverride, LatchedOverride, ShelvedReason, ShelvedOverride, \
     OffDelayedOverride, OnDelayedOverride, MaskedOverride, AlarmLocation, SimpleProducer, EPICSProducer, CALCProducer, \
-    AlarmInstance, AlarmState, EffectiveActivation, AlarmOverrideSet
+    AlarmInstance, AlarmState, EffectiveActivation, AlarmOverrideSet, EffectiveRegistration
 from jlab_jaws.avro.serde import _unwrap_enum
 from jlab_jaws.eventsource.cached_table import CachedTable, log_exception
 from jlab_jaws.eventsource.listener import EventSourceListener
@@ -571,6 +571,66 @@ class OverrideSetSerde(RegistryAvroWithReferencesSerde):
                                                 ShelvedReason[data['shelved'][1]['reason']],
                                                 data['shelved'][1]['oneshot'])
                                 if data.get('shelved') is not None else None)
+
+
+class EffectiveRegistrationSerde(RegistryAvroWithReferencesSerde):
+    """
+        Provides EffectiveRegistration serde utilities
+    """
+
+    def __init__(self, schema_registry_client):
+        self._class_serde = ClassSerde(schema_registry_client)
+        self._instance_serde = InstanceSerde(schema_registry_client)
+
+        classes_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmClass", "alarm-classes-value", 1)
+        registration_schema_ref = SchemaReference("org.jlab.jaws.entity.AlarmInstance",
+                                                  "alarm-instances-value", 1)
+
+        references = [classes_schema_ref, registration_schema_ref]
+
+        classes_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmClass.avsc")
+        classes_schema_str = classes_bytes.decode('utf-8')
+
+        instance_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmInstance.avsc")
+        instance_schema_str = instance_bytes.decode('utf-8')
+
+        named_schemas = self._class_serde.named_schemas()
+
+        ref_dict = json.loads(classes_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+        ref_dict = json.loads(instance_schema_str)
+        fastavro.parse_schema(ref_dict, named_schemas=named_schemas)
+
+        schema_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/EffectiveRegistration.avsc")
+        schema_str = schema_bytes.decode('utf-8')
+
+        schema = Schema(schema_str, "AVRO", references)
+
+        super().__init__(schema_registry_client, schema, references, named_schemas)
+
+    def to_dict(self, data):
+        """
+        Converts EffectiveRegistration to a dict.
+
+        :param data: The EffectiveRegistration
+        :return: A dict
+        """
+        return {
+            "class": self._class_serde.to_dict(data.alarm_class),
+            "instance": self._instance_serde.to_dict(data.instance)
+        }
+
+    def from_dict(self, data):
+        """
+        Converts a dict to EffectiveRegistration.
+
+        :param data: The dict
+        :return: The EffectiveRegistration
+        """
+        return EffectiveRegistration(
+            self._class_serde.from_dict(data['class'][1]) if data.get('class') is not None else None,
+            self._instance_serde.from_dict(data['instance'][1])
+            if data.get('instance') is not None else None)
 
 
 class EffectiveActivationSerde(RegistryAvroWithReferencesSerde):
