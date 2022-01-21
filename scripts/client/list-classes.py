@@ -4,8 +4,6 @@ from typing import List
 import click
 from confluent_kafka import Message
 
-from confluent_kafka.serialization import StringDeserializer
-
 from common import JAWSConsumer, StringSerde, ClassSerde, get_registry_client
 
 
