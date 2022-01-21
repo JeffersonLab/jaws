@@ -17,7 +17,8 @@ from confluent_kafka.serialization import StringDeserializer, StringSerializer
 from jlab_jaws.avro.entities import AlarmClass, AlarmPriority, UnionEncoding, NoteAlarming, EPICSAlarming, \
     SimpleAlarming, EPICSSEVR, EPICSSTAT, AlarmActivationUnion, OverriddenAlarmType, AlarmOverrideKey, \
     AlarmOverrideUnion, DisabledOverride, FilteredOverride, LatchedOverride, ShelvedReason, ShelvedOverride, \
-    OffDelayedOverride, OnDelayedOverride, MaskedOverride, AlarmLocation
+    OffDelayedOverride, OnDelayedOverride, MaskedOverride, AlarmLocation, SimpleProducer, EPICSProducer, CALCProducer, \
+    AlarmInstance
 from jlab_jaws.avro.serde import _unwrap_enum
 from jlab_jaws.eventsource.cached_table import CachedTable, log_exception
 from jlab_jaws.eventsource.listener import EventSourceListener
@@ -364,6 +365,99 @@ class ActivationSerde(RegistryAvroSerde):
             obj = SimpleAlarming()
 
         return AlarmActivationUnion(obj)
+
+
+class InstanceSerde(RegistryAvroSerde):
+    """
+        Provides AlarmInstance serde utilities
+    """
+
+    def __init__(self, schema_registry_client, union_encoding=UnionEncoding.TUPLE):
+
+        self._union_encoding = union_encoding
+
+        schema_bytes = pkgutil.get_data("jlab_jaws", "avro/schemas/AlarmInstance.avsc")
+        schema_str = schema_bytes.decode('utf-8')
+
+        schema = Schema(schema_str, "AVRO", [])
+
+        super().__init__(schema_registry_client, schema)
+
+    def to_dict(self, data):
+        """
+        Converts an AlarmInstance to a dict.
+
+        :param data: The AlarmInstance
+        :return: A dict
+        """
+
+        if data is None:
+            return None
+
+        if isinstance(data.producer, SimpleProducer):
+            uniontype = "org.jlab.jaws.entity.SimpleProducer"
+            uniondict = {}
+        elif isinstance(data.producer, EPICSProducer):
+            uniontype = "org.jlab.jaws.entity.EPICSProducer"
+            uniondict = {"pv": data.producer.pv}
+        elif isinstance(data.producer, CALCProducer):
+            uniontype = "org.jlab.jaws.entity.CALCProducer"
+            uniondict = {"expression": data.producer.expression}
+        else:
+            raise Exception("Unknown instance producer union type: {}".format(data.producer))
+
+        if self._union_encoding is UnionEncoding.TUPLE:
+            union = (uniontype, uniondict)
+        elif self._union_encoding is UnionEncoding.DICT_WITH_TYPE:
+            union = {uniontype: uniondict}
+        else:
+            union = uniondict
+
+        return {
+            "class": data.alarm_class,
+            "producer": union,
+            "location": data.location,
+            "maskedby": data.masked_by,
+            "screencommand": data.screen_command
+        }
+
+    def from_dict(self, data):
+        """
+        Converts a dict to an AlarmInstance.
+
+        Note: UnionEncoding.POSSIBLY_AMBIGUOUS_DICT is not supported.
+
+        :param data: The dict
+        :return: The AlarmInstance
+        """
+
+        if data is None:
+            return None
+
+        unionobj = data['producer']
+
+        if type(unionobj) is tuple:
+            uniontype = unionobj[0]
+            uniondict = unionobj[1]
+        elif type(unionobj is dict):
+            value = next(iter(unionobj.items()))
+            uniontype = value[0]
+            uniondict = value[1]
+        else:
+            raise Exception("Unsupported union encoding")
+
+        if uniontype == "org.jlab.jaws.entity.CalcProducer":
+            producer = CALCProducer(uniondict['expression'])
+        elif uniontype == "org.jlab.jaws.entity.EPICSProducer":
+            producer = EPICSProducer(uniondict['pv'])
+        else:
+            producer = SimpleProducer()
+
+        return AlarmInstance(data.get('class'),
+                             producer,
+                             data.get('location'),
+                             data.get('maskedby'),
+                             data.get('screencommand'))
 
 
 class OverrideKeySerde(RegistryAvroSerde):
