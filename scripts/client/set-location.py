@@ -5,7 +5,7 @@ import json
 
 from jlab_jaws.avro.entities import AlarmLocation
 from jlab_jaws.avro.clients import LocationProducer
-from jlab_jaws.avro.serde import AlarmLocationSerde
+from jlab_jaws.avro.serde import LocationSerde
 
 
 def line_to_kv(line):
@@ -13,7 +13,7 @@ def line_to_kv(line):
     key = tokens[0]
     value_obj = tokens[1]
     value_dict = json.loads(value_obj)
-    value = AlarmLocationSerde.from_dict(value_dict)
+    value = LocationSerde.from_dict(value_dict)
     return key, value
 
 

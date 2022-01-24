@@ -3,8 +3,9 @@
 import click
 
 from confluent_kafka import Message
-from common import get_registry_client, JAWSConsumer, StringSerde, EffectiveRegistrationSerde
 from typing import List
+
+from jlab_jaws.avro.clients import EffectiveRegistrationConsumer, CategoryConsumer
 
 
 def msg_to_list(msg: Message) -> List[str]:
@@ -31,7 +32,7 @@ class ClassAndCategoryFilter:
                (self._alarm_class is None or (value is not None and self._alarm_class == value.alarm_class))
 
 
-cat_consumer = JAWSConsumer('alarm-categories', 'list-categories.py', StringSerde(), StringSerde())
+cat_consumer = CategoryConsumer('list-effective-registrations.py')
 categories = cat_consumer.get_records()
 
 
@@ -42,22 +43,13 @@ categories = cat_consumer.get_records()
 @click.option('--category', type=click.Choice(categories), help="Only show registrations in the specified category")
 @click.option('--alarm_class', help="Only show registrations in the specified class")
 def cli(monitor, nometa, export, category, alarm_class):
-    schema_registry_client = get_registry_client()
-
-    consumer = JAWSConsumer('effective-registrations', 'list-effective-registrations.py', StringSerde(),
-                            EffectiveRegistrationSerde(schema_registry_client))
+    consumer = EffectiveRegistrationConsumer('list-effective-registrations.py')
 
     filter_obj = ClassAndCategoryFilter(category, alarm_class)
 
-    if monitor:
-        consumer.print_records_continuous()
-    elif export:
-        consumer.export_records(filter_obj.filter_if)
-    else:
-        consumer.print_table(msg_to_list,
-                             ["Alarm Name", "Instance", "Class"],
-                             nometa,
-                             filter_obj.filter_if)
+    head = ["Alarm Name", "Instance", "Class"],
+
+    consumer.consume(monitor, nometa, export, head, msg_to_list, filter_obj.filter_if)
 
 
 cli()

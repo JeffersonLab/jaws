@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-from typing import List
 
 import click
-from confluent_kafka import Message
 
-from common import JAWSConsumer, StringSerde, ClassSerde, get_registry_client
+from confluent_kafka import Message
+from jlab_jaws.avro.clients import ClassConsumer, CategoryConsumer
+from typing import List
 
 
 def msg_to_list(msg: Message) -> List[str]:
@@ -36,7 +36,7 @@ class CategoryFilter:
         return self._category is None or (value is not None and self._category == value.category)
 
 
-cat_consumer = JAWSConsumer('alarm-categories', 'list-categories.py', StringSerde(), StringSerde())
+cat_consumer = CategoryConsumer('list-classes.py')
 categories = cat_consumer.get_records()
 
 
@@ -46,21 +46,14 @@ categories = cat_consumer.get_records()
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--category', type=click.Choice(categories), help="Only show registered alarms in the specified category")
 def cli(monitor, nometa, export, category):
-    schema_registry_client = get_registry_client()
-
-    consumer = JAWSConsumer('alarm-classes', 'list-classes.py', StringSerde(), ClassSerde(schema_registry_client))
+    consumer = ClassConsumer('list-classes.py')
 
     filter_obj = CategoryFilter(category)
 
-    if monitor:
-        consumer.print_records_continuous()
-    elif export:
-        consumer.export_records(filter_obj.filter_if)
-    else:
-        consumer.print_table(msg_to_list,
-                             ["Class Name", "Category", "Priority", "Rationale", "Corrective Action",
-                             "P.O.C. Username", "Latching", "Filterable", "On Delay", "Off Delay"],
-                             nometa, filter_obj.filter_if)
+    head = ["Class Name", "Category", "Priority", "Rationale", "Corrective Action",
+            "P.O.C. Username", "Latching", "Filterable", "On Delay", "Off Delay"],
+
+    consumer.consume(monitor, nometa, export, head, msg_to_list, filter_obj.filter_if)
 
 
 cli()

@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
-from typing import List
-
 import click
 from confluent_kafka import Message
-
-from common import JAWSConsumer, get_registry_client, StringSerde, ActivationSerde
+from jlab_jaws.avro.clients import ActivationConsumer
+from typing import List
 
 
 def msg_to_list(msg: Message) -> List[str]:
@@ -26,17 +24,11 @@ def msg_to_list(msg: Message) -> List[str]:
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 def cli(monitor, nometa, export):
-    schema_registry_client = get_registry_client()
+    consumer = ActivationConsumer('list-activations.py')
 
-    consumer = JAWSConsumer('alarm-activations', 'list-activations.py', StringSerde(),
-                            ActivationSerde(schema_registry_client))
+    head = ["Alarm Name", "Value"]
 
-    if monitor:
-        consumer.print_records_continuous()
-    elif export:
-        consumer.export_records()
-    else:
-        consumer.print_table(msg_to_list, ["Alarm Name", "Value"], nometa)
+    consumer.consume(monitor, nometa, export, head, msg_to_list)
 
 
 cli()

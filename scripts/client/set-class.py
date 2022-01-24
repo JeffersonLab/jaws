@@ -4,7 +4,7 @@ import click
 import json
 
 from jlab_jaws.avro.clients import CategoryConsumer, ClassProducer
-from jlab_jaws.avro.serde import AlarmClassSerde
+from jlab_jaws.avro.serde import ClassSerde
 from jlab_jaws.avro.entities import AlarmClass
 from jlab_jaws.avro.entities import AlarmPriority
 
@@ -14,7 +14,7 @@ def line_to_kv(line):
     key = tokens[0]
     value_obj = tokens[1]
     value_dict = json.loads(value_obj)
-    value = AlarmClassSerde.from_dict(value_dict)
+    value = ClassSerde.from_dict(value_dict)
 
     return key, value
 
