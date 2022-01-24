@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import click
 
-from confluent_kafka.serialization import StringSerializer
-
 from jlab_jaws.avro.clients import CategoryProducer
 
 

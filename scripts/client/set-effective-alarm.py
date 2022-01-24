@@ -3,14 +3,11 @@
 import click
 import time
 
-from confluent_kafka.serialization import StringSerializer
+from jlab_jaws.avro.clients import EffectiveAlarmProducer
 from jlab_jaws.avro.entities import EffectiveAlarm, AlarmState, AlarmOverrideSet, \
     OverriddenAlarmType, EffectiveRegistration, EffectiveActivation, \
     DisabledOverride, FilteredOverride, LatchedOverride, MaskedOverride, OnDelayedOverride, OffDelayedOverride, \
     ShelvedOverride, ShelvedReason, SimpleProducer, AlarmInstance
-from jlab_jaws.avro.serde import EffectiveAlarmSerde
-
-from common import JAWSProducer, get_registry_client
 
 
 def get_overrides(override):
@@ -51,12 +48,7 @@ def get_instance():
 @click.option('--override', type=click.Choice(OverriddenAlarmType._member_names_), help="The state")
 @click.argument('name')
 def cli(unset, state, override, name):
-    schema_registry_client = get_registry_client()
-
-    key_serializer = StringSerializer()
-    value_serializer = EffectiveAlarmSerde.serializer(schema_registry_client)
-
-    producer = JAWSProducer('effective-alarms', 'set-effective-alarm.py', key_serializer, value_serializer)
+    producer = EffectiveAlarmProducer('set-effective-alarm.py')
 
     key = name
 

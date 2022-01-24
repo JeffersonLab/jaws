@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
-import os
 
 import click
 import json
 
-from confluent_kafka.serialization import StringSerializer
-
+from jlab_jaws.avro.clients import CategoryConsumer, ClassProducer
 from jlab_jaws.avro.serde import AlarmClassSerde
 from jlab_jaws.avro.entities import AlarmClass
 from jlab_jaws.avro.entities import AlarmPriority
-from jlab_jaws.eventsource.cached_table import CategoryCachedTable, log_exception
-
-from common import JAWSProducer, get_registry_client
 
 
 def line_to_kv(line):
@@ -24,13 +19,8 @@ def line_to_kv(line):
     return key, value
 
 
-# consumer = JAWSConsumer('alarm-categories', 'set-class.py', AlarmCategorySerde())
-# categories = consumer.records()
-bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-categories_table = CategoryCachedTable(bootstrap_servers)
-categories_table.start(log_exception)
-categories = categories_table.await_get(5).keys()
-categories_table.stop()
+consumer = CategoryConsumer('set-class.py')
+categories = consumer.records()
 
 
 @click.command()
@@ -53,12 +43,7 @@ categories_table.stop()
 def cli(file, unset, category,
         priority, filterable, latching, pointofcontactusername, rationale,
         correctiveaction, ondelayseconds, offdelayseconds, name):
-    schema_registry_client = get_registry_client()
-
-    key_serializer = StringSerializer()
-    value_serializer = AlarmClassSerde.serializer(schema_registry_client)
-
-    producer = JAWSProducer('alarm-classes', 'set-class.py', key_serializer, value_serializer)
+    producer = ClassProducer('set-class.py')
 
     key = name
 

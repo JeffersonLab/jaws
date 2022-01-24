@@ -3,10 +3,8 @@
 import click
 
 from typing import List
-from confluent_kafka.cimpl import Message
-from jlab_jaws.avro.entities import UnionEncoding
-
-from common import StringSerde, JAWSConsumer, get_registry_client, InstanceSerde
+from confluent_kafka import Message
+from jlab_jaws.avro.clients import InstanceConsumer
 
 
 def msg_to_list(msg: Message) -> List[str]:
@@ -40,22 +38,13 @@ class ClassFilter:
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--alarm_class', help="Only show instances in the specified class")
 def cli(monitor, nometa, export, alarm_class):
-    schema_registry_client = get_registry_client()
-
-    consumer = JAWSConsumer('alarm-instances', 'list-instances.py', StringSerde(),
-                            InstanceSerde(schema_registry_client, UnionEncoding.DICT_WITH_TYPE))
+    consumer = InstanceConsumer('list-instances.py')
 
     filter_obj = ClassFilter(alarm_class)
 
-    if monitor:
-        consumer.print_records_continuous()
-    elif export:
-        consumer.export_records(filter_obj.filter_if)
-    else:
-        consumer.print_table(msg_to_list,
-                             ["Alarm Name", "Class", "Producer", "Location", "Masked By", "Screen Command"],
-                             nometa,
-                             filter_obj.filter_if)
+    head = ["Alarm Name", "Class", "Producer", "Location", "Masked By", "Screen Command"]
+
+    consumer.consume(monitor, nometa, export, head, msg_to_list, filter_obj.filter_if)
 
 
 cli()

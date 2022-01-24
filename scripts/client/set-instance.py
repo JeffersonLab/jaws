@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 
-import os
 import click
 import json
 
-from confluent_kafka.serialization import StringSerializer
-
-from jlab_jaws.avro.serde import AlarmInstanceSerde
+from jlab_jaws.avro.serde import InstanceSerde
+from jlab_jaws.avro.clients import LocationConsumer, InstanceProducer
 from jlab_jaws.avro.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
-from jlab_jaws.eventsource.cached_table import LocationCachedTable, log_exception
-
-from common import JAWSProducer, get_registry_client
 
 
 def line_to_kv(line):
@@ -19,17 +14,13 @@ def line_to_kv(line):
     key = tokens[0]
     value_obj = tokens[1]
     value_dict = json.loads(value_obj)
-    value = AlarmInstanceSerde.from_dict(value_dict)
+    value = InstanceSerde.from_dict(value_dict)
 
     return key, value
 
 
-schema_registry_client = get_registry_client()
-bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-locations_table = LocationCachedTable(bootstrap_servers, schema_registry_client)
-locations_table.start(log_exception)
-locations = locations_table.await_get(5).keys()
-locations_table.stop()
+consumer = LocationConsumer('set-instance.py')
+locations = consumer.get_records()
 
 
 @click.command()
@@ -47,10 +38,7 @@ locations_table.stop()
 @click.argument('name')
 def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression, location,
         screencommand, maskedby, name):
-    key_serializer = StringSerializer()
-    value_serializer = AlarmInstanceSerde.serializer(schema_registry_client)
-
-    producer = JAWSProducer('alarm-instances', 'set-instance.py', key_serializer, value_serializer)
+    producer = InstanceProducer('set-instance.py')
 
     key = name
 

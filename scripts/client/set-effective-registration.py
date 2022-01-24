@@ -2,12 +2,9 @@
 
 import click
 
-from confluent_kafka.serialization import StringSerializer
 from jlab_jaws.avro.entities import EffectiveRegistration, \
     AlarmInstance, SimpleProducer
-from jlab_jaws.avro.serde import EffectiveRegistrationSerde
-
-from common import get_registry_client, JAWSProducer
+from jlab_jaws.avro.clients import EffectiveRegistrationProducer
 
 
 def get_instance():
@@ -22,13 +19,7 @@ def get_instance():
 @click.option('--unset', is_flag=True, help="present to clear state, missing to set state")
 @click.argument('name')
 def cli(unset, name):
-    schema_registry_client = get_registry_client()
-
-    key_serializer = StringSerializer()
-    value_serializer = EffectiveRegistrationSerde.serializer(schema_registry_client)
-
-    producer = JAWSProducer('effective-registrations', 'set-effective-registration.py', key_serializer,
-                            value_serializer)
+    producer = EffectiveRegistrationProducer('set-effective-registration.py')
 
     key = name
 
