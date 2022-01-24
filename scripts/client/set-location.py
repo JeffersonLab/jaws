@@ -3,11 +3,9 @@
 import click
 import json
 
-from confluent_kafka.serialization import StringSerializer
 from jlab_jaws.avro.entities import AlarmLocation
+from jlab_jaws.avro.clients import LocationProducer
 from jlab_jaws.avro.serde import AlarmLocationSerde
-
-from common import JAWSProducer, get_registry_client
 
 
 def line_to_kv(line):
@@ -27,12 +25,7 @@ def line_to_kv(line):
 @click.argument('name')
 @click.option('--parent', '-p', help="Name of parent Location or None if top-level Location")
 def cli(file, unset, name, parent):
-    schema_registry_client = get_registry_client()
-
-    key_serializer = StringSerializer()
-    value_serializer = AlarmLocationSerde.serializer(schema_registry_client)
-
-    producer = JAWSProducer('alarm-locations', 'set-location.py', key_serializer, value_serializer)
+    producer = LocationProducer('set-location.py')
 
     key = name
 

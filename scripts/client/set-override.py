@@ -6,9 +6,7 @@ import time
 from jlab_jaws.avro.entities import AlarmOverrideUnion, LatchedOverride, FilteredOverride, MaskedOverride, \
     DisabledOverride, OnDelayedOverride, OffDelayedOverride, ShelvedOverride, AlarmOverrideKey, OverriddenAlarmType, \
     ShelvedReason
-from jlab_jaws.avro.serde import AlarmOverrideKeySerde, AlarmOverrideUnionSerde
-
-from common import JAWSProducer, get_registry_client
+from jlab_jaws.avro.clients import OverrideProducer
 
 
 @click.command()
@@ -23,12 +21,7 @@ from common import JAWSProducer, get_registry_client
 @click.option('--filtername', help="Name of filter rule associated with this override")
 @click.argument('name')
 def cli(override, unset, expirationseconds, reason, oneshot, comments, filtername, name):
-    schema_registry_client = get_registry_client()
-
-    key_serializer = AlarmOverrideKeySerde.serializer(schema_registry_client)
-    value_serializer = AlarmOverrideUnionSerde.serializer(schema_registry_client)
-
-    producer = JAWSProducer('alarm-overrides', 'set-override.py', key_serializer, value_serializer)
+    producer = OverrideProducer('set-override.py')
 
     if override is None:
         raise click.ClickException("--override is required")

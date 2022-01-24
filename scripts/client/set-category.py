@@ -3,7 +3,7 @@ import click
 
 from confluent_kafka.serialization import StringSerializer
 
-from common import JAWSProducer
+from jlab_jaws.avro.clients import CategoryProducer
 
 
 def line_to_kv(line):
@@ -20,10 +20,7 @@ def line_to_kv(line):
 @click.option('--unset', is_flag=True, help="Remove the category")
 @click.argument('name')
 def cli(file, unset, name):
-    key_serializer = StringSerializer('utf_8')
-    value_serializer = StringSerializer('utf_8')
-
-    producer = JAWSProducer('alarm-categories', 'set-category.py', key_serializer, value_serializer)
+    producer = CategoryProducer('set-category.py')
 
     key = name
 

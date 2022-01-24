@@ -6,7 +6,7 @@ import click
 
 from confluent_kafka.cimpl import Message
 
-from common import JAWSConsumer, StringSerde
+from jlab_jaws.avro.clients import CategoryConsumer
 
 
 def msg_to_list(msg: Message) -> List[str]:
@@ -26,14 +26,11 @@ def msg_to_list(msg: Message) -> List[str]:
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 def cli(monitor, nometa, export):
-    consumer = JAWSConsumer('alarm-categories', 'list-categories.py', StringSerde(), StringSerde())
+    consumer = CategoryConsumer('list-categories.py')
 
-    if monitor:
-        consumer.print_records_continuous()
-    elif export:
-        consumer.export_records()
-    else:
-        consumer.print_table(msg_to_list, ['Category'], nometa)
+    head = ['Category']
+
+    consumer.consume(monitor, nometa, export, head, msg_to_list)
 
 
 cli()
