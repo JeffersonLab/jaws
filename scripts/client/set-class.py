@@ -20,7 +20,7 @@ def line_to_kv(line):
 
 
 consumer = CategoryConsumer('set-class.py')
-categories = consumer.records()
+categories = consumer.get_records()
 
 
 @click.command()
