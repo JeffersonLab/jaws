@@ -4,8 +4,8 @@ import click
 import json
 
 from jlab_jaws.avro.serde import InstanceSerde
-from jlab_jaws.avro.clients import LocationConsumer, InstanceProducer
-from jlab_jaws.avro.entities import AlarmInstance, \
+from jlab_jaws.clients import LocationConsumer, InstanceProducer
+from jlab_jaws.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 
 

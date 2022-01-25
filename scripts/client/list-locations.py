@@ -4,7 +4,8 @@ from typing import List
 import click
 
 from confluent_kafka import Message
-from jlab_jaws.avro.clients import LocationConsumer
+from jlab_jaws.clients import LocationConsumer
+
 
 def msg_to_list(msg: Message) -> List[str]:
     key = msg.key()

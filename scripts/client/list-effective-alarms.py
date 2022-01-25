@@ -1,16 +1,9 @@
 #!/usr/bin/env python3
 
-import os
 import click
 from confluent_kafka import Message
-from confluent_kafka.schema_registry import SchemaRegistryClient
-from jlab_jaws.avro.clients import EffectiveAlarmConsumer
+from jlab_jaws.clients import EffectiveAlarmConsumer
 from typing import List
-
-bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
-
-sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
-schema_registry_client = SchemaRegistryClient(sr_conf)
 
 
 def msg_to_list(msg: Message) -> List[str]:

@@ -4,7 +4,7 @@ from typing import List
 
 import click
 from confluent_kafka import Message
-from jlab_jaws.avro.clients import OverrideConsumer
+from jlab_jaws.clients import OverrideConsumer
 
 
 def msg_to_list(msg: Message) -> List[str]:

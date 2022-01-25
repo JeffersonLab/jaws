@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 
-from typing import List
-
 import click
-
-from confluent_kafka.cimpl import Message
-
-from jlab_jaws.avro.clients import CategoryConsumer
+from confluent_kafka import Message
+from typing import List
+from jlab_jaws.clients import CategoryConsumer
 
 
 def msg_to_list(msg: Message) -> List[str]:

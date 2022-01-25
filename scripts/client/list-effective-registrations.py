@@ -5,7 +5,7 @@ import click
 from confluent_kafka import Message
 from typing import List
 
-from jlab_jaws.avro.clients import EffectiveRegistrationConsumer, CategoryConsumer
+from jlab_jaws.clients import EffectiveRegistrationConsumer, CategoryConsumer
 
 
 def msg_to_list(msg: Message) -> List[str]:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import click
 
-from jlab_jaws.avro.clients import CategoryProducer
+from jlab_jaws.clients import CategoryProducer
 
 
 def line_to_kv(line):

@@ -2,9 +2,9 @@
 
 import click
 
-from jlab_jaws.avro.entities import EffectiveRegistration, \
+from jlab_jaws.entities import EffectiveRegistration, \
     AlarmInstance, SimpleProducer
-from jlab_jaws.avro.clients import EffectiveRegistrationProducer
+from jlab_jaws.clients import EffectiveRegistrationProducer
 
 
 def get_instance():

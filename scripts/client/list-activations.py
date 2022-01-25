@@ -2,7 +2,7 @@
 
 import click
 from confluent_kafka import Message
-from jlab_jaws.avro.clients import ActivationConsumer
+from jlab_jaws.clients import ActivationConsumer
 from typing import List
 
 

@@ -3,8 +3,8 @@
 import click
 import time
 
-from jlab_jaws.avro.clients import EffectiveActivationProducer
-from jlab_jaws.avro.entities import AlarmState, AlarmOverrideSet, \
+from jlab_jaws.clients import EffectiveActivationProducer
+from jlab_jaws.entities import AlarmState, AlarmOverrideSet, \
     OverriddenAlarmType, EffectiveActivation, \
     DisabledOverride, FilteredOverride, LatchedOverride, MaskedOverride, OnDelayedOverride, OffDelayedOverride, \
     ShelvedOverride, ShelvedReason

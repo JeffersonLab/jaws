@@ -3,7 +3,7 @@
 import click
 
 from confluent_kafka import Message
-from jlab_jaws.avro.clients import ClassConsumer, CategoryConsumer
+from jlab_jaws.clients import ClassConsumer, CategoryConsumer
 from typing import List
 
 

@@ -3,10 +3,9 @@
 import click
 import json
 
-from jlab_jaws.avro.clients import CategoryConsumer, ClassProducer
+from jlab_jaws.clients import CategoryConsumer, ClassProducer
 from jlab_jaws.avro.serde import ClassSerde
-from jlab_jaws.avro.entities import AlarmClass
-from jlab_jaws.avro.entities import AlarmPriority
+from jlab_jaws.entities import AlarmClass, AlarmPriority
 
 
 def line_to_kv(line):

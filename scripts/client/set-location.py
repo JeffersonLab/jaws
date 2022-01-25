@@ -3,8 +3,8 @@
 import click
 import json
 
-from jlab_jaws.avro.entities import AlarmLocation
-from jlab_jaws.avro.clients import LocationProducer
+from jlab_jaws.entities import AlarmLocation
+from jlab_jaws.clients import LocationProducer
 from jlab_jaws.avro.serde import LocationSerde
 
 

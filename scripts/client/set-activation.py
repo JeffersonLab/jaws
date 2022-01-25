@@ -2,8 +2,8 @@
 
 import click
 
-from jlab_jaws.avro.clients import ActivationProducer
-from jlab_jaws.avro.entities import AlarmActivationUnion, SimpleAlarming, EPICSAlarming, NoteAlarming, EPICSSEVR, \
+from jlab_jaws.clients import ActivationProducer
+from jlab_jaws.entities import AlarmActivationUnion, SimpleAlarming, EPICSAlarming, NoteAlarming, EPICSSEVR, \
     EPICSSTAT
 
 
