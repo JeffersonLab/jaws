@@ -1,21 +1,9 @@
 #!/usr/bin/env python3
 
 import click
-import json
 
 from jlab_jaws.clients import CategoryConsumer, ClassProducer
-from jlab_jaws.avro.serde import ClassSerde
 from jlab_jaws.entities import AlarmClass, AlarmPriority
-
-
-def line_to_kv(line):
-    tokens = line.split("=", 1)
-    key = tokens[0]
-    value_obj = tokens[1]
-    value_dict = json.loads(value_obj)
-    value = ClassSerde.from_dict(value_dict)
-
-    return key, value
 
 
 consumer = CategoryConsumer('set-class.py')
@@ -47,7 +35,7 @@ def cli(file, unset, category,
     key = name
 
     if file:
-        producer.import_records(name, line_to_kv)
+        producer.import_records(name)
     else:
         if unset:
             value = None

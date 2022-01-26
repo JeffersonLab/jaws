@@ -1,22 +1,10 @@
 #!/usr/bin/env python3
 
 import click
-import json
 
-from jlab_jaws.avro.serde import InstanceSerde
 from jlab_jaws.clients import LocationConsumer, InstanceProducer
 from jlab_jaws.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
-
-
-def line_to_kv(line):
-    tokens = line.split("=", 1)
-    key = tokens[0]
-    value_obj = tokens[1]
-    value_dict = json.loads(value_obj)
-    value = InstanceSerde.from_dict(value_dict)
-
-    return key, value
 
 
 consumer = LocationConsumer('set-instance.py')
@@ -43,7 +31,7 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
     key = name
 
     if file:
-        producer.import_records(name, line_to_kv)
+        producer.import_records(name)
     else:
         if unset:
             value = None

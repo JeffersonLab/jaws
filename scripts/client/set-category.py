@@ -4,13 +4,6 @@ import click
 from jlab_jaws.clients import CategoryProducer
 
 
-def line_to_kv(line):
-    key = line.rstrip()
-    value = ""
-
-    return key, value
-
-
 @click.command()
 @click.option('--file', is_flag=True,
               help="Imports a file of key=value pairs (one per line) where the key is category name and value is "
@@ -23,7 +16,7 @@ def cli(file, unset, name):
     key = name
 
     if file:
-        producer.import_records(name, line_to_kv)
+        producer.import_records(name)
     else:
         if unset:
             value = None

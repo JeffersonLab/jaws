@@ -1,20 +1,9 @@
 #!/usr/bin/env python3
 
 import click
-import json
 
 from jlab_jaws.entities import AlarmLocation
 from jlab_jaws.clients import LocationProducer
-from jlab_jaws.avro.serde import LocationSerde
-
-
-def line_to_kv(line):
-    tokens = line.split("=", 1)
-    key = tokens[0]
-    value_obj = tokens[1]
-    value_dict = json.loads(value_obj)
-    value = LocationSerde.from_dict(value_dict)
-    return key, value
 
 
 @click.command()
@@ -30,7 +19,7 @@ def cli(file, unset, name, parent):
     key = name
 
     if file:
-        producer.import_records(name, line_to_kv)
+        producer.import_records(name)
     else:
         if unset:
             value = None
