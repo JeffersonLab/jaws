@@ -1,22 +1,7 @@
 #!/usr/bin/env python3
 
 import click
-from confluent_kafka import Message
 from jlab_jaws.clients import ActivationConsumer
-from typing import List
-
-
-def msg_to_list(msg: Message) -> List[str]:
-    key = msg.key()
-    value = msg.value()
-
-    if value is None:
-        row = [key, None]
-    else:
-        row = [key,
-               value]
-
-    return row
 
 
 @click.command()
@@ -26,9 +11,7 @@ def msg_to_list(msg: Message) -> List[str]:
 def cli(monitor, nometa, export):
     consumer = ActivationConsumer('list-activations.py')
 
-    head = ["Alarm Name", "Value"]
-
-    consumer.consume(monitor, nometa, export, head, msg_to_list)
+    consumer.consume(monitor, nometa, export)
 
 
 cli()

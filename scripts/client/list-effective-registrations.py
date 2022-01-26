@@ -2,24 +2,7 @@
 
 import click
 
-from confluent_kafka import Message
-from typing import List
-
 from jlab_jaws.clients import EffectiveRegistrationConsumer, CategoryConsumer
-
-
-def msg_to_list(msg: Message) -> List[str]:
-    key = msg.key()
-    value = msg.value()
-
-    if value is None:
-        row = [key, None]
-    else:
-        row = [key,
-               value.instance,
-               value.alarm_class]
-
-    return row
 
 
 class ClassAndCategoryFilter:
@@ -47,9 +30,7 @@ def cli(monitor, nometa, export, category, alarm_class):
 
     filter_obj = ClassAndCategoryFilter(category, alarm_class)
 
-    head = ["Alarm Name", "Instance", "Class"],
-
-    consumer.consume(monitor, nometa, export, head, msg_to_list, filter_obj.filter_if)
+    consumer.consume(monitor, nometa, export, filter_obj.filter_if)
 
 
 cli()

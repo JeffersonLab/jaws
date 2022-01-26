@@ -2,30 +2,7 @@
 
 import click
 
-from confluent_kafka import Message
 from jlab_jaws.clients import ClassConsumer, CategoryConsumer
-from typing import List
-
-
-def msg_to_list(msg: Message) -> List[str]:
-    key = msg.key()
-    value = msg.value()
-
-    if value is None:
-        row = [key, None]
-    else:
-        row = [key,
-               value.category,
-               value.priority.name if value.priority is not None else None,
-               value.rationale.replace("\n", "\\n ") if value.rationale is not None else None,
-               value.corrective_action.replace("\n", "\\n") if value.corrective_action is not None else None,
-               value.point_of_contact_username,
-               value.latching,
-               value.filterable,
-               value.on_delay_seconds,
-               value.off_delay_seconds]
-
-    return row
 
 
 class CategoryFilter:
@@ -50,10 +27,7 @@ def cli(monitor, nometa, export, category):
 
     filter_obj = CategoryFilter(category)
 
-    head = ["Class Name", "Category", "Priority", "Rationale", "Corrective Action",
-            "P.O.C. Username", "Latching", "Filterable", "On Delay", "Off Delay"],
-
-    consumer.consume(monitor, nometa, export, head, msg_to_list, filter_obj.filter_if)
+    consumer.consume(monitor, nometa, export, filter_obj.filter_if)
 
 
 cli()

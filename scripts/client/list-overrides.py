@@ -1,26 +1,7 @@
 #!/usr/bin/env python3
 
-from typing import List
-
 import click
-from confluent_kafka import Message
 from jlab_jaws.clients import OverrideConsumer
-
-
-def msg_to_list(msg: Message) -> List[str]:
-    key = msg.key()
-    value = msg.value()
-
-    if value is None:
-        row = [key.name,
-               key.type,
-               None]
-    else:
-        row = [key.name,
-               key.type.name,
-               value]
-
-    return row
 
 
 @click.command()
@@ -30,9 +11,7 @@ def msg_to_list(msg: Message) -> List[str]:
 def cli(monitor, nometa, export):
     consumer = OverrideConsumer('list-overrides.py')
 
-    head = ["Alarm Name", "Override Type", "Value"]
-
-    consumer.consume(monitor, nometa, export, head, msg_to_list)
+    consumer.consume(monitor, nometa, export)
 
 
 cli()
