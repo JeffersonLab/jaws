@@ -11,7 +11,7 @@ from jlab_jaws.clients import EffectiveActivationConsumer
 def cli(monitor, nometa, export):
     consumer = EffectiveActivationConsumer('list-effective-activations.py')
 
-    consumer.consume(monitor, nometa, export)
+    consumer.consume_then_done(monitor, nometa, export)
 
 
 cli()

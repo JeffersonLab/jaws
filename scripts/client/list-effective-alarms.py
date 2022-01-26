@@ -11,7 +11,7 @@ from jlab_jaws.clients import EffectiveAlarmConsumer
 def cli(monitor, nometa, export):
     consumer = EffectiveAlarmConsumer('list-effective-alarms.py')
 
-    consumer.consume(monitor, nometa, export)
+    consumer.consume_then_done(monitor, nometa, export)
 
 
 cli()

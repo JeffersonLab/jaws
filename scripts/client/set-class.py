@@ -7,7 +7,7 @@ from jlab_jaws.entities import AlarmClass, AlarmPriority
 
 
 consumer = CategoryConsumer('set-class.py')
-categories = consumer.get_records()
+categories = consumer.get_keys_then_done()
 
 
 @click.command()

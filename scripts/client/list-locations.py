@@ -12,7 +12,7 @@ from jlab_jaws.clients import LocationConsumer
 def cli(monitor, nometa, export):
     consumer = LocationConsumer('list-locations.py')
 
-    consumer.consume(monitor, nometa, export)
+    consumer.consume_then_done(monitor, nometa, export)
 
 
 cli()

@@ -23,7 +23,7 @@ def cli(monitor, nometa, export, alarm_class):
 
     filter_obj = ClassFilter(alarm_class)
 
-    consumer.consume(monitor, nometa, export, filter_obj.filter_if)
+    consumer.consume_then_done(monitor, nometa, export, filter_obj.filter_if)
 
 
 cli()

@@ -14,7 +14,7 @@ class CategoryFilter:
 
 
 cat_consumer = CategoryConsumer('list-classes.py')
-categories = cat_consumer.get_records()
+categories = cat_consumer.get_keys_then_done()
 
 
 @click.command()
@@ -27,7 +27,7 @@ def cli(monitor, nometa, export, category):
 
     filter_obj = CategoryFilter(category)
 
-    consumer.consume(monitor, nometa, export, filter_obj.filter_if)
+    consumer.consume_then_done(monitor, nometa, export, filter_obj.filter_if)
 
 
 cli()

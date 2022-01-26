@@ -11,7 +11,7 @@ from jlab_jaws.clients import CategoryConsumer
 def cli(monitor, nometa, export):
     consumer = CategoryConsumer('list-categories.py')
 
-    consumer.consume(monitor, nometa, export)
+    consumer.consume_then_done(monitor, nometa, export)
 
 
 cli()

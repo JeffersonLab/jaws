@@ -8,7 +8,7 @@ from jlab_jaws.entities import AlarmInstance, \
 
 
 consumer = LocationConsumer('set-instance.py')
-locations = consumer.get_records()
+locations = consumer.get_keys_then_done()
 
 
 @click.command()

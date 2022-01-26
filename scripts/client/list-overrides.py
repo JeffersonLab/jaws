@@ -11,7 +11,7 @@ from jlab_jaws.clients import OverrideConsumer
 def cli(monitor, nometa, export):
     consumer = OverrideConsumer('list-overrides.py')
 
-    consumer.consume(monitor, nometa, export)
+    consumer.consume_then_done(monitor, nometa, export)
 
 
 cli()
