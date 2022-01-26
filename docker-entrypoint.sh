@@ -147,7 +147,7 @@ else
       screencommand="${def[5]}"
       if [[ -z "${pv}" ]]; then
         /scripts/client/set-instance.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" \
-         --maskedby "${maskedby}" --screenpath "${screenpath}"
+         --maskedby "${maskedby}" --screencommand "${screencommand}"
       else
         /scripts/client/set-instance.py "${name}" --producerpv "${pv}" --alarmclass "${class}" \
          --location "${location}" --maskedby "${maskedby}" --screencommand "${screencommand}"
