@@ -3,7 +3,7 @@ version: '3.8'
 
 services:
   jaws:
-    image: slominskir/jaws:3.4.0
+    image: slominskir/jaws:3.5.0
     environment:
       TZ: "America/New_York"
       LOGLEVEL: "INFO"
