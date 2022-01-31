@@ -111,10 +111,31 @@ else
       filterable="${def[7]}"
       ondelayseconds="${def[8]}"
       offdelayseconds="${def[9]}"
-      /scripts/client/set-class.py "${name}" --category "${category}" \
-          --priority "${priority}" --rationale "${rationale}" --correctiveaction "${correctiveaction}" \
-          --pointofcontactusername "${pointofcontactusername}" --latching "${latching}" --filterable "${filterable}" \
-          --ondelayseconds "${ondelayseconds}" --offdelayseconds "${offdelayseconds}"
+
+      PARMS=($name --category ${category} --priority ${priority} --rationale "${rationale}")
+      PARMS+=(--correctiveaction "${correctiveaction}" --pointofcontactusername ${pointofcontactusername})
+
+      if [[ "${latching}" == "True" ]]; then
+        PARMS+=(--latching)
+      else
+        PARMS+=(--not-latching)
+      fi
+
+      if [[ "${filterable}" == "True" ]]; then
+        PARMS+=(--filterable)
+      else
+        PARMS+=(--not-filterable)
+      fi
+
+      if [[  ! -z "${ondelayseconds}" ]]; then
+        PARMS+=(--ondelayseconds ${ondelayseconds})
+      fi
+
+      if [[  ! -z "${offdelayseconds}" ]]; then
+        PARMS+=(--offdelayseconds ${offdelayseconds})
+      fi
+
+      /scripts/client/set-class.py "${PARMS[@]}"
     done
 fi
 
