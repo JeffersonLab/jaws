@@ -77,7 +77,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:3.4.0
+    image: slominskir/jaws:3.5.1
     tty: true
     stdin_open: true
     hostname: jaws
