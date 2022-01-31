@@ -50,7 +50,14 @@ else
       read -a def <<< "$defStr"
       name="${def[0]}"
       parent="${def[1]}"
-      /scripts/client/set-location.py "${name}" --parent "${parent}"
+
+      PARMS=("${name}")
+
+      if [[  ! -z "${parent}" ]]; then
+        PARMS+=(--parent "${parent}")
+      fi
+
+      /scripts/client/set-location.py "${PARMS[@]}"
     done
 fi
 
@@ -112,8 +119,8 @@ else
       ondelayseconds="${def[8]}"
       offdelayseconds="${def[9]}"
 
-      PARMS=($name --category ${category} --priority ${priority} --rationale "${rationale}")
-      PARMS+=(--correctiveaction "${correctiveaction}" --pointofcontactusername ${pointofcontactusername})
+      PARMS=("${name}" --category "${category}" --priority "${priority}" --rationale "${rationale}")
+      PARMS+=(--correctiveaction "${correctiveaction}" --pointofcontactusername "${pointofcontactusername}")
 
       if [[ "${latching}" == "True" ]]; then
         PARMS+=(--latching)
@@ -166,13 +173,20 @@ else
       location="${def[3]}"
       maskedby="${def[4]}"
       screencommand="${def[5]}"
+
+      PARMS=("${name}" --alarmclass "${class}" --location "${location}" --screencommand "${screencommand}")
+
       if [[ -z "${pv}" ]]; then
-        /scripts/client/set-instance.py "${name}" --producersimple --alarmclass "${class}" --location "${location}" \
-         --maskedby "${maskedby}" --screencommand "${screencommand}"
+        PARMS+=(--producersimple)
       else
-        /scripts/client/set-instance.py "${name}" --producerpv "${pv}" --alarmclass "${class}" \
-         --location "${location}" --maskedby "${maskedby}" --screencommand "${screencommand}"
+        PARMS+=(--producerpv "${pv}")
       fi
+
+      if [[  ! -z "${maskedby}" ]]; then
+        PARMS+=(--maskedby "${maskedby}")
+      fi
+
+      /scripts/client/set-instance.py "${PARMS[@]}"
     done
 fi
 
