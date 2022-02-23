@@ -40,6 +40,7 @@ Activations indicate an alarm is annunciating (active), and timely operator acti
 
 **Plugins**
 - [jaws-epics2kafka](https://github.com/JeffersonLab/jaws-epics2kafka): Connects EPICS alarms to JAWS
+- [registrations2epics](https://github.com/JeffersonLab/registrations2epics): Notifies epics2kafka of EPICS alarm registration updates
 
 ## Usage
 
