@@ -1,39 +1,23 @@
----
-version: '3.8'
-
 services:
   zookeeper:
-    image: debezium/zookeeper:1.5.0.Final
-    hostname: zookeeper
-    container_name: zookeeper
-    ports:
-      - "2181:2181"
+    extends:
+      file: ../../deps.yml
+      service: zookeeper
 
   kafka:
-    image: debezium/kafka:1.5.0.Final
-    hostname: kafka
-    container_name: kafka
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_HOME: "/kafka"
-      BOOTSTRAP_SERVER: "kafka:9092"
-      ZOOKEEPER_CONNECT: 'zookeeper:2181'
+    extends:
+      file: ../../deps.yml
+      service: kafka
 
   registry:
-    image: confluentinc/cp-schema-registry:6.0.2
-    hostname: registry
-    container_name: registry
-    depends_on:
-      - zookeeper
-      - kafka
-    ports:
-      - 8081:8081
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
-      SCHEMA_REGISTRY_HOST_NAME: registry
+    extends:
+      file: ../../deps.yml
+      service: registry
+
+  jaws:
+    extends:
+      file: effective.yml
+      service: jaws
 
   softioc:
     image: slominskir/softioc:1.1.0
@@ -75,21 +59,3 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-
-  jaws:
-    image: slominskir/jaws:3.5.1
-    tty: true
-    stdin_open: true
-    hostname: jaws
-    container_name: jaws
-    depends_on:
-      - zookeeper
-      - kafka
-      - registry
-    environment:
-      BOOTSTRAP_SERVERS: "kafka:9092"
-      SCHEMA_REGISTRY: "http://registry:8081"
-      ALARM_LOCATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/locations
-      ALARM_CATEGORIES: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/categories
-      ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/classes
-      ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/instances/box
