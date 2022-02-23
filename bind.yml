@@ -1,0 +1,23 @@
+services:
+  zookeeper:
+    extends:
+      file: build.yml
+      service: zookeeper
+
+  kafka:
+    extends:
+      file: build.yml
+      service: kafka
+
+  registry:
+    extends:
+      file: build.yml
+      service: registry
+
+  jaws:
+    extends:
+      file: build.yml
+      service: registry
+    volumes:
+      - ./docker-entrypoint.sh:/docker-entrypoint.sh
+      - ./scripts:/scripts

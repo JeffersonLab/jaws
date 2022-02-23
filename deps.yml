@@ -1,0 +1,32 @@
+services:
+  zookeeper:
+    image: debezium/zookeeper:1.5.0.Final
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: debezium/kafka:1.5.0.Final
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      BOOTSTRAP_SERVER: "kafka:9092"
+      ZOOKEEPER_CONNECT: 'zookeeper:2181'
+
+  registry:
+    image: confluentinc/cp-schema-registry:6.0.2
+    hostname: registry
+    container_name: registry
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - 8081:8081
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
+      SCHEMA_REGISTRY_HOST_NAME: registry

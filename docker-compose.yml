@@ -1,38 +1,18 @@
----
-version: '3.8'
-
 services:
   zookeeper:
-    image: debezium/zookeeper:1.5.0.Final
-    hostname: zookeeper
-    container_name: zookeeper
-    ports:
-      - "2181:2181"
+    extends:
+      file: deps.yml
+      service: zookeeper
 
   kafka:
-    image: debezium/kafka:1.5.0.Final
-    hostname: kafka
-    container_name: kafka
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-    environment:
-      BOOTSTRAP_SERVER: "kafka:9092"
-      ZOOKEEPER_CONNECT: 'zookeeper:2181'
+    extends:
+      file: deps.yml
+      service: kafka
 
   registry:
-    image: confluentinc/cp-schema-registry:6.0.2
-    hostname: registry
-    container_name: registry
-    depends_on:
-      - zookeeper
-      - kafka
-    ports:
-      - 8081:8081
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
-      SCHEMA_REGISTRY_HOST_NAME: registry
+    extends:
+      file: deps.yml
+      service: registry
 
   jaws:
     tty: true
@@ -44,5 +24,6 @@ services:
       - kafka
       - registry
     environment:
+      TZ: "America/New_York"
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"

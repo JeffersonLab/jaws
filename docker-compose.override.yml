@@ -1,11 +1,7 @@
----
-version: '3.8'
-
 services:
   jaws:
     image: slominskir/jaws:3.5.1
     environment:
-      TZ: "America/New_York"
       LOGLEVEL: "INFO"
       ALARM_LOCATIONS: "INJ|CEBAF,NL|CEBAF,SL|CEBAF,CEBAF|"
       ALARM_CATEGORIES: "Vacuum,RF,RADCON"
