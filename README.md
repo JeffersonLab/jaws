@@ -15,6 +15,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
   - [Install](https://github.com/JeffersonLab/jaws#install) 
   - [Scripts](https://github.com/JeffersonLab/jaws#scripts)
 - [Configure](https://github.com/JeffersonLab/jaws#configure)
+- [Build](https://github.com/JeffersonLab/jaws#build) 
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
 ---
 
@@ -100,6 +101,19 @@ The Docker container requires the script environment variables, plus can optiona
 | ALARM_CATEGORIES | Path to an alarm categories file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/categories)), else an https URL to a file, else a comma separated list of catgory definitions with fields.  Example Inline CSV: `name` |
 | ALARM_CLASSES   | Path to an alarm classes file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/classes)), else an https URL to a file, else a comma separated list of class definitions with fields separated by the pipe symbol.  Example Inline CSV: `name\|category\|priority\|rationale\|correctiveaction\|pointofcontactusername\|latching\|filterable\|ondelayseconds\|offdelayseconds` |
 | ALARM_INSTANCES | Path to an alarm instances file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/instances)), else an https URL to a file, else a comma separated list of instance definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example Inline CSV: `name\|class\|epicspv\|location\|maskedby\|screencommand` |
+
+## Build
+This [Python 3.7](https://www.python.org/) project was build using the Python [virtual environment](https://docs.python.org/3/tutorial/venv.html) feature to isolate dependencies and [pip](https://pypi.org/project/pip/) to download them.  Docker was used extensively for development as well due to the dependency on the Kafka ecosystem, so the easiest way to build the project is with a Docker build:
+
+```
+git clone https://github.com/JeffersonLab/jaws
+cd jaws
+docker build .
+```
+
+**Note for JLab On-Site Users**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
+
+**See**: [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
