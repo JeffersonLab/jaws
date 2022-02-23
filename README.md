@@ -10,9 +10,11 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 
 ---
 - [Overview](https://github.com/JeffersonLab/jaws#overview)
-- [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
-- [Scripts](https://github.com/JeffersonLab/jaws#scripts)
-- [Docker](https://github.com/JeffersonLab/jaws#docker)
+- [Usage](https://github.com/JeffersonLab/jaws#usage)
+  - [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
+  - [Install](https://github.com/JeffersonLab/jaws#install) 
+  - [Scripts](https://github.com/JeffersonLab/jaws#scripts)
+- [Configure](https://github.com/JeffersonLab/jaws#configure)
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
 ---
 
@@ -38,7 +40,9 @@ Activations indicate an alarm is annunciating (active), and timely operator acti
 **Plugins**
 - [jaws-epics2kafka](https://github.com/JeffersonLab/jaws-epics2kafka): Connects EPICS alarms to JAWS
 
-## Quick Start with Compose 
+## Usage
+
+### Quick Start with Compose 
 1. Grab project
 ```
 git clone https://github.com/JeffersonLab/jaws
@@ -62,13 +66,7 @@ docker exec jaws /scripts/client/set-activation.py alarm1
 
 **See**: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
 
-## Scripts
-
-[Scripts Reference](https://github.com/JeffersonLab/jaws/wiki/Scripts-Reference)
-
- To see all options use the --help option.
-
-### Python Environment
+### Install
 Scripts tested with Python 3.7
 
 Generally recommended to use a Python virtual environment to avoid dependency conflicts.  You can use the requirements.txt file to ensure the Python module dependencies are installed:
@@ -79,9 +77,14 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-*Note*: [Jefferson Lab Internal Proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
+### Scripts
 
-### Configure
+[Scripts Reference](https://github.com/JeffersonLab/jaws/wiki/Scripts-Reference)
+
+ To see all options use the --help option.
+
+
+## Configure
 The following environment variables are required by the scripts:
 
 | Name             | Description                                                                                                                |
@@ -97,18 +100,6 @@ The Docker container requires the script environment variables, plus can optiona
 | ALARM_CATEGORIES | Path to an alarm categories file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/categories)), else an https URL to a file, else a comma separated list of catgory definitions with fields.  Example Inline CSV: `name` |
 | ALARM_CLASSES   | Path to an alarm classes file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/classes)), else an https URL to a file, else a comma separated list of class definitions with fields separated by the pipe symbol.  Example Inline CSV: `name\|category\|priority\|rationale\|correctiveaction\|pointofcontactusername\|latching\|filterable\|ondelayseconds\|offdelayseconds` |
 | ALARM_INSTANCES | Path to an alarm instances file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/instances)), else an https URL to a file, else a comma separated list of instance definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example Inline CSV: `name\|class\|epicspv\|location\|maskedby\|screencommand` |
-
-
-## Docker
-```
-docker pull slominskir/jaws
-```
-Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/jaws)
-
-**Note**: When developing the app you can mount the build artifact into the container by substituting the docker-compose up command with:
-```
-docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
-```
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
