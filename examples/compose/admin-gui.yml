@@ -55,13 +55,13 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-      ALARM_LOCATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/main/locations
-      ALARM_CATEGORIES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/categories
-      ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/classes
-      ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
+      ALARM_LOCATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/locations
+      ALARM_CATEGORIES: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/categories
+      ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/classes
+      ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/instances/box
 
   admin:
-    image: slominskir/jaws-admin-gui:1.2.0
+    image: slominskir/jaws-admin-gui:1.3.0
     hostname: admin
     container_name: admin
     ports:
