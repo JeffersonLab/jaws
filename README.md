@@ -26,6 +26,8 @@ Registrations make up the alarm metadata (descriptions), including corrective ac
 
 Activations indicate an alarm is annunciating (active), and timely operator action is required.  Alarms are triggered active by producing messages on the _alarm-activations_ topic.  An alarm can be overridden to either suppress or incite the active state by placing a message on the _alarm-overrides_ topic.  The effective activation state considering both actual activations and overrides is calculated by JAWS from _activations_ and _overrides_ and made available on the _effective-activations_ topic. 
 
+Both effective registrations and effective activations are combined by the JAWS effective processor on the _effective-alarms_ topic.
+
 **Services**
 - [jaws-effective-processor](https://github.com/JeffersonLab/jaws-effective-processor): Process classes and overrides and provide effective state on the _effective-registrations_, _effective-activations_, and _effective-alarms_ topics
 - [jaws-admin-gui](https://github.com/JeffersonLab/jaws-admin-gui): GUI for managing alarm registrations
