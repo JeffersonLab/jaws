@@ -18,6 +18,9 @@ services:
     extends:
       file: effective.yml
       service: jaws
+    environment:
+      # We Override with empty instances as missing PVs currently crash epics2kafka: https://github.com/JeffersonLab/epics2kafka/issues/7
+      ALARM_INSTANCES: ""
 
   softioc:
     image: slominskir/softioc:1.1.0
