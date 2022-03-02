@@ -106,7 +106,7 @@ The Docker container requires the script environment variables, plus can optiona
 | ALARM_INSTANCES | Path to an alarm instances file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/instances)), else an https URL to a file, else a comma separated list of instance definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example Inline CSV: `name\|class\|epicspv\|location\|maskedby\|screencommand` |
 
 ## Build
-This [Python 3.7](https://www.python.org/) project can be built using either the Python [virtual environment](https://docs.python.org/3/tutorial/venv.html) feature or a dedicated Docker container to isolate dependencies.   The [pip](https://pypi.org/project/pip/) tool can be used to download dependencies.  Docker was used extensively for development due to the dependency on the Kafka ecosystem, so the easiest way to build the project is with a Docker build:
+This [Python 3.9+](https://www.python.org/) project can be built using either the Python [virtual environment](https://docs.python.org/3/tutorial/venv.html) feature or a dedicated Docker container to isolate dependencies.   The [pip](https://pypi.org/project/pip/) tool can be used to download dependencies.  Docker was used extensively for development due to the dependency on the Kafka ecosystem, so the easiest way to build the project is with a Docker build:
 
 ```
 git clone https://github.com/JeffersonLab/jaws
