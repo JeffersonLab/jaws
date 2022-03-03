@@ -10,10 +10,9 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 
 ---
 - [Overview](https://github.com/JeffersonLab/jaws#overview)
-- [Usage](https://github.com/JeffersonLab/jaws#usage)
-  - [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
-  - [Install](https://github.com/JeffersonLab/jaws#install) 
-  - [Scripts](https://github.com/JeffersonLab/jaws#scripts)
+- [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
+- [Install](https://github.com/JeffersonLab/jaws#install) 
+- [Scripts](https://github.com/JeffersonLab/jaws#scripts)
 - [Configure](https://github.com/JeffersonLab/jaws#configure)
 - [Build](https://github.com/JeffersonLab/jaws#build) 
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
@@ -44,9 +43,7 @@ Both effective registrations and effective activations are combined by the JAWS 
 - [jaws-epics2kafka](https://github.com/JeffersonLab/jaws-epics2kafka): Connects EPICS alarms to JAWS
 - [registrations2epics](https://github.com/JeffersonLab/registrations2epics): Notifies epics2kafka of EPICS alarm registration updates
 
-## Usage
-
-### Quick Start with Compose 
+## Quick Start with Compose 
 1. Grab project
 ```
 git clone https://github.com/JeffersonLab/jaws
@@ -70,7 +67,7 @@ docker exec jaws /scripts/client/set-activation.py alarm1
 
 **See**: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
 
-### Install
+## Install
 Scripts tested with Python 3.9
 
 Generally recommended to use a Python virtual environment to avoid dependency conflicts (else a dedicated Docker container can be used).  You can use the requirements.txt file to ensure the Python module dependencies are installed:
@@ -81,12 +78,11 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-### Scripts
+## Scripts
 
 [Scripts Reference](https://github.com/JeffersonLab/jaws/wiki/Scripts-Reference)
 
- To see all options use the --help option.
-
+To see all options use the `--help` option.
 
 ## Configure
 The following environment variables are required by the scripts:
