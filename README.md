@@ -51,7 +51,7 @@ cd jaws
 ```
 2. Launch Docker
 ```
-docker-compose up
+docker compose up
 ```
 3. Monitor active alarms
 ```
