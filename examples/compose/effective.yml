@@ -15,7 +15,7 @@ services:
       service: registry
 
   effective:
-    image: slominskir/jaws-effective-processor:3.3.0
+    image: slominskir/jaws-effective-processor:3.4.1
     hostname: effective
     container_name: effective
     depends_on:
@@ -25,7 +25,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:3.5.1
+    image: slominskir/jaws:3.6.0
     tty: true
     stdin_open: true
     hostname: jaws
