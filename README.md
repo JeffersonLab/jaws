@@ -70,13 +70,11 @@ docker exec jaws /scripts/client/set-activation.py alarm1
 ## Install
 Requires [Python 3.9+](https://www.python.org/)
 
-Generally recommended to use a Python virtual environment to avoid dependency conflicts (else a dedicated Docker container can be used).  You can use the requirements.txt file to ensure the Python module dependencies are installed:
-
-```bash
-python3 -m venv env
-source env/bin/activate
-pip install -r requirements.txt
 ```
+pip install jaws-scripts
+```
+
+**Note**: It's generally recommended to use a Python virtual environment to avoid dependency conflicts (else a dedicated Docker container can be used).
 
 ## Scripts
 
@@ -102,12 +100,12 @@ The Docker container requires the script environment variables, plus can optiona
 | ALARM_INSTANCES | Path to an alarm instances file to import ([example file](https://github.com/JeffersonLab/jaws/blob/master/examples/data/instances)), else an https URL to a file, else a comma separated list of instance definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example Inline CSV: `name\|class\|epicspv\|location\|maskedby\|screencommand` |
 
 ## Build
-This [Python 3.9+](https://www.python.org/) project can be built using either the Python [virtual environment](https://docs.python.org/3/tutorial/venv.html) feature or a dedicated Docker container to isolate dependencies.   The [pip](https://pypi.org/project/pip/) tool can be used to download dependencies.  Docker was used extensively for development due to the dependency on the Kafka ecosystem, so the easiest way to build the project is with a Docker build:
+This [Python 3.9+](https://www.python.org/) project is built with [setuptools](https://setuptools.pypa.io/en/latest/setuptools.html) and may be run using either the Python [virtual environment](https://docs.python.org/3/tutorial/venv.html) feature or a dedicated Docker container to isolate dependencies.   The [pip](https://pypi.org/project/pip/) tool can be used to download dependencies.  Docker was used extensively for development due to the dependency on the Kafka ecosystem.
 
 ```
 git clone https://github.com/JeffersonLab/jaws
 cd jaws
-docker build .
+python -m build
 ```
 
 **Note for JLab On-Site Users**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
