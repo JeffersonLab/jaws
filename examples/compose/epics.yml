@@ -51,7 +51,7 @@ services:
       - ../connect-config:/config
 
   registrations2epics:
-    image: slominskir/registrations2epics:2.3.0
+    image: slominskir/registrations2epics:2.4.0
     hostname: registrations2epics
     container_name: registrations2epics
     depends_on:
