@@ -68,7 +68,7 @@ docker exec jaws /scripts/client/set-activation.py alarm1
 **See**: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
 
 ## Install
-Scripts tested with Python 3.9
+Requires [Python 3.9+](https://www.python.org/)
 
 Generally recommended to use a Python virtual environment to avoid dependency conflicts (else a dedicated Docker container can be used).  You can use the requirements.txt file to ensure the Python module dependencies are installed:
 
