@@ -20,4 +20,4 @@ services:
       service: registry
     volumes:
       - ./docker-entrypoint.sh:/docker-entrypoint.sh
-      - ./src:/scripts
+      - ./src/jaws-scripts:/scripts
