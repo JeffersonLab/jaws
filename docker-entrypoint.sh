@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set Timezone
-ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+export TZ="/usr/share/zoneinfo/$TZ"
 
 echo "-------------------------------------------------------"
 echo "Step 1: Waiting for Schema Registry to start listening "
