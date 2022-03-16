@@ -20,8 +20,8 @@ from jlab_jaws.clients import OverrideProducer
 @click.option('--comments', help="Operator explanation for why suppressed")
 @click.option('--filtername', help="Name of filter rule associated with this override")
 @click.argument('name')
-def cli(override, unset, expirationseconds, reason, oneshot, comments, filtername, name):
-    producer = OverrideProducer('set-override.py')
+def main(override, unset, expirationseconds, reason, oneshot, comments, filtername, name):
+    producer = OverrideProducer('set_override.py')
 
     if override is None:
         raise click.ClickException("--override is required")
@@ -71,5 +71,7 @@ def cli(override, unset, expirationseconds, reason, oneshot, comments, filternam
     producer.send(key, value)
 
 
-cli()
+if __name__ == "__main__":
+    main()
+
 

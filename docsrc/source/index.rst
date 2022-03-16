@@ -1,15 +1,14 @@
 Welcome to jaws-scripts's documentation!
 ========================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+API:
 
+.. autosummary::
+  :toctree: _autosummary
+  :recursive:
 
+  jaws_scripts
 
-Indices and tables
-==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`

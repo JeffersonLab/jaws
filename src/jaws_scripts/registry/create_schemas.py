@@ -43,8 +43,13 @@ def process(record):
         traceback.print_exc()
 
 
-conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
+def main() -> None:
+    conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
 
-records = json.loads(conf)
-for r in records:
-    process(r)
+    records = json.loads(conf)
+    for r in records:
+        process(r)
+
+
+if __name__ == "__main__":
+    main()

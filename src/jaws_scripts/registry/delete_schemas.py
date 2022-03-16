@@ -23,13 +23,18 @@ def process(record):
         traceback.print_exc()
 
 
-conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schema-registry.json')
+def main() -> None:
+    conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schema-registry.json')
 
-conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
+    conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
 
-records = json.loads(conf)
+    records = json.loads(conf)
 
-records.reverse()
+    records.reverse()
 
-for record in records:
-    process(record)
+    for record in records:
+        process(record)
+
+
+if __name__ == "__main__":
+    main()

@@ -18,8 +18,8 @@ def get_instance():
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear state, missing to set state")
 @click.argument('name')
-def cli(unset, name):
-    producer = EffectiveRegistrationProducer('set-effective-registration.py')
+def main(unset, name):
+    producer = EffectiveRegistrationProducer('set_effective_registration.py')
 
     key = name
 
@@ -34,4 +34,6 @@ def cli(unset, name):
     producer.send(key, value)
 
 
-cli()
+if __name__ == "__main__":
+    main()
+

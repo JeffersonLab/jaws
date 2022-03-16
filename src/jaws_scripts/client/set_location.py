@@ -13,8 +13,8 @@ from jlab_jaws.clients import LocationProducer
 @click.option('--unset', is_flag=True, help="Remove the location")
 @click.argument('name')
 @click.option('--parent', '-p', help="Name of parent Location or None if top-level Location")
-def cli(file, unset, name, parent):
-    producer = LocationProducer('set-location.py')
+def main(file, unset, name, parent):
+    producer = LocationProducer('set_location.py')
 
     key = name
 
@@ -29,4 +29,6 @@ def cli(file, unset, name, parent):
         producer.send(key, value)
 
 
-cli()
+if __name__ == "__main__":
+    main()
+

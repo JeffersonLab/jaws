@@ -5,3 +5,4 @@ __pycache__/
 /.venv/
 /.venv_dev/
 /build/
+/docsrc/source/_autosummary/

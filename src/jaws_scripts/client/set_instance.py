@@ -6,9 +6,7 @@ from jlab_jaws.clients import LocationConsumer, InstanceProducer
 from jlab_jaws.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 
-
-consumer = LocationConsumer('set-instance.py')
-locations = consumer.get_keys_then_done()
+locations = []
 
 
 @click.command()
@@ -26,7 +24,7 @@ locations = consumer.get_keys_then_done()
 @click.argument('name')
 def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression, location,
         screencommand, maskedby, name):
-    producer = InstanceProducer('set-instance.py')
+    producer = InstanceProducer('set_instance.py')
 
     key = name
 
@@ -59,4 +57,14 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
         producer.send(key, value)
 
 
-cli()
+def main() -> None:
+    global locations
+
+    consumer = LocationConsumer('set_instance.py')
+    locations = consumer.get_keys_then_done()
+    cli()
+
+
+if __name__ == "__main__":
+    main()
+

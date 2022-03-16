@@ -13,8 +13,8 @@ from jlab_jaws.entities import AlarmActivationUnion, SimpleAlarming, EPICSAlarmi
 @click.option('--sevr', type=click.Choice(EPICSSEVR._member_names_), help="The sevr (only for EPICSAlarming)")
 @click.option('--stat', type=click.Choice(EPICSSTAT._member_names_), help="The stat (only for EPICSAlarming)")
 @click.argument('name')
-def cli(unset, note, stat, sevr, name):
-    producer = ActivationProducer('set-activation.py')
+def main(unset, note, stat, sevr, name):
+    producer = ActivationProducer('set_activation.py')
 
     key = name
 
@@ -33,4 +33,6 @@ def cli(unset, note, stat, sevr, name):
     producer.send(key, value)
 
 
-cli()
+if __name__ == "__main__":
+    main()
+

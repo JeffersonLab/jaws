@@ -15,8 +15,7 @@ class ClassAndCategoryFilter:
                (self._alarm_class is None or (value is not None and self._alarm_class == value.alarm_class))
 
 
-cat_consumer = CategoryConsumer('list-effective-registrations.py')
-categories = cat_consumer.get_keys_then_done()
+categories = []
 
 
 @click.command()
@@ -26,11 +25,21 @@ categories = cat_consumer.get_keys_then_done()
 @click.option('--category', type=click.Choice(categories), help="Only show registrations in the specified category")
 @click.option('--alarm_class', help="Only show registrations in the specified class")
 def cli(monitor, nometa, export, category, alarm_class):
-    consumer = EffectiveRegistrationConsumer('list-effective-registrations.py')
+    consumer = EffectiveRegistrationConsumer('list_effective_registrations.py')
 
     filter_obj = ClassAndCategoryFilter(category, alarm_class)
 
     consumer.consume_then_done(monitor, nometa, export, filter_obj.filter_if)
 
 
-cli()
+def main() -> None:
+    global categories
+
+    cat_consumer = CategoryConsumer('list_effective_registrations.py')
+    categories = cat_consumer.get_keys_then_done()
+    cli()
+
+
+if __name__ == "__main__":
+    main()
+

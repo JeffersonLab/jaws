@@ -6,8 +6,7 @@ from jlab_jaws.clients import CategoryConsumer, ClassProducer
 from jlab_jaws.entities import AlarmClass, AlarmPriority
 
 
-consumer = CategoryConsumer('set-class.py')
-categories = consumer.get_keys_then_done()
+categories = []
 
 
 @click.command()
@@ -30,7 +29,7 @@ categories = consumer.get_keys_then_done()
 def cli(file, unset, category,
         priority, filterable, latching, pointofcontactusername, rationale,
         correctiveaction, ondelayseconds, offdelayseconds, name):
-    producer = ClassProducer('set-class.py')
+    producer = ClassProducer('set_class.py')
 
     key = name
 
@@ -68,4 +67,14 @@ def cli(file, unset, category,
         producer.send(key, value)
 
 
-cli()
+def main() -> None:
+    global categories
+
+    cat_consumer = CategoryConsumer('set_class.py')
+    categories = cat_consumer.get_keys_then_done()
+    cli()
+
+
+if __name__ == "__main__":
+    main()
+

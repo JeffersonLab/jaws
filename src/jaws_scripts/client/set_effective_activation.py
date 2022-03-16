@@ -3,11 +3,11 @@
 import click
 import time
 
-from jlab_jaws.clients import EffectiveAlarmProducer
-from jlab_jaws.entities import EffectiveAlarm, AlarmState, AlarmOverrideSet, \
-    OverriddenAlarmType, EffectiveRegistration, EffectiveActivation, \
+from jlab_jaws.clients import EffectiveActivationProducer
+from jlab_jaws.entities import AlarmState, AlarmOverrideSet, \
+    OverriddenAlarmType, EffectiveActivation, \
     DisabledOverride, FilteredOverride, LatchedOverride, MaskedOverride, OnDelayedOverride, OffDelayedOverride, \
-    ShelvedOverride, ShelvedReason, SimpleProducer, AlarmInstance
+    ShelvedOverride, ShelvedReason
 
 
 def get_overrides(override):
@@ -28,18 +28,10 @@ def get_overrides(override):
         overrides.filtered = FilteredOverride("testing")
     elif override == "Masked":
         overrides.masked = MaskedOverride()
-    else:  # assume Latched
+    elif override == "Latched":
         overrides.latched = LatchedOverride()
 
     return overrides
-
-
-def get_instance():
-    return AlarmInstance("base",
-                         SimpleProducer(),
-                         ["INJ"],
-                         "alarm1",
-                         "command1")
 
 
 @click.command()
@@ -47,8 +39,8 @@ def get_instance():
 @click.option('--state', required=True, type=click.Choice(AlarmState._member_names_), help="The state")
 @click.option('--override', type=click.Choice(OverriddenAlarmType._member_names_), help="The state")
 @click.argument('name')
-def cli(unset, state, override, name):
-    producer = EffectiveAlarmProducer('set-effective-alarm.py')
+def main(unset, state, override, name):
+    producer = EffectiveActivationProducer('set_effective_activation.py')
 
     key = name
 
@@ -56,14 +48,12 @@ def cli(unset, state, override, name):
         value = None
     else:
         overrides = get_overrides(override)
-        alarm_instance= get_instance()
 
-        registration = EffectiveRegistration(None, alarm_instance)
-        activation = EffectiveActivation(None, overrides, AlarmState[state])
-
-        value = EffectiveAlarm(registration, activation)
+        value = EffectiveActivation(None, overrides, AlarmState[state])
 
     producer.send(key, value)
 
 
-cli()
+if __name__ == "__main__":
+    main()
+

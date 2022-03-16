@@ -10,8 +10,8 @@ from jlab_jaws.clients import CategoryProducer
                    "empty string")
 @click.option('--unset', is_flag=True, help="Remove the category")
 @click.argument('name')
-def cli(file, unset, name):
-    producer = CategoryProducer('set-category.py')
+def main(file, unset, name):
+    producer = CategoryProducer('set_category.py')
 
     key = name
 
@@ -26,4 +26,6 @@ def cli(file, unset, name):
         producer.send(key, value)
 
 
-cli()
+if __name__ == "__main__":
+    main()
+

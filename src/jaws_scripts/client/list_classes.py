@@ -13,8 +13,7 @@ class CategoryFilter:
         return self._category is None or (value is not None and self._category == value.category)
 
 
-cat_consumer = CategoryConsumer('list-classes.py')
-categories = cat_consumer.get_keys_then_done()
+categories = []
 
 
 @click.command()
@@ -23,11 +22,21 @@ categories = cat_consumer.get_keys_then_done()
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--category', type=click.Choice(categories), help="Only show registered alarms in the specified category")
 def cli(monitor, nometa, export, category):
-    consumer = ClassConsumer('list-classes.py')
+    consumer = ClassConsumer('list_classes.py')
 
     filter_obj = CategoryFilter(category)
 
     consumer.consume_then_done(monitor, nometa, export, filter_obj.filter_if)
 
 
-cli()
+def main() -> None:
+    global categories
+
+    cat_consumer = CategoryConsumer('list_classes.py')
+    categories = cat_consumer.get_keys_then_done()
+    cli()
+
+
+if __name__ == "__main__":
+    main()
+
