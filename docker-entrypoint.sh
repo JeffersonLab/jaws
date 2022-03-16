@@ -15,13 +15,13 @@ done
 echo "------------------------"
 echo "Step 2: Creating Topics "
 echo "------------------------"
-/scripts/broker/create-topics.py
+/scripts/broker/create_topics.py
 
 
 echo "---------------------------------------"
 echo "Step 3: Adding Schemas to the registry "
 echo "---------------------------------------"
-/scripts/registry/create-schemas.py
+/scripts/registry/create_schemas.py
 
 
 beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
@@ -36,10 +36,10 @@ if [[ -z "${ALARM_LOCATIONS}" ]]; then
 elif beginswith 'https://' "${ALARM_LOCATIONS}"; then
   echo "HTTPS URL specified: $ALARM_LOCATIONS"
   wget -O /tmp/locations "$ALARM_LOCATIONS"
-  /scripts/client/set-location.py --file /tmp/locations
+  /scripts/client/set_location.py --file /tmp/locations
 elif [[ -f "$ALARM_LOCATIONS" ]]; then
   echo "Attempting to setup locations from file $ALARM_LOCATIONS"
-  /scripts/client/set-location.py --file "$ALARM_LOCATIONS"
+  /scripts/client/set_location.py --file "$ALARM_LOCATIONS"
 else
   echo "Attempting to setup locations"
   IFS=','
@@ -57,7 +57,7 @@ else
         PARMS+=(--parent "${parent}")
       fi
 
-      /scripts/client/set-location.py "${PARMS[@]}"
+      /scripts/client/set_location.py "${PARMS[@]}"
     done
 fi
 
@@ -70,10 +70,10 @@ if [[ -z "${ALARM_CATEGORIES}" ]]; then
 elif beginswith 'https://' "${ALARM_CATEGORIES}"; then
   echo "HTTPS URL specified: $ALARM_CATEGORIES"
   wget -O /tmp/categories "$ALARM_CATEGORIES"
-  /scripts/client/set-category.py --file /tmp/categories
+  /scripts/client/set_category.py --file /tmp/categories
 elif [[ -f "$ALARM_CATEGORIES" ]]; then
   echo "Attempting to setup categories from file $ALARM_CATEGORIES"
-  /scripts/client/set-category.py --file "$ALARM_CATEGORIES"
+  /scripts/client/set_category.py --file "$ALARM_CATEGORIES"
 else
   echo "Attempting to setup categories"
   IFS=','
@@ -83,7 +83,7 @@ else
       IFS='|'
       read -a def <<< "$defStr"
       name="${def[0]}"
-      /scripts/client/set-category.py "${name}"
+      /scripts/client/set_category.py "${name}"
     done
 fi
 
@@ -96,10 +96,10 @@ if [[ -z "${ALARM_CLASSES}" ]]; then
 elif beginswith 'https://' "${ALARM_CLASSES}"; then
   echo "HTTPS URL specified: $ALARM_CLASSES"
   wget -O /tmp/classes "$ALARM_CLASSES"
-  /scripts/client/set-class.py --file /tmp/classes
+  /scripts/client/set_class.py --file /tmp/classes
 elif [[ -f "$ALARM_CLASSES" ]]; then
   echo "Attempting to setup class definitions from file $ALARM_CLASSES"
-  /scripts/client/set-class.py --file "$ALARM_CLASSES"
+  /scripts/client/set_class.py --file "$ALARM_CLASSES"
 else
   echo "Attempting to setup classes"
   IFS=','
@@ -142,7 +142,7 @@ else
         PARMS+=(--offdelayseconds ${offdelayseconds})
       fi
 
-      /scripts/client/set-class.py "${PARMS[@]}"
+      /scripts/client/set_class.py "${PARMS[@]}"
     done
 fi
 
@@ -155,10 +155,10 @@ if [[ -z "${ALARM_INSTANCES}" ]]; then
 elif beginswith 'https://' "${ALARM_INSTANCES}"; then
   echo "HTTPS URL specified: $ALARM_INSTANCES"
   wget -O /tmp/instances "$ALARM_INSTANCES"
-  /scripts/client/set-instance.py --file /tmp/instances
+  /scripts/client/set_instance.py --file /tmp/instances
 elif [[ -f "$ALARM_INSTANCES" ]]; then
   echo "Attempting to setup alarm definitions from file $ALARM_INSTANCES"
-  /scripts/client/set-instance.py --file "$ALARM_INSTANCES"
+  /scripts/client/set_instance.py --file "$ALARM_INSTANCES"
 else
   echo "Attempting to setup instances"
   IFS=','
@@ -186,7 +186,7 @@ else
         PARMS+=(--maskedby "${maskedby}")
       fi
 
-      /scripts/client/set-instance.py "${PARMS[@]}"
+      /scripts/client/set_instance.py "${PARMS[@]}"
     done
 fi
 
