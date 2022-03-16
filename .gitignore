@@ -1,7 +1,6 @@
-env/
-venv/
-.venv/
 /.idea/
 __pycache__/
 /src/jaws_scripts.egg-info/
 /dist/
+/.venv/
+/.venv_dev/
