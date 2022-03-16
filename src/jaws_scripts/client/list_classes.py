@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+"""
+    Lists the alarm registration classes.
+
+    **Note**: With the ``--export`` option you can export a file that can be imported by ``set-class --file``.
+"""
+
 import click
 
 from jlab_jaws.clients import ClassConsumer, CategoryConsumer
@@ -21,7 +27,7 @@ categories = []
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--category', type=click.Choice(categories), help="Only show registered alarms in the specified category")
-def cli(monitor, nometa, export, category):
+def list_classes(monitor, nometa, export, category) -> None:
     consumer = ClassConsumer('list_classes.py')
 
     filter_obj = CategoryFilter(category)
@@ -29,14 +35,14 @@ def cli(monitor, nometa, export, category):
     consumer.consume_then_done(monitor, nometa, export, filter_obj.filter_if)
 
 
-def main() -> None:
+def click_main() -> None:
     global categories
 
     cat_consumer = CategoryConsumer('list_classes.py')
     categories = cat_consumer.get_keys_then_done()
-    cli()
+    list_classes()
 
 
 if __name__ == "__main__":
-    main()
+    click_main()
 

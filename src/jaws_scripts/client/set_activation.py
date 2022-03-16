@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Set alarm activation.
+"""
+
 import click
 
 from jlab_jaws.clients import ActivationProducer
@@ -13,7 +17,7 @@ from jlab_jaws.entities import AlarmActivationUnion, SimpleAlarming, EPICSAlarmi
 @click.option('--sevr', type=click.Choice(EPICSSEVR._member_names_), help="The sevr (only for EPICSAlarming)")
 @click.option('--stat', type=click.Choice(EPICSSTAT._member_names_), help="The stat (only for EPICSAlarming)")
 @click.argument('name')
-def main(unset, note, stat, sevr, name):
+def set_activation(unset, note, stat, sevr, name) -> None:
     producer = ActivationProducer('set_activation.py')
 
     key = name
@@ -33,6 +37,10 @@ def main(unset, note, stat, sevr, name):
     producer.send(key, value)
 
 
+def click_main() -> None:
+    set_activation()
+
+
 if __name__ == "__main__":
-    main()
+    click_main()
 

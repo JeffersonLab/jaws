@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+"""
+    Set effective registration.
+
+    **Note**: This is generally for testing only and should be done automatically via
+    `jaws-effective-processor <https://github.com/JeffersonLab/jaws-effective-processor>`_
+"""
+
 import click
 
 from jlab_jaws.entities import EffectiveRegistration, \
@@ -18,7 +25,7 @@ def get_instance():
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear state, missing to set state")
 @click.argument('name')
-def main(unset, name):
+def set_effective_registration(unset, name):
     producer = EffectiveRegistrationProducer('set_effective_registration.py')
 
     key = name
@@ -34,6 +41,10 @@ def main(unset, name):
     producer.send(key, value)
 
 
+def click_main() -> None:
+    set_effective_registration()
+
+
 if __name__ == "__main__":
-    main()
+    click_main()
 

@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 
+"""
+    List Kafka topics
+"""
+
 from confluent_kafka.admin import AdminClient
 
 import os
 
 
-def main() -> None:
+def list_topics() -> None:
+    """
+        List Kafka topics
+    """
     bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
     a = AdminClient({'bootstrap.servers': bootstrap_servers})
@@ -24,4 +31,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    list_topics()

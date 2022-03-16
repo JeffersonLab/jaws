@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Describe Kafka topics
+"""
+
 from confluent_kafka.admin import AdminClient, ConfigResource, ConfigSource
 from confluent_kafka import KafkaException
 
@@ -8,7 +12,10 @@ import json
 import pkgutil
 
 
-def main() -> None:
+def describe_topics() -> None:
+    """
+        Describe Kafka topics
+    """
     bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
     a = AdminClient({'bootstrap.servers': bootstrap_servers})
@@ -43,4 +50,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    describe_topics()

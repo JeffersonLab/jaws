@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 
+"""
+    Show Kafka consumer groups
+"""
+
 from confluent_kafka.admin import AdminClient
 
 import os
 
 
-def main() -> None:
+def show_consumer_groups() -> None:
+    """
+        Show Kafka consumer groups
+    """
     bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
     a = AdminClient({'bootstrap.servers': bootstrap_servers})
@@ -28,4 +35,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    show_consumer_groups()

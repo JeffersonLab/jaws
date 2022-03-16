@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Lists the alarm effective activations.
+"""
+
 import click
 from jlab_jaws.clients import EffectiveActivationConsumer
 
@@ -8,12 +12,16 @@ from jlab_jaws.clients import EffectiveActivationConsumer
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
-def main(monitor, nometa, export):
+def list_effective_activations(monitor, nometa, export) -> None:
     consumer = EffectiveActivationConsumer('list_effective_activations.py')
 
     consumer.consume_then_done(monitor, nometa, export)
 
 
+def click_main() -> None:
+    list-list_effective_activations()
+
+
 if __name__ == "__main__":
-    main()
+    click_main()
 

@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+"""
+    Set effective activation.
+
+    **Note**: This is generally for testing only and should be done automatically via
+    `jaws-effective-processor <https://github.com/JeffersonLab/jaws-effective-processor>`_
+"""
+
 import click
 import time
 
@@ -39,7 +46,7 @@ def get_overrides(override):
 @click.option('--state', required=True, type=click.Choice(AlarmState._member_names_), help="The state")
 @click.option('--override', type=click.Choice(OverriddenAlarmType._member_names_), help="The state")
 @click.argument('name')
-def main(unset, state, override, name):
+def set_effective_activation(unset, state, override, name) -> None:
     producer = EffectiveActivationProducer('set_effective_activation.py')
 
     key = name
@@ -54,6 +61,10 @@ def main(unset, state, override, name):
     producer.send(key, value)
 
 
+def click_main() -> None:
+    set_effective_activation()
+
+
 if __name__ == "__main__":
-    main()
+    click_main()
 

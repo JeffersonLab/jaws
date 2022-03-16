@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Delete JAWS Kafka topics
+"""
+
 from confluent_kafka.admin import AdminClient
 
 import os
@@ -7,7 +11,10 @@ import json
 import pkgutil
 
 
-def main() -> None:
+def delete_topics() -> None:
+    """
+        Delete JAWS Kafka topics
+    """
     bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
     a = AdminClient({'bootstrap.servers': bootstrap_servers})
@@ -27,4 +34,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    delete_topics()

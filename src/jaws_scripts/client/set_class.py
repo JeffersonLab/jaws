@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+"""
+    Set alarm registration class.
+
+    **Note**: bulk imports with ``--file`` expect alarm class records formatted in
+    `AVRO JSON Encoding <https://avro.apache.org/docs/current/spec.html#json_encoding>`_
+"""
+
 import click
 
 from jlab_jaws.clients import CategoryConsumer, ClassProducer
@@ -26,9 +33,9 @@ categories = []
 @click.option('--ondelayseconds', type=int, default=None, help="Number of on delay seconds")
 @click.option('--offdelayseconds', type=int, default=None, help="Number of off delay seconds")
 @click.argument('name')
-def cli(file, unset, category,
+def set_class(file, unset, category,
         priority, filterable, latching, pointofcontactusername, rationale,
-        correctiveaction, ondelayseconds, offdelayseconds, name):
+        correctiveaction, ondelayseconds, offdelayseconds, name) -> None:
     producer = ClassProducer('set_class.py')
 
     key = name
@@ -67,14 +74,14 @@ def cli(file, unset, category,
         producer.send(key, value)
 
 
-def main() -> None:
+def click_main() -> None:
     global categories
 
     cat_consumer = CategoryConsumer('set_class.py')
     categories = cat_consumer.get_keys_then_done()
-    cli()
+    set_class()
 
 
 if __name__ == "__main__":
-    main()
+    click_main()
 

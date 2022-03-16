@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+"""
+    Set alarm category.
+"""
+
 import click
 
 from jlab_jaws.clients import CategoryProducer
@@ -10,7 +15,7 @@ from jlab_jaws.clients import CategoryProducer
                    "empty string")
 @click.option('--unset', is_flag=True, help="Remove the category")
 @click.argument('name')
-def main(file, unset, name):
+def set_category(file, unset, name) -> None:
     producer = CategoryProducer('set_category.py')
 
     key = name
@@ -26,6 +31,10 @@ def main(file, unset, name):
         producer.send(key, value)
 
 
+def click_main() -> None:
+    set_category()
+
+
 if __name__ == "__main__":
-    main()
+    click_main()
 

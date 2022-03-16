@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Lists the effective registrations.
+"""
+
 import click
 
 from jlab_jaws.clients import EffectiveRegistrationConsumer, CategoryConsumer
@@ -24,7 +28,7 @@ categories = []
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--category', type=click.Choice(categories), help="Only show registrations in the specified category")
 @click.option('--alarm_class', help="Only show registrations in the specified class")
-def cli(monitor, nometa, export, category, alarm_class):
+def list_effective_registrations(monitor, nometa, export, category, alarm_class) -> None:
     consumer = EffectiveRegistrationConsumer('list_effective_registrations.py')
 
     filter_obj = ClassAndCategoryFilter(category, alarm_class)
@@ -32,14 +36,14 @@ def cli(monitor, nometa, export, category, alarm_class):
     consumer.consume_then_done(monitor, nometa, export, filter_obj.filter_if)
 
 
-def main() -> None:
+def click_main() -> None:
     global categories
 
     cat_consumer = CategoryConsumer('list_effective_registrations.py')
     categories = cat_consumer.get_keys_then_done()
-    cli()
+    list_effective_registrations()
 
 
 if __name__ == "__main__":
-    main()
+    click_main()
 

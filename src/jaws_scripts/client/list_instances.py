@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Lists the alarm registration instances.
+"""
+
 import click
 
 from jlab_jaws.clients import InstanceConsumer
@@ -18,7 +22,7 @@ class ClassFilter:
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--alarm_class', help="Only show instances in the specified class")
-def main(monitor, nometa, export, alarm_class):
+def list_instances(monitor, nometa, export, alarm_class) -> None:
     consumer = InstanceConsumer('list_instances.py')
 
     filter_obj = ClassFilter(alarm_class)
@@ -26,6 +30,10 @@ def main(monitor, nometa, export, alarm_class):
     consumer.consume_then_done(monitor, nometa, export, filter_obj.filter_if)
 
 
+def click_main() -> None:
+    list_instances()
+
+
 if __name__ == "__main__":
-    main()
+    click_main()
 
