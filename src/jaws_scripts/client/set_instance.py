@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
-import click
-
-from jlab_jaws.clients import LocationConsumer, InstanceProducer
-from jlab_jaws.entities import AlarmInstance, \
-    SimpleProducer, EPICSProducer, CALCProducer
-
 """
     Set alarm registration instance.
 
     **Note**: bulk imports with ``--file`` expect alarm instance records formatted in
     `AVRO JSON Encoding <https://avro.apache.org/docs/current/spec.html#json_encoding>`_
 """
+
+import click
+
+from jlab_jaws.clients import LocationConsumer, InstanceProducer
+from jlab_jaws.entities import AlarmInstance, \
+    SimpleProducer, EPICSProducer, CALCProducer
 
 locations = []
 
