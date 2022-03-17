@@ -7,13 +7,13 @@
    .. autosummary::
       :toctree:
    {% for item in functions %}
-
    {% if item == "click_main" %}
    .. click:: {{ fullname }}:{{ name }}
       :prog: {{ name }}
       :nested: full
    {% else %}
-      {{ item }}
+   .. parsed-literal::
+      {{ name }}
    {% endif %}
    {%- endfor %}
    {% endif %}
