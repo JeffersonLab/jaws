@@ -26,7 +26,9 @@ categories = []
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
-@click.option('--category', type=click.Choice(categories), help="Only show registrations in the specified category")
+@click.option('--category', type=click.Choice(categories),
+              help="Only show registrations in the specified category (Options queried on-demand from "
+                   "alarm-categories topic)")
 @click.option('--alarm_class', help="Only show registrations in the specified class")
 def list_effective_registrations(monitor, nometa, export, category, alarm_class) -> None:
     consumer = EffectiveRegistrationConsumer('list_effective_registrations.py')

@@ -2,6 +2,10 @@
 
 """
     Set alarm category.
+
+    **Note**: bulk imports with ``--file`` expect alarm class records formatted in
+    `AVRO JSON Encoding <https://avro.apache.org/docs/current/spec.html#json_encoding>`_
+    See `Example file <https://github.com/JeffersonLab/jaws/blob/main/examples/data/categories>`_.
 """
 
 import click

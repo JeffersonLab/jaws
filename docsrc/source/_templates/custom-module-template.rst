@@ -12,6 +12,9 @@
       :prog: {{ name }}
       :nested: full
    {% else %}
+   ********************
+   {{ name }}
+   ********************
    .. parsed-literal::
       {{ name }}
    {% endif %}

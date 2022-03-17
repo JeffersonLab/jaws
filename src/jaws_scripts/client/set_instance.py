@@ -4,7 +4,8 @@
     Set alarm registration instance.
 
     **Note**: bulk imports with ``--file`` expect alarm instance records formatted in
-    `AVRO JSON Encoding <https://avro.apache.org/docs/current/spec.html#json_encoding>`_
+    `AVRO JSON Encoding <https://avro.apache.org/docs/current/spec.html#json_encoding>`_.
+    See `Example file <https://github.com/JeffersonLab/jaws/blob/main/examples/data/instances>`_.
 """
 
 import click
@@ -25,7 +26,9 @@ locations = []
 @click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")
 @click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm")
 @click.option('--producerexpression', help="The CALC expression used to generate this alarm")
-@click.option('--location', '-l', type=click.Choice(locations), multiple=True, help="The alarm location")
+@click.option('--location', '-l', type=click.Choice(locations), multiple=True,
+              help="The alarm location (Options queried on-demand from alarm-locations topic).  Multiple locations "
+                   "allowed.")
 @click.option('--screencommand', help="The command to open the related control system screen")
 @click.option('--maskedby', help="The optional parent alarm that masks this one")
 @click.argument('name')
