@@ -17,7 +17,7 @@ from jlab_jaws.entities import AlarmState, AlarmOverrideSet, \
     ShelvedOverride, ShelvedReason
 
 
-def get_overrides(override):
+def __get_overrides(override):
     overrides = AlarmOverrideSet(None, None, None, None, None, None, None)
 
     timestamp_seconds = time.time() + 5;
@@ -54,7 +54,7 @@ def set_effective_activation(unset, state, override, name) -> None:
     if unset:
         value = None
     else:
-        overrides = get_overrides(override)
+        overrides = __get_overrides(override)
 
         value = EffectiveActivation(None, overrides, AlarmState[state])
 

@@ -14,7 +14,7 @@ from jlab_jaws.entities import EffectiveRegistration, \
 from jlab_jaws.clients import EffectiveRegistrationProducer
 
 
-def get_instance():
+def __get_instance():
     return AlarmInstance("base",
                          SimpleProducer(),
                          ["INJ"],
@@ -34,7 +34,7 @@ def set_effective_registration(unset, name):
         value = None
     else:
         alarm_class = None
-        alarm_instance = get_instance()
+        alarm_instance = __get_instance()
 
         value = EffectiveRegistration(alarm_class, alarm_instance)
 
