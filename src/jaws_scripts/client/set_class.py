@@ -10,8 +10,8 @@
 
 import click
 
-from jlab_jaws.clients import CategoryConsumer, ClassProducer
-from jlab_jaws.entities import AlarmClass, AlarmPriority
+from jaws_libp.clients import CategoryConsumer, ClassProducer
+from jaws_libp.entities import AlarmClass, AlarmPriority
 
 
 categories = []

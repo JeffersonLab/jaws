@@ -9,9 +9,9 @@
 
 import click
 
-from jlab_jaws.entities import EffectiveRegistration, \
+from jaws_libp.entities import EffectiveRegistration, \
     AlarmInstance, SimpleProducer
-from jlab_jaws.clients import EffectiveRegistrationProducer
+from jaws_libp.clients import EffectiveRegistrationProducer
 
 
 def __get_instance():

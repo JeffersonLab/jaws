@@ -10,7 +10,7 @@
 
 import click
 
-from jlab_jaws.clients import CategoryProducer
+from jaws_libp.clients import CategoryProducer
 
 
 @click.command()

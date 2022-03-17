@@ -6,8 +6,8 @@
 
 import click
 
-from jlab_jaws.entities import AlarmLocation
-from jlab_jaws.clients import LocationProducer
+from jaws_libp.entities import AlarmLocation
+from jaws_libp.clients import LocationProducer
 
 
 @click.command()

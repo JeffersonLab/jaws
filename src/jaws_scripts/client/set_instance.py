@@ -10,8 +10,8 @@
 
 import click
 
-from jlab_jaws.clients import LocationConsumer, InstanceProducer
-from jlab_jaws.entities import AlarmInstance, \
+from jaws_libp.clients import LocationConsumer, InstanceProducer
+from jaws_libp.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 
 locations = []

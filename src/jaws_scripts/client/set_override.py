@@ -7,10 +7,10 @@
 import click
 import time
 
-from jlab_jaws.entities import AlarmOverrideUnion, LatchedOverride, FilteredOverride, MaskedOverride, \
+from jaws_libp.entities import AlarmOverrideUnion, LatchedOverride, FilteredOverride, MaskedOverride, \
     DisabledOverride, OnDelayedOverride, OffDelayedOverride, ShelvedOverride, AlarmOverrideKey, OverriddenAlarmType, \
     ShelvedReason
-from jlab_jaws.clients import OverrideProducer
+from jaws_libp.clients import OverrideProducer
 
 
 @click.command()

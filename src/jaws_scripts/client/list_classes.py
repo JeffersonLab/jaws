@@ -8,7 +8,7 @@
 
 import click
 
-from jlab_jaws.clients import ClassConsumer, CategoryConsumer
+from jaws_libp.clients import ClassConsumer, CategoryConsumer
 
 
 class CategoryFilter:

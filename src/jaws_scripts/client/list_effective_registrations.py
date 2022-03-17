@@ -6,7 +6,7 @@
 
 import click
 
-from jlab_jaws.clients import EffectiveRegistrationConsumer, CategoryConsumer
+from jaws_libp.clients import EffectiveRegistrationConsumer, CategoryConsumer
 
 
 class ClassAndCategoryFilter:

@@ -5,7 +5,7 @@
 """
 
 import click
-from jlab_jaws.clients import OverrideConsumer
+from jaws_libp.clients import OverrideConsumer
 
 
 @click.command()

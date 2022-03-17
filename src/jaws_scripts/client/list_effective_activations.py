@@ -5,7 +5,7 @@
 """
 
 import click
-from jlab_jaws.clients import EffectiveActivationConsumer
+from jaws_libp.clients import EffectiveActivationConsumer
 
 
 @click.command()

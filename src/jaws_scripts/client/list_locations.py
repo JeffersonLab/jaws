@@ -10,7 +10,7 @@
 
 import click
 
-from jlab_jaws.clients import LocationConsumer
+from jaws_libp.clients import LocationConsumer
 
 
 @click.command()

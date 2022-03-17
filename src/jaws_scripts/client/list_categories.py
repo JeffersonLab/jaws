@@ -5,7 +5,7 @@
 """
 
 import click
-from jlab_jaws.clients import CategoryConsumer
+from jaws_libp.clients import CategoryConsumer
 
 
 @click.command()

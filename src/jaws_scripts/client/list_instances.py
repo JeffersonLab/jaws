@@ -6,7 +6,7 @@
 
 import click
 
-from jlab_jaws.clients import InstanceConsumer
+from jaws_libp.clients import InstanceConsumer
 
 
 class ClassFilter:

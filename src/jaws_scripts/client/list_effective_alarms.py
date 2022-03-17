@@ -5,7 +5,7 @@
 """
 
 import click
-from jlab_jaws.clients import EffectiveAlarmConsumer
+from jaws_libp.clients import EffectiveAlarmConsumer
 
 
 @click.command()

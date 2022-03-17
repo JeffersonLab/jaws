@@ -10,8 +10,8 @@
 import click
 import time
 
-from jlab_jaws.clients import EffectiveAlarmProducer
-from jlab_jaws.entities import EffectiveAlarm, AlarmState, AlarmOverrideSet, \
+from jaws_libp.clients import EffectiveAlarmProducer
+from jaws_libp.entities import EffectiveAlarm, AlarmState, AlarmOverrideSet, \
     OverriddenAlarmType, EffectiveRegistration, EffectiveActivation, \
     DisabledOverride, FilteredOverride, LatchedOverride, MaskedOverride, OnDelayedOverride, OffDelayedOverride, \
     ShelvedOverride, ShelvedReason, SimpleProducer, AlarmInstance
