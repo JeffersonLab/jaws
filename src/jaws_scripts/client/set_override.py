@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Set alarm override.
+"""
+
 import click
 import time
 
@@ -20,7 +24,7 @@ from jlab_jaws.clients import OverrideProducer
 @click.option('--comments', help="Operator explanation for why suppressed")
 @click.option('--filtername', help="Name of filter rule associated with this override")
 @click.argument('name')
-def main(override, unset, expirationseconds, reason, oneshot, comments, filtername, name):
+def set_override(override, unset, expirationseconds, reason, oneshot, comments, filtername, name) -> None:
     producer = OverrideProducer('set_override.py')
 
     if override is None:
@@ -71,7 +75,11 @@ def main(override, unset, expirationseconds, reason, oneshot, comments, filterna
     producer.send(key, value)
 
 
+def click_main() -> None:
+    set_override()
+
+
 if __name__ == "__main__":
-    main()
+    click_main()
 
 

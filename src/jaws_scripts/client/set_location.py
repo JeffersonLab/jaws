@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Set alarm location.
+"""
+
 import click
 
 from jlab_jaws.entities import AlarmLocation
@@ -13,7 +17,7 @@ from jlab_jaws.clients import LocationProducer
 @click.option('--unset', is_flag=True, help="Remove the location")
 @click.argument('name')
 @click.option('--parent', '-p', help="Name of parent Location or None if top-level Location")
-def main(file, unset, name, parent):
+def set_location(file, unset, name, parent) -> None:
     producer = LocationProducer('set_location.py')
 
     key = name
@@ -29,6 +33,10 @@ def main(file, unset, name, parent):
         producer.send(key, value)
 
 
+def click_main() -> None:
+    set_location()
+
+
 if __name__ == "__main__":
-    main()
+    click_main()
 

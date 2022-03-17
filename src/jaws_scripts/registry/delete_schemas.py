@@ -14,7 +14,7 @@ sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
 
 
-def process(record):
+def __process(record):
     try:
         versions = client.delete_subject(record['subject'], True)
         print('Successfully deleted {}; versions: {}'.format(record['subject'], versions))
@@ -23,7 +23,10 @@ def process(record):
         traceback.print_exc()
 
 
-def main() -> None:
+def delete_schemas() -> None:
+    """
+        Delete JAWS AVRO schemas from the Schema Registry
+    """
     conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schema-registry.json')
 
     conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
@@ -33,8 +36,8 @@ def main() -> None:
     records.reverse()
 
     for record in records:
-        process(record)
+        __process(record)
 
 
 if __name__ == "__main__":
-    main()
+    delete_schemas()

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Register JAWS AVRO schemas in to Schema Registry
+"""
+
 import json
 import os
 import pkgutil
@@ -11,7 +15,7 @@ sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
 
 
-def register(file, subject, references=[]):
+def __register(file, subject, references=[]):
 
     schema_bytes = pkgutil.get_data("jlab_jaws", file)
 
@@ -30,26 +34,29 @@ def register(file, subject, references=[]):
     return registered_schema
 
 
-def process(record):
+def __process(record):
     references = []
 
     for ref in record['references']:
         references.append(SchemaReference(ref['name'], ref['subject'], ref['version']))
 
     try:
-        s = register(record['file'], record['subject'], references)
+        s = __register(record['file'], record['subject'], references)
     except SchemaRegistryError:
         print('Unable to create subject {}'.format(record['subject']))
         traceback.print_exc()
 
 
-def main() -> None:
+def create_schemas() -> None:
+    """
+        Register JAWS AVRO schemas in to Schema Registry
+    """
     conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
 
     records = json.loads(conf)
     for r in records:
-        process(r)
+        __process(r)
 
 
 if __name__ == "__main__":
-    main()
+    create_schemas()

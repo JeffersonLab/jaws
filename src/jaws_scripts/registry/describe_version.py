@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Describe a Specific JAWS AVRO schema and version in the Schema Registry
+"""
+
 import os
 import json
 import sys
@@ -7,7 +11,10 @@ import sys
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
 
-def main() -> None:
+def describe_version() -> None:
+    """
+        Describe a Specific JAWS AVRO schema and version in the Schema Registry
+    """
     if len(sys.argv) != 3:
         print("Usage: ./describe_version.py <subject> <version>")
         quit()
@@ -31,4 +38,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    describe_version()

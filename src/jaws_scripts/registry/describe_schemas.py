@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Describe JAWS AVRO schemas in to Schema Registry
+"""
+
 import os
 import json
 import pkgutil
@@ -7,7 +11,10 @@ import pkgutil
 from confluent_kafka.schema_registry import SchemaRegistryClient
 
 
-def main() -> None:
+def describe_schemas() -> None:
+    """
+        Describe JAWS AVRO schemas in to Schema Registry
+    """
     sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
     client = SchemaRegistryClient(sr_conf)
 
@@ -39,4 +46,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    describe_schemas()

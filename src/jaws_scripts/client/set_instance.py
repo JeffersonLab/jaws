@@ -6,6 +6,13 @@ from jlab_jaws.clients import LocationConsumer, InstanceProducer
 from jlab_jaws.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 
+"""
+    Set alarm registration instance.
+
+    **Note**: bulk imports with ``--file`` expect alarm instance records formatted in
+    `AVRO JSON Encoding <https://avro.apache.org/docs/current/spec.html#json_encoding>`_
+"""
+
 locations = []
 
 
@@ -22,8 +29,8 @@ locations = []
 @click.option('--screencommand', help="The command to open the related control system screen")
 @click.option('--maskedby', help="The optional parent alarm that masks this one")
 @click.argument('name')
-def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression, location,
-        screencommand, maskedby, name):
+def set_instance(file, unset, alarmclass, producersimple, producerpv, producerexpression, location,
+        screencommand, maskedby, name) -> None:
     producer = InstanceProducer('set_instance.py')
 
     key = name
@@ -57,14 +64,14 @@ def cli(file, unset, alarmclass, producersimple, producerpv, producerexpression,
         producer.send(key, value)
 
 
-def main() -> None:
+def click_main() -> None:
     global locations
 
     consumer = LocationConsumer('set_instance.py')
     locations = consumer.get_keys_then_done()
-    cli()
+    set_instance()
 
 
 if __name__ == "__main__":
-    main()
+    click_main()
 
