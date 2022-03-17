@@ -76,11 +76,11 @@ pip install jaws-scripts
 
 **Note**: It's generally recommended to use a Python virtual environment to avoid dependency conflicts (else a dedicated Docker container can be used).
 
-## Scripts
+## API
+Admin Scripts API
 
-[Scripts Reference](https://github.com/JeffersonLab/jaws/wiki/Scripts-Reference)
+[Sphinx Docs](https://jeffersonlab.github.io/jaws/)
 
-To see all options use the `--help` option.
 
 ## Configure
 The following environment variables are required by the scripts:
