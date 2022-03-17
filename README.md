@@ -12,7 +12,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [Overview](https://github.com/JeffersonLab/jaws#overview)
 - [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
 - [Install](https://github.com/JeffersonLab/jaws#install) 
-- [Scripts](https://github.com/JeffersonLab/jaws#scripts)
+- [API](https://github.com/JeffersonLab/jaws#api)
 - [Configure](https://github.com/JeffersonLab/jaws#configure)
 - [Build](https://github.com/JeffersonLab/jaws#build) 
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
