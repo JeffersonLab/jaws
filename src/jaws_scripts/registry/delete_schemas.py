@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+    Delete JAWS AVRO schemas from the Schema Registry
+"""
+
 import os
 import json
 import pkgutil
