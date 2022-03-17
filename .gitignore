@@ -4,5 +4,6 @@ __pycache__/
 /dist/
 /.venv/
 /.venv_dev/
+/.venv_intellij/
 /build/
 /docsrc/source/_autosummary/
