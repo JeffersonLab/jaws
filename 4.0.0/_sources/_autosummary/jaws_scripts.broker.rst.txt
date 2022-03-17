@@ -1,0 +1,24 @@
+jaws\_scripts.broker
+====================
+
+.. automodule:: jaws_scripts.broker
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   jaws_scripts.broker.create_topics
+   jaws_scripts.broker.delete_topics
+   jaws_scripts.broker.describe_topics
+   jaws_scripts.broker.list_topics
+   jaws_scripts.broker.show_consumer_groups
+

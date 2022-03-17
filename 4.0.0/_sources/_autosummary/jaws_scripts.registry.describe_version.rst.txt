@@ -1,0 +1,22 @@
+jaws\_scripts.registry.describe\_version
+========================================
+
+.. automodule:: jaws_scripts.registry.describe_version
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   ********************
+   describe_version
+   ********************
+   .. parsed-literal::
+      describe_version
+   
+   
+   
+
+
+

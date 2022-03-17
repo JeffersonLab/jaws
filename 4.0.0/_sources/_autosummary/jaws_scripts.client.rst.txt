@@ -1,0 +1,37 @@
+jaws\_scripts.client
+====================
+
+.. automodule:: jaws_scripts.client
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   jaws_scripts.client.list_activations
+   jaws_scripts.client.list_categories
+   jaws_scripts.client.list_classes
+   jaws_scripts.client.list_effective_activations
+   jaws_scripts.client.list_effective_alarms
+   jaws_scripts.client.list_effective_registrations
+   jaws_scripts.client.list_instances
+   jaws_scripts.client.list_locations
+   jaws_scripts.client.list_overrides
+   jaws_scripts.client.set_activation
+   jaws_scripts.client.set_category
+   jaws_scripts.client.set_class
+   jaws_scripts.client.set_effective_activation
+   jaws_scripts.client.set_effective_alarm
+   jaws_scripts.client.set_effective_registration
+   jaws_scripts.client.set_instance
+   jaws_scripts.client.set_location
+   jaws_scripts.client.set_override
+

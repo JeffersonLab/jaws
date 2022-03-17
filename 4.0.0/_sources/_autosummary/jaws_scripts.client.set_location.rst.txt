@@ -1,0 +1,20 @@
+jaws\_scripts.client.set\_location
+==================================
+
+.. automodule:: jaws_scripts.client.set_location
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   .. click:: jaws_scripts.client.set_location:set_location
+      :prog: set_location
+      :nested: full
+   
+   
+   
+
+
+

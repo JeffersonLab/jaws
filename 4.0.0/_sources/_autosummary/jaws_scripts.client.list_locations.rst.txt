@@ -1,0 +1,20 @@
+jaws\_scripts.client.list\_locations
+====================================
+
+.. automodule:: jaws_scripts.client.list_locations
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   .. click:: jaws_scripts.client.list_locations:list_locations
+      :prog: list_locations
+      :nested: full
+   
+   
+   
+
+
+

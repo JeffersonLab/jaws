@@ -1,0 +1,20 @@
+jaws\_scripts.client.list\_effective\_alarms
+============================================
+
+.. automodule:: jaws_scripts.client.list_effective_alarms
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   .. click:: jaws_scripts.client.list_effective_alarms:list_effective_alarms
+      :prog: list_effective_alarms
+      :nested: full
+   
+   
+   
+
+
+

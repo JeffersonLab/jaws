@@ -1,0 +1,20 @@
+jaws\_scripts.client.set\_effective\_activation
+===============================================
+
+.. automodule:: jaws_scripts.client.set_effective_activation
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   .. click:: jaws_scripts.client.set_effective_activation:set_effective_activation
+      :prog: set_effective_activation
+      :nested: full
+   
+   
+   
+
+
+
