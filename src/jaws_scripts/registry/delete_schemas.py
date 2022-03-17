@@ -33,7 +33,7 @@ def delete_schemas() -> None:
     """
     conf = os.environ.get('SCHEMA_CONFIG', projectpath + 'config/schema-registry.json')
 
-    conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
+    conf = pkgutil.get_data("jaws_libp", "avro/schema-registry.json")
 
     records = json.loads(conf)
 

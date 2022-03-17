@@ -17,7 +17,7 @@ client = SchemaRegistryClient(sr_conf)
 
 def __register(file, subject, references=[]):
 
-    schema_bytes = pkgutil.get_data("jlab_jaws", file)
+    schema_bytes = pkgutil.get_data("jaws_libp", file)
 
     json_dict = json.loads(schema_bytes)
 
@@ -51,7 +51,7 @@ def create_schemas() -> None:
     """
         Register JAWS AVRO schemas in to Schema Registry
     """
-    conf = pkgutil.get_data("jlab_jaws", "avro/schema-registry.json")
+    conf = pkgutil.get_data("jaws_libp", "avro/schema-registry.json")
 
     records = json.loads(conf)
     for r in records:

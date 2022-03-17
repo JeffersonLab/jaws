@@ -20,7 +20,7 @@ def describe_topics() -> None:
 
     a = AdminClient({'bootstrap.servers': bootstrap_servers})
 
-    conf = pkgutil.get_data("jlab_jaws", "avro/topics.json")
+    conf = pkgutil.get_data("jaws_libp", "avro/topics.json")
 
     topics = json.loads(conf)
 
