@@ -1,5 +1,6 @@
 alabaster==0.7.12
 Babel==2.9.1
+build==0.7.0
 certifi==2021.10.8
 charset-normalizer==2.0.12
 click==8.0.4
@@ -14,6 +15,7 @@ jaws-libp==4.0.0
 Jinja2==3.0.3
 MarkupSafe==2.1.1
 packaging==21.3
+pep517==0.12.0
 psutil==5.9.0
 Pygments==2.11.2
 pyparsing==3.0.7
@@ -30,5 +32,6 @@ sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
 tabulate==0.8.9
+tomli==2.0.1
 urllib3==1.26.9
 zipp==3.7.0
