@@ -1,6 +1,6 @@
 services:
   jaws:
-    image: slominskir/jaws:4.0.1
+    image: slominskir/jaws:4.0.2
     environment:
       LOGLEVEL: "INFO"
       ALARM_LOCATIONS: "INJ|CEBAF,NL|CEBAF,SL|CEBAF,CEBAF|"
