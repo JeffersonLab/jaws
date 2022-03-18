@@ -14,7 +14,9 @@ from jaws_libp.clients import CategoryConsumer, ClassProducer
 from jaws_libp.entities import AlarmClass, AlarmPriority
 
 
-categories = []
+if __name__ == "__main__":
+    cat_consumer = CategoryConsumer('set_class.py')
+    categories = cat_consumer.get_keys_then_done()
 
 
 @click.command()
@@ -77,10 +79,6 @@ def set_class(file, unset, category,
 
 
 def click_main() -> None:
-    global categories
-
-    cat_consumer = CategoryConsumer('set_class.py')
-    categories = cat_consumer.get_keys_then_done()
     set_class()
 
 

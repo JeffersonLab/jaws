@@ -19,7 +19,9 @@ class CategoryFilter:
         return self._category is None or (value is not None and self._category == value.category)
 
 
-categories = []
+if __name__ == "__main__":
+    cat_consumer = CategoryConsumer('list_classes.py')
+    categories = cat_consumer.get_keys_then_done()
 
 
 @click.command()
@@ -38,10 +40,6 @@ def list_classes(monitor, nometa, export, category) -> None:
 
 
 def click_main() -> None:
-    global categories
-
-    cat_consumer = CategoryConsumer('list_classes.py')
-    categories = cat_consumer.get_keys_then_done()
     list_classes()
 
 

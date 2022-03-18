@@ -14,7 +14,10 @@ from jaws_libp.clients import LocationConsumer, InstanceProducer
 from jaws_libp.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 
-locations = []
+
+if __name__ == "__main__":
+    consumer = LocationConsumer('set_instance.py')
+    locations = consumer.get_keys_then_done()
 
 
 @click.command()
@@ -68,10 +71,6 @@ def set_instance(file, unset, alarmclass, producersimple, producerpv, producerex
 
 
 def click_main() -> None:
-    global locations
-
-    consumer = LocationConsumer('set_instance.py')
-    locations = consumer.get_keys_then_done()
     set_instance()
 
 
