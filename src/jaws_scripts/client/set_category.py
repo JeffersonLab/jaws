@@ -13,6 +13,7 @@ import click
 from jaws_libp.clients import CategoryProducer
 
 
+# pylint: disable=missing-function-docstring,no-value-for-parameter
 @click.command()
 @click.option('--file', is_flag=True,
               help="Imports a file of key=value pairs (one per line) where the key is category name and value is "

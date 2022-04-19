@@ -11,12 +11,15 @@ from jaws_libp.entities import AlarmActivationUnion, ChannelError, SimpleAlarmin
     EPICSSEVR, EPICSSTAT
 
 
+# pylint: disable=missing-function-docstring,no-value-for-parameter,too-many-arguments
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear an alarm, missing to set active")
 @click.option('--note', help="The note (only for NoteAlarming)")
 @click.option('--error', help="A channel error between JAWS and an alarm activation source such as Disconnected")
-@click.option('--sevr', type=click.Choice(EPICSSEVR._member_names_), help="The sevr (only for EPICSAlarming)")
-@click.option('--stat', type=click.Choice(EPICSSTAT._member_names_), help="The stat (only for EPICSAlarming)")
+@click.option('--sevr', type=click.Choice(list(map(lambda c: c.name, EPICSSEVR))),
+              help="The sevr (only for EPICSAlarming)")
+@click.option('--stat', type=click.Choice(list(map(lambda c: c.name, EPICSSTAT))),
+              help="The stat (only for EPICSAlarming)")
 @click.argument('name')
 def set_activation(unset, note, error, stat, sevr, name) -> None:
     producer = ActivationProducer('set_activation.py')
