@@ -17,20 +17,20 @@ def delete_topics() -> None:
     """
     bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
-    a = AdminClient({'bootstrap.servers': bootstrap_servers})
+    admin_client = AdminClient({'bootstrap.servers': bootstrap_servers})
 
     conf = pkgutil.get_data("jaws_libp", "avro/topics.json")
 
     topics = json.loads(conf)
 
-    fs = a.delete_topics(topics, operation_timeout=15)
+    futures = admin_client.delete_topics(topics, operation_timeout=15)
 
-    for topic, f in fs.items():
+    for topic, future in futures.items():
         try:
-            f.result()  # The result itself is None
-            print("Topic {} deleted".format(topic))
+            future.result()  # The result itself is None
+            print(f"Topic {topic} deleted")
         except Exception as e:
-            print("Failed to delete topic {}: {}".format(topic, e))
+            print(f"Failed to delete topic {topic}: {e}")
 
 
 if __name__ == "__main__":

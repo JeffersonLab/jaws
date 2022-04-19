@@ -15,19 +15,19 @@ def list_topics() -> None:
     """
     bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
-    a = AdminClient({'bootstrap.servers': bootstrap_servers})
+    admin_client = AdminClient({'bootstrap.servers': bootstrap_servers})
 
-    md = a.list_topics(timeout=10)
+    meta = admin_client.list_topics(timeout=10)
 
-    print("{} topics:".format(len(md.topics)))
+    print("{} topics:".format(len(meta.topics)))
 
-    for t in iter(md.topics.values()):
-        if t.error is not None:
-            errstr = ": {}".format(t.error)
+    for topic in iter(meta.topics.values()):
+        if topic.error is not None:
+            errstr = ": {}".format(topic.error)
         else:
             errstr = ""
 
-        print("  \"{}\" with {} partition(s){}".format(t, len(t.partitions), errstr))
+        print("  \"{}\" with {} partition(s){}".format(topic, len(topic.partitions), errstr))
 
 
 if __name__ == "__main__":

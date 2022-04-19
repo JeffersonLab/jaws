@@ -15,23 +15,23 @@ def show_consumer_groups() -> None:
     """
     bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
-    a = AdminClient({'bootstrap.servers': bootstrap_servers})
+    admin_client = AdminClient({'bootstrap.servers': bootstrap_servers})
 
-    groups = a.list_groups(timeout=10)
+    groups = admin_client.list_groups(timeout=10)
 
     print("{} consumer groups:".format(len(groups)))
 
-    for g in groups:
-        if g.error is not None:
-            errstr = ": {}".format(g.error)
+    for group in groups:
+        if group.error is not None:
+            errstr = ": {}".format(group.error)
         else:
             errstr = ""
 
         print(" \"{}\" with {} member(s), protocol: {}, protocol_type: {}{}".format(
-            g, len(g.members), g.protocol, g.protocol_type, errstr))
+            group, len(group.members), group.protocol, group.protocol_type, errstr))
 
-        for m in g.members:
-            print("id {} client_id: {} client_host: {}".format(m.id, m.client_id, m.client_host))
+        for member in group.members:
+            print("id {} client_id: {} client_host: {}".format(member.id, member.client_id, member.client_host))
 
 
 if __name__ == "__main__":

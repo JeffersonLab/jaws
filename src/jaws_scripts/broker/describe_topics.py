@@ -18,7 +18,7 @@ def describe_topics() -> None:
     """
     bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
-    a = AdminClient({'bootstrap.servers': bootstrap_servers})
+    admin_client = AdminClient({'bootstrap.servers': bootstrap_servers})
 
     conf = pkgutil.get_data("jaws_libp", "avro/topics.json")
 
@@ -33,11 +33,11 @@ def describe_topics() -> None:
     for t in topics:
         resources.append(ConfigResource('topic', t))
 
-    fs = a.describe_configs(resources)
+    futures = admin_client.describe_configs(resources)
 
-    for res, f in fs.items():
+    for res, future in futures.items():
         try:
-            configs = f.result()
+            configs = future.result()
             print("")
             print("Topic {}".format(res.name))
             print("-----------------------------------------------------------------")

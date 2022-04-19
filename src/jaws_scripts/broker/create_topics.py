@@ -17,7 +17,7 @@ def create_topics() -> None:
     """
     bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
 
-    a = AdminClient({'bootstrap.servers': bootstrap_servers})
+    admin_client = AdminClient({'bootstrap.servers': bootstrap_servers})
 
     conf = pkgutil.get_data("jaws_libp", "avro/topics.json")
 
@@ -26,14 +26,14 @@ def create_topics() -> None:
     new_topics = [NewTopic(topic, num_partitions=1, replication_factor=1,
                            config={"cleanup.policy": "compact"}) for topic in topics]
 
-    fs = a.create_topics(new_topics, operation_timeout=15)
+    futures = admin_client.create_topics(new_topics, operation_timeout=15)
 
-    for topic, f in fs.items():
+    for topic, future in futures.items():
         try:
-            f.result()
-            print("Topic {} created".format(topic))
+            future.result()
+            print(f"Topic {topic} created")
         except Exception as e:
-            print("Failed to create topic {}: {}".format(topic, e))
+            print(f"Failed to create topic {topic}: {e}")
 
 
 if __name__ == "__main__":
