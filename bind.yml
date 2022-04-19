@@ -17,7 +17,7 @@ services:
   jaws:
     extends:
       file: build.yml
-      service: registry
+      service: jaws
     volumes:
       - ./docker-entrypoint.sh:/docker-entrypoint.sh
       - ./src/jaws-scripts:/scripts
