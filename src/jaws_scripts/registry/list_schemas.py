@@ -13,7 +13,7 @@ def list_schemas() -> None:
     """
         List all schemas in the Schema Registry
     """
-    sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
+    sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
     client = SchemaRegistryClient(sr_conf)
 
     subjects = client.get_subjects()

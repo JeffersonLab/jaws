@@ -11,12 +11,11 @@ import traceback
 
 from confluent_kafka.schema_registry import SchemaRegistryClient, Schema, SchemaReference, SchemaRegistryError
 
-sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
+sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
 
 
 def __register(file, subject, references=[]):
-
     schema_bytes = pkgutil.get_data("jaws_libp", file)
 
     json_dict = json.loads(schema_bytes)

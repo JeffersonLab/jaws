@@ -4,8 +4,8 @@
     Describe JAWS AVRO schemas in to Schema Registry
 """
 
-import os
 import json
+import os
 import pkgutil
 
 from confluent_kafka.schema_registry import SchemaRegistryClient
@@ -15,7 +15,7 @@ def describe_schemas() -> None:
     """
         Describe JAWS AVRO schemas in to Schema Registry
     """
-    sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
+    sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
     client = SchemaRegistryClient(sr_conf)
 
     conf = pkgutil.get_data("jaws_libp", "avro/schema-registry.json")
@@ -42,7 +42,8 @@ def describe_schemas() -> None:
         with open(path, "w") as text_file:
             print(json.dumps(json.loads(registered.schema.schema_str), indent=4), file=text_file)
 
-        print("ID: {}, Subject: {}, Version: {}, File: {}".format(registered.schema_id, registered.subject, registered.version, path))
+        print("ID: {}, Subject: {}, Version: {}, File: {}".format(registered.schema_id, registered.subject,
+                                                                  registered.version, path))
 
 
 if __name__ == "__main__":

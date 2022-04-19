@@ -4,8 +4,8 @@
     Describe a Specific JAWS AVRO schema and version in the Schema Registry
 """
 
-import os
 import json
+import os
 import sys
 
 from confluent_kafka.schema_registry import SchemaRegistryClient

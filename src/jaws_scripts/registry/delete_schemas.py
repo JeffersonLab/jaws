@@ -4,8 +4,8 @@
     Delete JAWS AVRO schemas from the Schema Registry
 """
 
-import os
 import json
+import os
 import pkgutil
 import traceback
 
@@ -14,7 +14,7 @@ from confluent_kafka.schema_registry import SchemaRegistryClient, SchemaRegistry
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 projectpath = scriptpath + '/../../'
 
-sr_conf = {'url':  os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
+sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
 
 
