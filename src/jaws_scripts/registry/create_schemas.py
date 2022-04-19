@@ -15,7 +15,10 @@ sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
 client = SchemaRegistryClient(sr_conf)
 
 
-def __register(file, subject, references=[]):
+def __register(file, subject, references=None):
+    if references is None:
+        references = []
+
     schema_bytes = pkgutil.get_data("jaws_libp", file)
 
     json_dict = json.loads(schema_bytes)
@@ -24,9 +27,9 @@ def __register(file, subject, references=[]):
 
     unregistered_schema = Schema(json_str, 'AVRO', references)
 
-    id = client.register_schema(subject, unregistered_schema)
+    schema_id = client.register_schema(subject, unregistered_schema)
 
-    print('Successfully registered {} with id: {}'.format(subject, id))
+    print(f'Successfully registered {subject} with id: {schema_id}')
 
     registered_schema = client.get_latest_version(subject)
 
@@ -40,9 +43,9 @@ def __process(record):
         references.append(SchemaReference(ref['name'], ref['subject'], ref['version']))
 
     try:
-        s = __register(record['file'], record['subject'], references)
+        __register(record['file'], record['subject'], references)
     except SchemaRegistryError:
-        print('Unable to create subject {}'.format(record['subject']))
+        print(f'Unable to create subject {record["subject"]}')
         traceback.print_exc()
 
 
@@ -53,8 +56,8 @@ def create_schemas() -> None:
     conf = pkgutil.get_data("jaws_libp", "avro/schema-registry.json")
 
     records = json.loads(conf)
-    for r in records:
-        __process(r)
+    for record in records:
+        __process(record)
 
 
 if __name__ == "__main__":

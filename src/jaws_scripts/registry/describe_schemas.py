@@ -24,8 +24,8 @@ def describe_schemas() -> None:
 
     lookup = {}
 
-    for r in records:
-        lookup[r['subject']] = r['file']
+    for record in records:
+        lookup[record['subject']] = record['file']
 
     subjects = client.get_subjects()
 
@@ -39,11 +39,10 @@ def describe_schemas() -> None:
 
         path = "/tmp/" + filename
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w") as text_file:
+        with open(path, "w", encoding="utf-8") as text_file:
             print(json.dumps(json.loads(registered.schema.schema_str), indent=4), file=text_file)
 
-        print("ID: {}, Subject: {}, Version: {}, File: {}".format(registered.schema_id, registered.subject,
-                                                                  registered.version, path))
+        print(f"ID: {registered.schema_id}, Subject: {registered.subject}, Version: {registered.version}, File: {path}")
 
 
 if __name__ == "__main__":

@@ -21,9 +21,9 @@ client = SchemaRegistryClient(sr_conf)
 def __process(record):
     try:
         versions = client.delete_subject(record['subject'], True)
-        print('Successfully deleted {}; versions: {}'.format(record['subject'], versions))
+        print(f'Successfully deleted {record["subject"]}; versions: {versions}')
     except SchemaRegistryError:
-        print('Unable to delete: {}'.format(record['subject']))
+        print(f'Unable to delete: {record["subject"]}')
         traceback.print_exc()
 
 
