@@ -22,6 +22,7 @@ def __get_instance():
                          "command1")
 
 
+# pylint: disable=missing-function-docstring,no-value-for-parameter
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear state, missing to set state")
 @click.argument('name')
