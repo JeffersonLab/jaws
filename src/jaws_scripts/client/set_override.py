@@ -13,13 +13,15 @@ from jaws_libp.entities import AlarmOverrideUnion, LatchedOverride, FilteredOver
     ShelvedReason
 
 
+# pylint: disable=missing-function-docstring,too-many-arguments,no-value-for-parameter,too-many-branches
 @click.command()
-@click.option('--override', type=click.Choice(OverriddenAlarmType._member_names_), help="The type of override")
+@click.option('--override', type=click.Choice(list(map(lambda c: c.name, OverriddenAlarmType))),
+              help="The type of override")
 @click.option('--unset', is_flag=True, help="Remove the override")
 @click.option('--expirationseconds', type=int, help="The number of seconds until the shelved status expires, None for "
                                                     "indefinite")
-@click.option('--reason', type=click.Choice(ShelvedReason._member_names_), help="The explanation for why this alarm "
-                                                                                "has been shelved")
+@click.option('--reason', type=click.Choice(list(map(lambda c: c.name, ShelvedReason))),
+              help="The explanation for why this alarm has been shelved")
 @click.option('--oneshot', is_flag=True, help="Whether shelving is one-shot or continuous")
 @click.option('--comments', help="Operator explanation for why suppressed")
 @click.option('--filtername', help="Name of filter rule associated with this override")
