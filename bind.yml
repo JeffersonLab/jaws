@@ -20,4 +20,4 @@ services:
       service: jaws
     volumes:
       - ./docker-entrypoint.sh:/docker-entrypoint.sh
-      - ./src/jaws-scripts:/scripts
+      - ./src/jaws_scripts:/opt/venv/lib/python3.9/site-packages/jaws_scripts
