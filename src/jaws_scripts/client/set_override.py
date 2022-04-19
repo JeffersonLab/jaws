@@ -4,13 +4,13 @@
     Set alarm override.
 """
 
-import click
 import time
 
+import click
+from jaws_libp.clients import OverrideProducer
 from jaws_libp.entities import AlarmOverrideUnion, LatchedOverride, FilteredOverride, MaskedOverride, \
     DisabledOverride, OnDelayedOverride, OffDelayedOverride, ShelvedOverride, AlarmOverrideKey, OverriddenAlarmType, \
     ShelvedReason
-from jaws_libp.clients import OverrideProducer
 
 
 @click.command()
@@ -67,7 +67,7 @@ def set_override(override, unset, expirationseconds, reason, oneshot, comments, 
             msg = FilteredOverride(filtername)
         elif override == "Masked":
             msg = MaskedOverride()
-        else: # assume Latched
+        else:  # assume Latched
             msg = LatchedOverride()
 
         value = AlarmOverrideUnion(msg)
@@ -81,5 +81,3 @@ def click_main() -> None:
 
 if __name__ == "__main__":
     click_main()
-
-

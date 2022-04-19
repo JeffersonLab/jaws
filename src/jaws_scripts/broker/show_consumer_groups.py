@@ -4,9 +4,9 @@
     Show Kafka consumer groups
 """
 
-from confluent_kafka.admin import AdminClient
-
 import os
+
+from confluent_kafka.admin import AdminClient
 
 
 def show_consumer_groups() -> None:
@@ -28,7 +28,7 @@ def show_consumer_groups() -> None:
             errstr = ""
 
         print(" \"{}\" with {} member(s), protocol: {}, protocol_type: {}{}".format(
-              g, len(g.members), g.protocol, g.protocol_type, errstr))
+            g, len(g.members), g.protocol, g.protocol_type, errstr))
 
         for m in g.members:
             print("id {} client_id: {} client_host: {}".format(m.id, m.client_id, m.client_host))

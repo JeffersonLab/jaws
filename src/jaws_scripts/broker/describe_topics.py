@@ -4,12 +4,12 @@
     Describe Kafka topics
 """
 
-from confluent_kafka.admin import AdminClient, ConfigResource, ConfigSource
-from confluent_kafka import KafkaException
-
-import os
 import json
+import os
 import pkgutil
+
+from confluent_kafka import KafkaException
+from confluent_kafka.admin import AdminClient, ConfigResource
 
 
 def describe_topics() -> None:

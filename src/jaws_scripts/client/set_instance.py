@@ -14,7 +14,6 @@ from jaws_libp.clients import LocationConsumer, InstanceProducer
 from jaws_libp.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 
-
 if __name__ == "__main__":
     consumer = LocationConsumer('set_instance.py')
     locations = consumer.get_keys_then_done()
@@ -36,7 +35,7 @@ if __name__ == "__main__":
 @click.option('--maskedby', help="The optional parent alarm that masks this one")
 @click.argument('name')
 def set_instance(file, unset, alarmclass, producersimple, producerpv, producerexpression, location,
-        screencommand, maskedby, name) -> None:
+                 screencommand, maskedby, name) -> None:
     producer = InstanceProducer('set_instance.py')
 
     key = name
@@ -76,4 +75,3 @@ def click_main() -> None:
 
 if __name__ == "__main__":
     click_main()
-

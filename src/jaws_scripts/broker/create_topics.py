@@ -4,11 +4,11 @@
     Create JAWS Kafka topics
 """
 
-from confluent_kafka.admin import AdminClient, NewTopic
-
-import os
 import json
+import os
 import pkgutil
+
+from confluent_kafka.admin import AdminClient, NewTopic
 
 
 def create_topics() -> None:

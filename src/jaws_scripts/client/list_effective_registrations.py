@@ -48,4 +48,3 @@ def click_main() -> None:
 
 if __name__ == "__main__":
     click_main()
-

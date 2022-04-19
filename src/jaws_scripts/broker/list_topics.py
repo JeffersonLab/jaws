@@ -4,9 +4,9 @@
     List Kafka topics
 """
 
-from confluent_kafka.admin import AdminClient
-
 import os
+
+from confluent_kafka.admin import AdminClient
 
 
 def list_topics() -> None:

@@ -7,9 +7,9 @@
     `jaws-effective-processor <https://github.com/JeffersonLab/jaws-effective-processor>`_
 """
 
-import click
 import time
 
+import click
 from jaws_libp.clients import EffectiveActivationProducer
 from jaws_libp.entities import AlarmState, AlarmOverrideSet, \
     OverriddenAlarmType, EffectiveActivation, \
@@ -67,4 +67,3 @@ def click_main() -> None:
 
 if __name__ == "__main__":
     click_main()
-

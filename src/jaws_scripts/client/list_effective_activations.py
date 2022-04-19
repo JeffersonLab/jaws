@@ -19,9 +19,8 @@ def list_effective_activations(monitor, nometa, export) -> None:
 
 
 def click_main() -> None:
-    list-list_effective_activations()
+    list - list_effective_activations()
 
 
 if __name__ == "__main__":
     click_main()
-

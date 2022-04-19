@@ -13,7 +13,6 @@ import click
 from jaws_libp.clients import CategoryConsumer, ClassProducer
 from jaws_libp.entities import AlarmClass, AlarmPriority
 
-
 if __name__ == "__main__":
     cat_consumer = CategoryConsumer('set_class.py')
     categories = cat_consumer.get_keys_then_done()
@@ -38,8 +37,8 @@ if __name__ == "__main__":
 @click.option('--offdelayseconds', type=int, default=None, help="Number of off delay seconds")
 @click.argument('name')
 def set_class(file, unset, category,
-        priority, filterable, latching, pointofcontactusername, rationale,
-        correctiveaction, ondelayseconds, offdelayseconds, name) -> None:
+              priority, filterable, latching, pointofcontactusername, rationale,
+              correctiveaction, ondelayseconds, offdelayseconds, name) -> None:
     producer = ClassProducer('set_class.py')
 
     key = name
@@ -84,4 +83,3 @@ def click_main() -> None:
 
 if __name__ == "__main__":
     click_main()
-

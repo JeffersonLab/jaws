@@ -5,9 +5,8 @@
 """
 
 import click
-
-from jaws_libp.entities import AlarmLocation
 from jaws_libp.clients import LocationProducer
+from jaws_libp.entities import AlarmLocation
 
 
 @click.command()
@@ -39,4 +38,3 @@ def click_main() -> None:
 
 if __name__ == "__main__":
     click_main()
-

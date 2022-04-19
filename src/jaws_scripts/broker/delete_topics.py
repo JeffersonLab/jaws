@@ -4,11 +4,11 @@
     Delete JAWS Kafka topics
 """
 
-from confluent_kafka.admin import AdminClient
-
-import os
 import json
+import os
 import pkgutil
+
+from confluent_kafka.admin import AdminClient
 
 
 def delete_topics() -> None:

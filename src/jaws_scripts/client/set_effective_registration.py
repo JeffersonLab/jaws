@@ -8,10 +8,9 @@
 """
 
 import click
-
+from jaws_libp.clients import EffectiveRegistrationProducer
 from jaws_libp.entities import EffectiveRegistration, \
     AlarmInstance, SimpleProducer
-from jaws_libp.clients import EffectiveRegistrationProducer
 
 
 def __get_instance():
@@ -47,4 +46,3 @@ def click_main() -> None:
 
 if __name__ == "__main__":
     click_main()
-
