@@ -18,6 +18,7 @@ if __name__ == "__main__":
     categories = cat_consumer.get_keys_then_done()
 
 
+# pylint: disable=duplicate-code
 @click.command()
 @click.option('--file', is_flag=True,
               help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON "

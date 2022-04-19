@@ -22,6 +22,7 @@ class ClassAndCategoryFilter:
 categories = []
 
 
+# pylint: disable=duplicate-code
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")

@@ -9,6 +9,7 @@ from jaws_libp.clients import LocationProducer
 from jaws_libp.entities import AlarmLocation
 
 
+# pylint: disable=duplicate-code
 @click.command()
 @click.option('--file', is_flag=True,
               help="Imports a file of key=value pairs (one per line) where the key is location name and value is JSON "

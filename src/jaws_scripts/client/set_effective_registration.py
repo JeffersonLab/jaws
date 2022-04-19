@@ -13,6 +13,7 @@ from jaws_libp.entities import EffectiveRegistration, \
     AlarmInstance, SimpleProducer
 
 
+# pylint: disable=duplicate-code
 def __get_instance():
     return AlarmInstance("base",
                          SimpleProducer(),

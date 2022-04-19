@@ -1,5 +1,8 @@
 [BASIC]
 good-names=e
 
+[FORMAT]
+max-line-length=120
+
 [EXCEPTIIONS]
 overgeneral-exceptions=
