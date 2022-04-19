@@ -20,8 +20,8 @@ from jaws_libp.entities import AlarmState, AlarmOverrideSet, \
 def __get_overrides(override):
     overrides = AlarmOverrideSet(None, None, None, None, None, None, None)
 
-    timestamp_seconds = time.time() + 5;
-    timestamp_millis = int(timestamp_seconds * 1000);
+    timestamp_seconds = time.time() + 5
+    timestamp_millis = int(timestamp_seconds * 1000)
 
     if override == "Shelved":
         overrides.shelved = ShelvedOverride(timestamp_millis, None, ShelvedReason.Other, False)
@@ -41,10 +41,11 @@ def __get_overrides(override):
     return overrides
 
 
+# pylint: disable=missing-function-docstring,no-value-for-parameter
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear state, missing to set state")
-@click.option('--state', required=True, type=click.Choice(AlarmState._member_names_), help="The state")
-@click.option('--override', type=click.Choice(OverriddenAlarmType._member_names_), help="The state")
+@click.option('--state', required=True, type=click.Choice(list(map(lambda c: c.name, AlarmState))), help="The state")
+@click.option('--override', type=click.Choice(list(map(lambda c: c.name, OverriddenAlarmType))), help="The state")
 @click.argument('name')
 def set_effective_activation(unset, state, override, name) -> None:
     producer = EffectiveActivationProducer('set_effective_activation.py')

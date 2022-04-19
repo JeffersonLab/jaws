@@ -17,7 +17,7 @@ from jaws_libp.entities import EffectiveAlarm, AlarmState, AlarmOverrideSet, \
     ShelvedOverride, ShelvedReason, SimpleProducer, AlarmInstance
 
 
-# pylint: disable=duplicate-code,missing-function-docstring,no-value-for-parameter
+# pylint: disable=duplicate-code
 def __get_overrides(override):
     overrides = AlarmOverrideSet(None, None, None, None, None, None, None)
 
@@ -50,7 +50,7 @@ def __get_instance():
                          "command1")
 
 
-# pylint: disable=duplicate-code
+# pylint: disable=duplicate-code,missing-function-docstring,no-value-for-parameter
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear state, missing to set state")
 @click.option('--state', required=True, type=click.Choice(list(map(lambda c: c.name, AlarmState))), help="The state")
