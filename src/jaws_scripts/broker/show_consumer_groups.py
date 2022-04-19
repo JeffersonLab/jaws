@@ -19,19 +19,19 @@ def show_consumer_groups() -> None:
 
     groups = admin_client.list_groups(timeout=10)
 
-    print("{} consumer groups:".format(len(groups)))
+    print(f"{len(groups)} consumer groups:")
 
     for group in groups:
         if group.error is not None:
-            errstr = ": {}".format(group.error)
+            errstr = f": {group.error}"
         else:
             errstr = ""
 
-        print(" \"{}\" with {} member(s), protocol: {}, protocol_type: {}{}".format(
-            group, len(group.members), group.protocol, group.protocol_type, errstr))
+        print(
+            f" \"{group}\" mems: {len(group.members)}, pro: {group.protocol}, pro_type: {group.protocol_type}{errstr}")
 
         for member in group.members:
-            print("id {} client_id: {} client_host: {}".format(member.id, member.client_id, member.client_host))
+            print(f"id {member.id} client_id: {member.client_id} client_host: {member.client_host}")
 
 
 if __name__ == "__main__":

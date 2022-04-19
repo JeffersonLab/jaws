@@ -19,15 +19,15 @@ def list_topics() -> None:
 
     meta = admin_client.list_topics(timeout=10)
 
-    print("{} topics:".format(len(meta.topics)))
+    print(f"{len(meta.topics)} topics:")
 
     for topic in iter(meta.topics.values()):
         if topic.error is not None:
-            errstr = ": {}".format(topic.error)
+            errstr = f": {topic.error}"
         else:
             errstr = ""
 
-        print("  \"{}\" with {} partition(s){}".format(topic, len(topic.partitions), errstr))
+        print(f"  \"{topic}\" with {len(topic.partitions)} partition(s){errstr}")
 
 
 if __name__ == "__main__":

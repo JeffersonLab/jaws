@@ -25,13 +25,12 @@ def describe_topics() -> None:
     topics = json.loads(conf)
 
     def print_config(config, depth):
-        print('%40s = %-50s' %
-              ((' ' * depth) + config.name, config.value))
+        print(f'{(" " * depth) + config.name:>40} = {config.value:<50}')
 
     resources = []
 
-    for t in topics:
-        resources.append(ConfigResource('topic', t))
+    for topic in topics:
+        resources.append(ConfigResource('topic', topic))
 
     futures = admin_client.describe_configs(resources)
 
@@ -39,14 +38,12 @@ def describe_topics() -> None:
         try:
             configs = future.result()
             print("")
-            print("Topic {}".format(res.name))
+            print(f"Topic {res.name}")
             print("-----------------------------------------------------------------")
             for config in iter(configs.values()):
                 print_config(config, 1)
         except KafkaException as e:
-            print("Failed to describe {}: {}".format(res, e))
-        except Exception:
-            raise
+            print(f"Failed to describe {res}: {e}")
 
 
 if __name__ == "__main__":
