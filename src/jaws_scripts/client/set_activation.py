@@ -7,17 +7,18 @@
 import click
 
 from jaws_libp.clients import ActivationProducer
-from jaws_libp.entities import AlarmActivationUnion, SimpleAlarming, EPICSAlarming, NoteAlarming, EPICSSEVR, \
-    EPICSSTAT
+from jaws_libp.entities import AlarmActivationUnion, ChannelError, SimpleAlarming, EPICSAlarming, NoteAlarming, \
+    EPICSSEVR, EPICSSTAT
 
 
 @click.command()
 @click.option('--unset', is_flag=True, help="present to clear an alarm, missing to set active")
 @click.option('--note', help="The note (only for NoteAlarming)")
+@click.option('--error', help="A channel error between JAWS and an alarm activation source such as Disconnected")
 @click.option('--sevr', type=click.Choice(EPICSSEVR._member_names_), help="The sevr (only for EPICSAlarming)")
 @click.option('--stat', type=click.Choice(EPICSSTAT._member_names_), help="The stat (only for EPICSAlarming)")
 @click.argument('name')
-def set_activation(unset, note, stat, sevr, name) -> None:
+def set_activation(unset, note, error, stat, sevr, name) -> None:
     producer = ActivationProducer('set_activation.py')
 
     key = name
@@ -25,7 +26,9 @@ def set_activation(unset, note, stat, sevr, name) -> None:
     if unset:
         value = None
     else:
-        if sevr and stat:
+        if error:
+            msg = ChannelError(error)
+        elif sevr and stat:
             msg = EPICSAlarming(EPICSSEVR[sevr], EPICSSTAT[stat])
         elif note:
             msg = NoteAlarming(note)
