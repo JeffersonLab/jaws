@@ -17,12 +17,12 @@ def describe_version() -> None:
     """
     if len(sys.argv) != 3:
         print("Usage: ./describe_version.py <subject> <version>")
-        quit()
+        sys.exit(1)
 
     subject = sys.argv[1]
     version = sys.argv[2]
 
-    print("Describe {}; version {}".format(subject, version))
+    print(f"Describe {subject}; version {version}")
 
     sr_conf = {'url': os.environ.get('SCHEMA_REGISTRY', 'http://localhost:8081')}
     client = SchemaRegistryClient(sr_conf)
@@ -31,10 +31,10 @@ def describe_version() -> None:
 
     filename = "/tmp/schemas/" + registered.subject + "-" + version + ".avsc"
     os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, "w") as text_file:
+    with open(filename, "w", encoding="utf-8") as text_file:
         print(json.dumps(json.loads(registered.schema.schema_str), indent=4), file=text_file)
-        print("ID: {}, Subject: {}, Version: {}, File: {}".format(registered.schema_id, registered.subject,
-                                                                  registered.version, filename))
+        print(
+            f"ID: {registered.schema_id}, Subj: {registered.subject}, Ver: {registered.version}, File: {filename}")
 
 
 if __name__ == "__main__":
