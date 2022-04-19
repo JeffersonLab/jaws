@@ -11,24 +11,33 @@ import click
 from jaws_libp.clients import ClassConsumer, CategoryConsumer
 
 
+# pylint: disable=too-few-public-methods
 class CategoryFilter:
+    """
+        Filter category messages
+    """
     def __init__(self, category):
         self._category = category
 
+    # pylint: disable=unused-argument
     def filter_if(self, key, value):
+        """
+            Filter out messages unless the category matches the provided category
+        """
         return self._category is None or (value is not None and self._category == value.category)
 
 
 if __name__ == "__main__":
     cat_consumer = CategoryConsumer('list_classes.py')
-    categories = cat_consumer.get_keys_then_done()
+    CATEGORIES = cat_consumer.get_keys_then_done()
 
 
+# pylint: disable=missing-function-docstring,no-value-for-parameter
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
-@click.option('--category', type=click.Choice(categories),
+@click.option('--category', type=click.Choice(CATEGORIES),
               help="Only show registered alarms in the specified category (Options queried on-demand from "
                    "alarm-categories topic)")
 def list_classes(monitor, nometa, export, category) -> None:

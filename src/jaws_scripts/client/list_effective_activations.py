@@ -8,6 +8,7 @@ import click
 from jaws_libp.clients import EffectiveActivationConsumer
 
 
+# pylint: disable=missing-function-docstring,no-value-for-parameter
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
@@ -19,7 +20,7 @@ def list_effective_activations(monitor, nometa, export) -> None:
 
 
 def click_main() -> None:
-    list - list_effective_activations()
+    list_effective_activations()
 
 
 if __name__ == "__main__":

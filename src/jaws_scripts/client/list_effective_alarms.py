@@ -8,6 +8,7 @@ import click
 from jaws_libp.clients import EffectiveAlarmConsumer
 
 
+# pylint: disable=missing-function-docstring,no-value-for-parameter
 @click.command()
 @click.option('--monitor', is_flag=True, help="Monitor indefinitely")
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")

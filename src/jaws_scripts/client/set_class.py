@@ -15,7 +15,7 @@ from jaws_libp.entities import AlarmClass, AlarmPriority
 
 if __name__ == "__main__":
     cat_consumer = CategoryConsumer('set_class.py')
-    categories = cat_consumer.get_keys_then_done()
+    CATEGORIES = cat_consumer.get_keys_then_done()
 
 
 # pylint: disable=duplicate-code,missing-function-docstring,no-value-for-parameter,too-many-arguments
@@ -24,7 +24,7 @@ if __name__ == "__main__":
               help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON "
                    "encoded AVRO formatted per the alarm-classes-value schema")
 @click.option('--unset', is_flag=True, help="Remove the class")
-@click.option('--category', type=click.Choice(categories),
+@click.option('--category', type=click.Choice(CATEGORIES),
               help="The alarm category (Options queried on-demand from alarm-categories topic)")
 @click.option('--priority', type=click.Choice(list(map(lambda c: c.name, AlarmPriority))), help="The alarm priority")
 @click.option('--filterable/--not-filterable', is_flag=True, default=True,
