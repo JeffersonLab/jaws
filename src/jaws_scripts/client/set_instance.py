@@ -19,7 +19,7 @@ if __name__ == "__main__":
     locations = consumer.get_keys_then_done()
 
 
-# pylint: disable=duplicate-code
+# pylint: disable=duplicate-code,missing-function-docstring,too-many-arguments,no-value-for-parameter
 @click.command()
 @click.option('--file', is_flag=True,
               help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON "
@@ -52,17 +52,17 @@ def set_instance(file, unset, alarmclass, producersimple, producerpv, producerex
                     "Must specify one of --producersimple, --producerpv, --producerexpression")
 
             if producersimple:
-                p = SimpleProducer()
+                source_producer = SimpleProducer()
             elif producerpv:
-                p = EPICSProducer(producerpv)
+                source_producer = EPICSProducer(producerpv)
             else:
-                p = CALCProducer(producerexpression)
+                source_producer = CALCProducer(producerexpression)
 
             if alarmclass is None:
                 alarmclass = "base"
 
             value = AlarmInstance(alarmclass,
-                                  p,
+                                  source_producer,
                                   location,
                                   maskedby,
                                   screencommand)
