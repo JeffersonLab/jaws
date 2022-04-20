@@ -14,9 +14,11 @@ from jaws_libp.clients import LocationConsumer, InstanceProducer
 from jaws_libp.entities import AlarmInstance, \
     SimpleProducer, EPICSProducer, CALCProducer
 
+LOCATIONS = []
+
 if __name__ == "__main__":
     consumer = LocationConsumer('set_instance.py')
-    locations = consumer.get_keys_then_done()
+    LOCATIONS = consumer.get_keys_then_done()
 
 
 # pylint: disable=duplicate-code,missing-function-docstring,too-many-arguments,no-value-for-parameter
@@ -29,7 +31,7 @@ if __name__ == "__main__":
 @click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")
 @click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm")
 @click.option('--producerexpression', help="The CALC expression used to generate this alarm")
-@click.option('--location', '-l', type=click.Choice(locations), multiple=True,
+@click.option('--location', '-l', type=click.Choice(LOCATIONS), multiple=True,
               help="The alarm location (Options queried on-demand from alarm-locations topic).  Multiple locations "
                    "allowed.")
 @click.option('--screencommand', help="The command to open the related control system screen")

@@ -27,6 +27,8 @@ class CategoryFilter:
         return self._category is None or (value is not None and self._category == value.category)
 
 
+CATEGORIES = []
+
 if __name__ == "__main__":
     cat_consumer = CategoryConsumer('list_classes.py')
     CATEGORIES = cat_consumer.get_keys_then_done()
