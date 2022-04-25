@@ -29,6 +29,9 @@ class ClassAndCategoryFilter:
 
 CATEGORIES = []
 
+if __name__ == "__main__":
+    cat_consumer = CategoryConsumer('list_classes.py')
+    CATEGORIES = cat_consumer.get_keys_then_done()
 
 # pylint: disable=duplicate-code,missing-function-docstring,no-value-for-parameter
 @click.command()
@@ -47,12 +50,7 @@ def list_effective_registrations(monitor, nometa, export, category, alarm_class)
     consumer.consume_then_done(monitor, nometa, export, filter_obj.filter_if)
 
 
-# pylint: disable=global-statement
 def click_main() -> None:
-    global CATEGORIES
-
-    cat_consumer = CategoryConsumer('list_effective_registrations.py')
-    CATEGORIES = cat_consumer.get_keys_then_done()
     list_effective_registrations()
 
 
