@@ -6,7 +6,7 @@
 
 import click
 
-from jaws_libp.clients import EffectiveRegistrationConsumer, CategoryConsumer
+from jaws_libp.clients import EffectiveRegistrationConsumer
 
 
 # pylint: disable=too-few-public-methods
