@@ -9,7 +9,7 @@ import click
 from jaws_libp.clients import EffectiveRegistrationConsumer
 
 
-# pylint: disable=too-few-public-methods
+# pylint: disable=duplicate-code,disable=too-few-public-methods
 class ClassFilter:
     """
         Filter class messages
