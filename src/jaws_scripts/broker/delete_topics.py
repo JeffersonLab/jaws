@@ -3,7 +3,7 @@
 """
     Delete JAWS Kafka topics
 """
-
+import concurrent
 import json
 import os
 import pkgutil
@@ -23,9 +23,9 @@ def delete_topics() -> None:
 
     topics = json.loads(conf)
 
-    futures = admin_client.delete_topics(topics, operation_timeout=15)
+    results = admin_client.delete_topics(topics, operation_timeout=15)
 
-    for topic, future in futures.items():
+    for topic, future in results.items():
         try:
             future.result()  # The result itself is None
             print(f"Topic {topic} deleted")

@@ -3,7 +3,7 @@
 """
     Create JAWS Kafka topics
 """
-
+import concurrent
 import json
 import os
 import pkgutil
@@ -26,9 +26,9 @@ def create_topics() -> None:
     new_topics = [NewTopic(topic, num_partitions=1, replication_factor=1,
                            config={"cleanup.policy": "compact"}) for topic in topics]
 
-    futures = admin_client.create_topics(new_topics, operation_timeout=15)
+    results = admin_client.create_topics(new_topics, operation_timeout=15)
 
-    for topic, future in futures.items():
+    for topic, future in results.items():
         try:
             future.result()
             print(f"Topic {topic} created")
