@@ -30,9 +30,9 @@ jobs:
     - name: Start containers
       run: docker compose -f "test.yml" up -d
     - name: Install pytest
-      run: docker exec -it jaws bash -c "pip install pytest"
+      run: docker exec -i jaws bash -c "pip install pytest"
     - name: Run pytest
-      run: docker exec -it jaws bash -c "cd /tests; pytest"
+      run: docker exec -i jaws bash -c "cd /tests; pytest"
     - name: Stop containers
       if: always()
       run: docker compose -f "test.yml" down
