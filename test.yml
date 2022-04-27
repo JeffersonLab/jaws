@@ -1,0 +1,26 @@
+services:
+  zookeeper:
+    extends:
+      file: docker-compose.yml
+      service: zookeeper
+
+  kafka:
+    extends:
+      file: docker-compose.yml
+      service: kafka
+
+  registry:
+    extends:
+      file: docker-compose.yml
+      service: registry
+
+  jaws:
+    extends:
+      file: docker-compose.yml
+      service: jaws
+    image: slominskir/jaws:4.2.0
+    environment:
+      LOGLEVEL: "INFO"
+    volumes:
+      - ./src/jaws_scripts:/opt/venv/lib/python3.9/site-packages/jaws_scripts
+      - ./tests:/tests

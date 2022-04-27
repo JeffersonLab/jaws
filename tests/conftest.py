@@ -1,25 +1,18 @@
-import os
-import time
-
 import pytest
-from testcontainers.compose import DockerCompose
-from testcontainers.core.waiting_utils import wait_container_is_ready
+
+from jaws_scripts.broker.create_topics import create_topics
+from jaws_scripts.broker.delete_topics import delete_topics
 
 
-@pytest.fixture
-def deps_using_docker_compose():
-    _compose = get_compose()
-    time.sleep(10)
-    yield _compose
-    _compose.stop()
+@pytest.fixture(scope="session", autouse=True)
+def reset_topics():
+    # We want to start testing with empty topics
+    try:
+        delete_topics()
+    except:
+        pass
 
-
-@wait_container_is_ready()
-def get_compose():
-    dirname = os.path.dirname(__file__)
-    filepath = os.path.abspath(os.path.join(dirname, '..'))
-    compose = DockerCompose(filepath, compose_file_name="deps.yml")
-    compose.start()
-    os.environ["BOOTSTRAP_SERVERS"] = "localhost:9094"
-    os.environ["SCHEMA_REGISTRY"] = "http://localhost:8081"
-    return compose
+    try:
+        create_topics()
+    except:
+        print("Unable to create topics")

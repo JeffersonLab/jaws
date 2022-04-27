@@ -28,7 +28,11 @@ jobs:
       run: |
         pylint src/jaws_scripts
     - name: Start containers
-      run: docker compose -f "bind.yml" up -d
+      run: docker compose -f "test.yml" up -d
+    - name: Install pytest
+      run: docker exec -it jaws bash -c "pip install pytest"
+    - name: Run pytest
+      run: docker exec -it jaws bash -c "cd /tests; pytest"
     - name: Stop containers
       if: always()
-      run: docker compose -f "bind.yml" down
+      run: docker compose -f "test.yml" down
