@@ -3,7 +3,6 @@
 """
     Delete JAWS Kafka topics
 """
-import concurrent
 import json
 import os
 import pkgutil
