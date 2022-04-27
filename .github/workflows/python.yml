@@ -28,7 +28,7 @@ jobs:
       run: |
         pylint src/jaws_scripts
     - name: Start containers
-      run: docker-compose -f "bind.yml" up -d
+      run: docker compose -f "bind.yml" up -d
     - name: Stop containers
       if: always()
-      run: docker-compose -f "bind.yml" down
+      run: docker compose -f "bind.yml" down
