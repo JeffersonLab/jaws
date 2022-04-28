@@ -32,7 +32,7 @@ jobs:
     - name: Start containers
       run: docker compose -f "test.yml" up -d
     - name: Wait for containers to settle
-      run: docker exec -i jaws bash -c "sleep 5"
+      run: docker exec -i jaws bash -c "sleep 20"
     - name: Install pytest
       run: docker exec -i jaws bash -c "pip install pytest"
     - name: Run pytest
