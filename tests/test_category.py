@@ -16,3 +16,7 @@ def test_category():
     result = runner.invoke(list_categories, ['--export'])
     assert result.exit_code == 0
     assert result.output == category + '=\n'
+
+    # Clear (Set)
+    result = runner.invoke(set_category, [category, '--unset'])
+    assert result.exit_code == 0

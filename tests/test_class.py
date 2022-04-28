@@ -1,5 +1,3 @@
-import os
-
 from click import Choice
 from click.testing import CliRunner
 from jaws_libp.avro.serde import ClassSerde
@@ -33,3 +31,7 @@ def test_class():
 
     class_serde = ClassSerde(None)
     assert result.output == class_name + '=' + class_serde.to_json(alarm_class) + '\n'
+
+    # Clear (Set)
+    result = runner.invoke(set_class, [class_name, '--unset'])
+    assert result.exit_code == 0
