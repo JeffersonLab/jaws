@@ -33,9 +33,9 @@ jobs:
       run: docker exec -i jaws bash -c "pip install pytest"
     - name: Run pytest
       run: docker exec -i jaws bash -c "cd /tests; pytest -p no:cacheprovider"
-    - name: Stop containers
-      if: always()
-      run: docker compose -f "test.yml" down
     - name: Dump logs
       if: always()
       run: docker logs registry
+    - name: Stop containers
+      if: always()
+      run: docker compose -f "test.yml" down
