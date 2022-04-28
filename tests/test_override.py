@@ -3,7 +3,8 @@ import time
 from click.testing import CliRunner
 from jaws_libp.avro.serde import OverrideSerde, OverrideKeySerde
 from jaws_libp.entities import AlarmOverrideUnion, LatchedOverride, AlarmOverrideKey, OverriddenAlarmType, \
-    MaskedOverride, DisabledOverride, FilteredOverride, ShelvedOverride, ShelvedReason
+    MaskedOverride, DisabledOverride, FilteredOverride, ShelvedOverride, ShelvedReason, OnDelayedOverride, \
+    OffDelayedOverride
 from jaws_scripts.client.list_overrides import list_overrides
 from jaws_scripts.client.set_override import set_override
 
@@ -170,6 +171,66 @@ def test_oneshot_shelved_override():
         result = runner.invoke(set_override, [alarm_name, '--override', override_type.name,
                                               '--expirationts', expiration_ts, '--comments', comments,
                                               '--reason', reason.name, '--oneshot'])
+        assert result.exit_code == 0
+
+        # Get
+        result = runner.invoke(list_overrides, ['--export'])
+        assert result.exit_code == 0
+
+        override_serde = OverrideSerde(None)
+        key_serde = OverrideKeySerde(None)
+        assert result.output == key_serde.to_json(override_key) + '=' + override_serde.to_json(override) + '\n'
+
+    finally:
+        # Clear
+        result = runner.invoke(set_override, [alarm_name, '--unset', '--override', override_type.name])
+        assert result.exit_code == 0
+
+
+def test_on_delayed_override():
+    alarm_name = "alarm1"
+    expiration_seconds = 15
+    expiration_ts = int(time.time() + expiration_seconds) * 1000
+    override_type = OverriddenAlarmType.OnDelayed
+    override_key = AlarmOverrideKey(alarm_name, override_type)
+    override = AlarmOverrideUnion(OnDelayedOverride(expiration_ts))
+
+    runner = CliRunner()
+
+    try:
+        # Set
+        result = runner.invoke(set_override, [alarm_name, '--override', override_type.name,
+                                              '--expirationts', expiration_ts])
+        assert result.exit_code == 0
+
+        # Get
+        result = runner.invoke(list_overrides, ['--export'])
+        assert result.exit_code == 0
+
+        override_serde = OverrideSerde(None)
+        key_serde = OverrideKeySerde(None)
+        assert result.output == key_serde.to_json(override_key) + '=' + override_serde.to_json(override) + '\n'
+
+    finally:
+        # Clear
+        result = runner.invoke(set_override, [alarm_name, '--unset', '--override', override_type.name])
+        assert result.exit_code == 0
+
+
+def test_off_delayed_override():
+    alarm_name = "alarm1"
+    expiration_seconds = 15
+    expiration_ts = int(time.time() + expiration_seconds) * 1000
+    override_type = OverriddenAlarmType.OffDelayed
+    override_key = AlarmOverrideKey(alarm_name, override_type)
+    override = AlarmOverrideUnion(OffDelayedOverride(expiration_ts))
+
+    runner = CliRunner()
+
+    try:
+        # Set
+        result = runner.invoke(set_override, [alarm_name, '--override', override_type.name,
+                                              '--expirationts', expiration_ts])
         assert result.exit_code == 0
 
         # Get
