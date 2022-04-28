@@ -5,26 +5,28 @@ from jaws_scripts.client.list_locations import list_locations
 from jaws_scripts.client.set_location import set_location
 
 
-def test_location_single():
+def test_location():
     location1_name = "LOCATION1"
     location1 = AlarmLocation(None)
 
     runner = CliRunner()
 
-    # Set
-    result = runner.invoke(set_location, [location1_name])
-    assert result.exit_code == 0
+    try:
+        # Set
+        result = runner.invoke(set_location, [location1_name])
+        assert result.exit_code == 0
 
-    # Get
-    result = runner.invoke(list_locations, ['--export'])
-    assert result.exit_code == 0
+        # Get
+        result = runner.invoke(list_locations, ['--export'])
+        assert result.exit_code == 0
 
-    location_serde = LocationSerde(None)
-    assert result.output == location1_name + '=' + location_serde.to_json(location1) + '\n'
+        location_serde = LocationSerde(None)
+        assert result.output == location1_name + '=' + location_serde.to_json(location1) + '\n'
 
-    # Clear (Set)
-    result = runner.invoke(set_location, [location1_name, '--unset'])
-    assert result.exit_code == 0
+    finally:
+        # Clear
+        result = runner.invoke(set_location, [location1_name, '--unset'])
+        assert result.exit_code == 0
 
 
 def test_location_with_parent():
@@ -34,17 +36,19 @@ def test_location_with_parent():
 
     runner = CliRunner()
 
-    # Set
-    result = runner.invoke(set_location, [location1_name, '--parent', parent])
-    assert result.exit_code == 0
+    try:
+        # Set
+        result = runner.invoke(set_location, [location1_name, '--parent', parent])
+        assert result.exit_code == 0
 
-    # Get
-    result = runner.invoke(list_locations, ['--export'])
-    assert result.exit_code == 0
+        # Get
+        result = runner.invoke(list_locations, ['--export'])
+        assert result.exit_code == 0
 
-    location_serde = LocationSerde(None)
-    assert result.output == location1_name + '=' + location_serde.to_json(location1) + '\n'
+        location_serde = LocationSerde(None)
+        assert result.output == location1_name + '=' + location_serde.to_json(location1) + '\n'
 
-    # Clear (Set)
-    result = runner.invoke(set_location, [location1_name, '--unset'])
-    assert result.exit_code == 0
+    finally:
+        # Clear
+        result = runner.invoke(set_location, [location1_name, '--unset'])
+        assert result.exit_code == 0

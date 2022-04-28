@@ -8,15 +8,17 @@ def test_category():
 
     runner = CliRunner()
 
-    # Set
-    result = runner.invoke(set_category, [category])
-    assert result.exit_code == 0
+    try:
+        # Set
+        result = runner.invoke(set_category, [category])
+        assert result.exit_code == 0
 
-    # Get
-    result = runner.invoke(list_categories, ['--export'])
-    assert result.exit_code == 0
-    assert result.output == category + '=\n'
+        # Get
+        result = runner.invoke(list_categories, ['--export'])
+        assert result.exit_code == 0
+        assert result.output == category + '=\n'
 
-    # Clear (Set)
-    result = runner.invoke(set_category, [category, '--unset'])
-    assert result.exit_code == 0
+    finally:
+        # Clear
+        result = runner.invoke(set_category, [category, '--unset'])
+        assert result.exit_code == 0

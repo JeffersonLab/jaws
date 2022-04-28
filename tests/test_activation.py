@@ -12,20 +12,22 @@ def test_simple_activation():
 
     runner = CliRunner()
 
-    # Set
-    result = runner.invoke(set_activation, [alarm_name])
-    assert result.exit_code == 0
+    try:
+        # Set
+        result = runner.invoke(set_activation, [alarm_name])
+        assert result.exit_code == 0
 
-    # Get
-    result = runner.invoke(list_activations, ['--export'])
-    assert result.exit_code == 0
+        # Get
+        result = runner.invoke(list_activations, ['--export'])
+        assert result.exit_code == 0
 
-    activation_serde = ActivationSerde(None)
-    assert result.output == alarm_name + '=' + activation_serde.to_json(activation) + '\n'
+        activation_serde = ActivationSerde(None)
+        assert result.output == alarm_name + '=' + activation_serde.to_json(activation) + '\n'
 
-    # Clear (Set)
-    result = runner.invoke(set_activation, [alarm_name, '--unset'])
-    assert result.exit_code == 0
+    finally:
+        # Clear
+        result = runner.invoke(set_activation, [alarm_name, '--unset'])
+        assert result.exit_code == 0
 
 
 def test_note_activation():
@@ -35,20 +37,22 @@ def test_note_activation():
 
     runner = CliRunner()
 
-    # Set
-    result = runner.invoke(set_activation, [alarm_name, '--note', note])
-    assert result.exit_code == 0
+    try:
+        # Set
+        result = runner.invoke(set_activation, [alarm_name, '--note', note])
+        assert result.exit_code == 0
 
-    # Get
-    result = runner.invoke(list_activations, ['--export'])
-    assert result.exit_code == 0
+        # Get
+        result = runner.invoke(list_activations, ['--export'])
+        assert result.exit_code == 0
 
-    activation_serde = ActivationSerde(None)
-    assert result.output == alarm_name + '=' + activation_serde.to_json(activation) + '\n'
+        activation_serde = ActivationSerde(None)
+        assert result.output == alarm_name + '=' + activation_serde.to_json(activation) + '\n'
 
-    # Clear (Set)
-    result = runner.invoke(set_activation, [alarm_name, '--unset'])
-    assert result.exit_code == 0
+    finally:
+        # Clear
+        result = runner.invoke(set_activation, [alarm_name, '--unset'])
+        assert result.exit_code == 0
 
 
 def test_epics_activation():
@@ -59,20 +63,22 @@ def test_epics_activation():
 
     runner = CliRunner()
 
-    # Set
-    result = runner.invoke(set_activation, [alarm_name, '--sevr', sevr.name, '--stat', stat.name])
-    assert result.exit_code == 0
+    try:
+        # Set
+        result = runner.invoke(set_activation, [alarm_name, '--sevr', sevr.name, '--stat', stat.name])
+        assert result.exit_code == 0
 
-    # Get
-    result = runner.invoke(list_activations, ['--export'])
-    assert result.exit_code == 0
+        # Get
+        result = runner.invoke(list_activations, ['--export'])
+        assert result.exit_code == 0
 
-    activation_serde = ActivationSerde(None)
-    assert result.output == alarm_name + '=' + activation_serde.to_json(activation) + '\n'
+        activation_serde = ActivationSerde(None)
+        assert result.output == alarm_name + '=' + activation_serde.to_json(activation) + '\n'
 
-    # Clear (Set)
-    result = runner.invoke(set_activation, [alarm_name, '--unset'])
-    assert result.exit_code == 0
+    finally:
+        # Clear
+        result = runner.invoke(set_activation, [alarm_name, '--unset'])
+        assert result.exit_code == 0
 
 
 def test_error_activation():
@@ -82,17 +88,19 @@ def test_error_activation():
 
     runner = CliRunner()
 
-    # Set
-    result = runner.invoke(set_activation, [alarm_name, '--error', error])
-    assert result.exit_code == 0
+    try:
+        # Set
+        result = runner.invoke(set_activation, [alarm_name, '--error', error])
+        assert result.exit_code == 0
 
-    # Get
-    result = runner.invoke(list_activations, ['--export'])
-    assert result.exit_code == 0
+        # Get
+        result = runner.invoke(list_activations, ['--export'])
+        assert result.exit_code == 0
 
-    activation_serde = ActivationSerde(None)
-    assert result.output == alarm_name + '=' + activation_serde.to_json(activation) + '\n'
+        activation_serde = ActivationSerde(None)
+        assert result.output == alarm_name + '=' + activation_serde.to_json(activation) + '\n'
 
-    # Clear (Set)
-    result = runner.invoke(set_activation, [alarm_name, '--unset'])
-    assert result.exit_code == 0
+    finally:
+        # Clear
+        result = runner.invoke(set_activation, [alarm_name, '--unset'])
+        assert result.exit_code == 0

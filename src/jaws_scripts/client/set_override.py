@@ -18,15 +18,16 @@ from jaws_libp.entities import AlarmOverrideUnion, LatchedOverride, FilteredOver
 @click.option('--override', type=click.Choice(list(map(lambda c: c.name, OverriddenAlarmType))),
               help="The type of override")
 @click.option('--unset', is_flag=True, help="Remove the override")
-@click.option('--expirationseconds', type=int, help="The number of seconds until the shelved status expires, None for "
-                                                    "indefinite")
+@click.option('--expirationseconds', type=int, help="The number of seconds until the override status expires")
+@click.option('--expirationts', type=int, help="UNIX timestamp (millis since epoch 1970) when the override status "
+                                               "expires, Overrides --expirationseconds (so only use one or the other)")
 @click.option('--reason', type=click.Choice(list(map(lambda c: c.name, ShelvedReason))),
               help="The explanation for why this alarm has been shelved")
 @click.option('--oneshot', is_flag=True, help="Whether shelving is one-shot or continuous")
 @click.option('--comments', help="Operator explanation for why suppressed")
 @click.option('--filtername', help="Name of filter rule associated with this override")
 @click.argument('name')
-def set_override(override, unset, expirationseconds, reason, oneshot, comments, filtername, name) -> None:
+def set_override(override, unset, expirationseconds, expirationts, reason, oneshot, comments, filtername, name) -> None:
     producer = OverrideProducer('set_override.py')
 
     if override is None:
@@ -36,7 +37,7 @@ def set_override(override, unset, expirationseconds, reason, oneshot, comments, 
 
     if expirationseconds is not None:
         timestamp_seconds = time.time() + expirationseconds
-        timestamp_millis = int(timestamp_seconds * 1000)
+        expirationts = int(timestamp_seconds * 1000)
 
     if unset:
         value = None
@@ -45,21 +46,21 @@ def set_override(override, unset, expirationseconds, reason, oneshot, comments, 
             if reason is None:
                 raise click.ClickException("--reason is required")
 
-            if expirationseconds is None:
+            if expirationts is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = ShelvedOverride(timestamp_millis, comments, ShelvedReason[reason], oneshot)
+            msg = ShelvedOverride(expirationts, comments, ShelvedReason[reason], oneshot)
 
         elif override == "OnDelayed":
-            if expirationseconds is None:
+            if expirationts is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = OnDelayedOverride(timestamp_millis)
+            msg = OnDelayedOverride(expirationts)
         elif override == "OffDelayed":
-            if expirationseconds is None:
+            if expirationts is None:
                 raise click.ClickException("--expirationseconds is required")
 
-            msg = OffDelayedOverride(timestamp_millis)
+            msg = OffDelayedOverride(expirationts)
         elif override == "Disabled":
             msg = DisabledOverride(comments)
         elif override == "Filtered":
