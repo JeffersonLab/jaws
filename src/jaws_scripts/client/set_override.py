@@ -20,7 +20,8 @@ from jaws_libp.entities import AlarmOverrideUnion, LatchedOverride, FilteredOver
 @click.option('--unset', is_flag=True, help="Remove the override")
 @click.option('--expirationseconds', type=int, help="The number of seconds until the override status expires")
 @click.option('--expirationts', type=int, help="UNIX timestamp (millis since epoch 1970) when the override status "
-                                               "expires, Overrides --expirationseconds (so only use one or the other)")
+                                               "expires, Overridden by --expirationseconds "
+                                               "(so only use one or the other)")
 @click.option('--reason', type=click.Choice(list(map(lambda c: c.name, ShelvedReason))),
               help="The explanation for why this alarm has been shelved")
 @click.option('--oneshot', is_flag=True, help="Whether shelving is one-shot or continuous")
