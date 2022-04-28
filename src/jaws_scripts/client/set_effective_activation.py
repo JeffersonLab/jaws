@@ -43,9 +43,9 @@ def __get_overrides(override):
 
 # pylint: disable=missing-function-docstring,no-value-for-parameter
 @click.command()
-@click.option('--unset', is_flag=True, help="present to clear state, missing to set state")
-@click.option('--state', required=True, type=click.Choice(list(map(lambda c: c.name, AlarmState))), help="The state")
-@click.option('--override', type=click.Choice(list(map(lambda c: c.name, OverriddenAlarmType))), help="The state")
+@click.option('--unset', is_flag=True, help="Remove the effective activation")
+@click.option('--state', type=click.Choice(list(map(lambda c: c.name, AlarmState))), help="The state")
+@click.option('--override', type=click.Choice(list(map(lambda c: c.name, OverriddenAlarmType))), help="The override")
 @click.argument('name')
 def set_effective_activation(unset, state, override, name) -> None:
     producer = EffectiveActivationProducer('set_effective_activation.py')
@@ -56,6 +56,9 @@ def set_effective_activation(unset, state, override, name) -> None:
         value = None
     else:
         overrides = __get_overrides(override)
+
+        if state is None:
+            state = "Normal"
 
         value = EffectiveActivation(None, overrides, AlarmState[state])
 
