@@ -36,3 +36,6 @@ jobs:
     - name: Stop containers
       if: always()
       run: docker compose -f "test.yml" down
+    - name: Dump logs
+      if: always()
+      run: docker logs registry
