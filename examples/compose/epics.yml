@@ -37,7 +37,7 @@ services:
       - ../softioc-db:/db
 
   epics2kafka:
-    image: slominskir/jaws-epics2kafka:2.3.0
+    image: slominskir/jaws-epics2kafka:4.0.0
     hostname: epics2kafka
     container_name: epics2kafka
     ports:
@@ -51,7 +51,7 @@ services:
       - ../connect-config:/config
 
   registrations2epics:
-    image: slominskir/registrations2epics:2.4.0
+    image: slominskir/registrations2epics:4.0.0
     hostname: registrations2epics
     container_name: registrations2epics
     depends_on:
