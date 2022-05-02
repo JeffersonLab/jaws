@@ -1,13 +1,13 @@
 services:
   zookeeper:
-    image: debezium/zookeeper:1.8.1.Final
+    image: debezium/zookeeper:1.9.2.Final
     hostname: zookeeper
     container_name: zookeeper
     ports:
       - "2181:2181"
 
   kafka:
-    image: debezium/kafka:1.8.1.Final
+    image: debezium/kafka:1.9.2.Final
     hostname: kafka
     container_name: kafka
     depends_on:
@@ -24,7 +24,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
 
   registry:
-    image: confluentinc/cp-schema-registry:7.0.1
+    image: confluentinc/cp-schema-registry:7.1.1
     hostname: registry
     container_name: registry
     depends_on:

@@ -15,7 +15,7 @@ services:
       service: registry
 
   effective:
-    image: slominskir/jaws-effective-processor:4.0.0
+    image: slominskir/jaws-effective-processor:4.1.0
     hostname: effective
     container_name: effective
     depends_on:
