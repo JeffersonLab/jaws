@@ -15,6 +15,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [API](https://github.com/JeffersonLab/jaws#api)
 - [Configure](https://github.com/JeffersonLab/jaws#configure)
 - [Build](https://github.com/JeffersonLab/jaws#build) 
+- [Test](https://github.com/JeffersonLab/jaws#test) 
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
 ---
 
@@ -111,6 +112,24 @@ python -m build
 **Note for JLab On-Site Users**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
 
 **See**: [Python Development Notes](https://gist.github.com/slominskir/e7ed71317ea24fc19b97a0ec006ff4f1) and [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
+
+## Test
+The integration tests require a docker container environment.
+
+1. Start Docker Test environment
+```
+docker compose -f test.yml up
+```
+2. Install pytest
+```
+docker exec -i jaws bash -c "pip install pytest"
+```
+3. Execute Tests
+```
+docker exec -i jaws bash -c "cd /tests; pytest -p no:cacheprovider"
+```
+**Note**: You can also run tests directly on the host if you set the environment variables as: 
+`BOOTSTRAP_SERVERS=localhost:9094` and `SCHEMA_REGISTRY=http://localhost:8081`
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
