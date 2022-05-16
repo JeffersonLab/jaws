@@ -114,7 +114,7 @@ python -m build
 **See**: [Python Development Notes](https://gist.github.com/slominskir/e7ed71317ea24fc19b97a0ec006ff4f1) and [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
 
 ## Test
-The integration tests require a docker container environment.
+The integration tests require a docker container environment and are run automatically as a GitHub Action on git push.   You can also run tests from a local workstation using the following instructions:
 
 1. Start Docker Test environment
 ```
@@ -128,7 +128,7 @@ docker exec -i jaws bash -c "pip install pytest"
 ```
 docker exec -i jaws bash -c "cd /tests; pytest -p no:cacheprovider"
 ```
-**Note**: You can also run tests directly on the host if you set the environment variables as: 
+**Note**: You can also run tests directly on the host (instead of inside the jaws container) if you set the environment variables as: 
 `BOOTSTRAP_SERVERS=localhost:9094` and `SCHEMA_REGISTRY=http://localhost:8081`
 
 ## See Also
