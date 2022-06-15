@@ -18,7 +18,7 @@ services:
     extends:
       file: docker-compose.yml
       service: jaws
-    image: slominskir/jaws:4.2.3
+    image: slominskir/jaws:4.4.0
     environment:
       LOGLEVEL: "INFO"
     volumes:
