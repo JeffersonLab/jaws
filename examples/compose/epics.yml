@@ -34,7 +34,7 @@ services:
       - ../softioc-db:/db
 
   epics2kafka:
-    image: slominskir/jaws-epics2kafka:4.3.0
+    image: slominskir/jaws-epics2kafka:4.4.0
     hostname: epics2kafka
     container_name: epics2kafka
     ports:
