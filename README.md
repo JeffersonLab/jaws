@@ -69,6 +69,7 @@ docker exec jaws /scripts/client/set_activation.py alarm1
 **See**: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
 
 ## Install
+### Core scripts
 Requires [Python 3.9+](https://www.python.org/)
 
 ```
@@ -76,6 +77,9 @@ pip install jaws-scripts
 ```
 
 **Note**: It's generally recommended to use a Python virtual environment to avoid dependency conflicts (else a dedicated Docker container can be used).
+
+### Entire application
+The entire JAWS application consists of multiple microservices and each one has a separate installation.  However, you can launch them all using the docker compose [here](https://github.com/JeffersonLab/jaws/blob/main/examples/compose/all.yml).   This compose file (and it's references) answers the question of which version of each microservice to use.   In a production environment you'll likely want to use some orchestration tooling, which could be literally anything from bash scripts leveraging `systemctl --host` to Ansible/Chef/Puppet/Whatever, or perhaps Kubernetes + tooling.
 
 ## API
 Admin Scripts API
