@@ -20,13 +20,13 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ---
 
 ## Overview
-The JAWS alarm system is composed primarily of two subsystems: registrations and activations.  
+The JAWS alarm system is composed primarily of two subsystems: registrations and notifications.  
 
-The inventory of all possible alarms (the master alarm database) are stored in Kafka as alarm instances, and these instances are organized into classes so that some properties are inherited from their assigned alarm class.  The alarm instances are maintained on the _alarm-instances_ topic.  Alarm classes define group-shared properties such as corrective action and rationale and are persisted on the _alarm-classes_ topic.   The JAWS effective processor joins classes to instances to form effective alarm registrations on the _effective-registrations_ topic.   
+The inventory of all possible alarms (the master alarm database) are stored in Kafka as alarm instances, and these instances are organized into classes so that some properties are provided by their assigned alarm class.  The alarm instances are maintained on the _alarm-instances_ topic.  Alarm classes define group-shared properties such as corrective action and rationale and are persisted on the _alarm-classes_ topic.   The JAWS effective processor joins classes to instances to form effective alarm registrations on the _effective-registrations_ topic.   
 
-Activations indicate an alarm is annunciating (active), and timely operator action is required.  Alarms are triggered active by producing messages on the _alarm-activations_ topic.  An alarm can be overridden to either suppress or incite the active state by placing a message on the _alarm-overrides_ topic.  The effective activation state considering both actual activations and overrides is calculated by JAWS from _activations_ and _overrides_ and made available on the _effective-activations_ topic. 
+Activations indicate an alarm is annunciating (active), and timely operator action is required.  Alarms are triggered active by producing messages on the _alarm-activations_ topic.  An alarm can be overridden to either suppress or incite the active state by placing a message on the _alarm-overrides_ topic.  The effective notification state considering both activations and overrides is calculated by JAWS from _activations_ and _overrides_ and made available on the _effective-notifications_ topic. 
 
-Both effective registrations and effective activations are combined by the JAWS effective processor on the _effective-alarms_ topic.
+Both effective registrations and effective notifications are combined by the JAWS effective processor on the _effective-alarms_ topic.
 
 **Services**
 - [jaws-effective-processor](https://github.com/JeffersonLab/jaws-effective-processor): Process classes and overrides and provide effective state on the _effective-registrations_, _effective-activations_, and _effective-alarms_ topics
