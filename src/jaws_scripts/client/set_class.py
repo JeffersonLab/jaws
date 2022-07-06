@@ -31,7 +31,7 @@ if __name__ == "__main__":
 @click.option('--priority', type=click.Choice(list(map(lambda c: c.name, AlarmPriority))), help="The alarm priority")
 @click.option('--filterable/--not-filterable', is_flag=True, default=True,
               help="True if alarm can be filtered out of view")
-@click.option('--latching/--not-latching', is_flag=True, default=True,
+@click.option('--latchable/--not-latchable', is_flag=True, default=True,
               help="Indicate that the alarm latches and requires acknowledgement to clear")
 @click.option('--pointofcontactusername', help="The point of contact user name")
 @click.option('--rationale', help="The alarm rationale")
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 @click.option('--offdelayseconds', type=int, default=None, help="Number of off delay seconds")
 @click.argument('name')
 def set_class(file, unset, category,
-              priority, filterable, latching, pointofcontactusername, rationale,
+              priority, filterable, latchable, pointofcontactusername, rationale,
               correctiveaction, ondelayseconds, offdelayseconds, name) -> None:
     producer = ClassProducer('set_class.py')
 
@@ -72,7 +72,7 @@ def set_class(file, unset, category,
                                rationale,
                                correctiveaction,
                                pointofcontactusername,
-                               latching,
+                               latchable,
                                filterable,
                                ondelayseconds,
                                offdelayseconds)

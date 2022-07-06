@@ -12,7 +12,7 @@ import click
 
 from jaws_libp.clients import LocationConsumer, InstanceProducer
 from jaws_libp.entities import AlarmInstance, \
-    SimpleProducer, EPICSProducer, CALCProducer
+    Source, EPICSSource, CALCSource
 
 LOCATIONS = []
 
@@ -28,16 +28,15 @@ if __name__ == "__main__":
                    "encoded AVRO formatted per the alarm-instances-value schema")
 @click.option('--unset', is_flag=True, help="Remove the alarm")
 @click.option('--alarmclass', help="The alarm class")
-@click.option('--producersimple', is_flag=True, help="Simple alarm (producer)")
-@click.option('--producerpv', help="The name of the EPICS CA PV that directly powers this alarm")
-@click.option('--producerexpression', help="The CALC expression used to generate this alarm")
+@click.option('--pv', help="The name of the EPICS CA PV that directly powers this alarm")
+@click.option('--expression', help="The CALC expression used to generate this alarm")
 @click.option('--location', '-l', type=click.Choice(LOCATIONS), multiple=True,
               help="The alarm location (Options queried on-demand from alarm-locations topic).  Multiple locations "
                    "allowed.")
 @click.option('--screencommand', help="The command to open the related control system screen")
 @click.option('--maskedby', help="The optional parent alarm that masks this one")
 @click.argument('name')
-def set_instance(file, unset, alarmclass, producersimple, producerpv, producerexpression, location,
+def set_instance(file, unset, alarmclass, pv, expression, location,
                  screencommand, maskedby, name) -> None:
     producer = InstanceProducer('set_instance.py')
 
@@ -49,22 +48,18 @@ def set_instance(file, unset, alarmclass, producersimple, producerpv, producerex
         if unset:
             value = None
         else:
-            if producersimple is False and producerpv is None and producerexpression is None:
-                raise click.ClickException(
-                    "Must specify one of --producersimple, --producerpv, --producerexpression")
-
-            if producersimple:
-                source_producer = SimpleProducer()
-            elif producerpv:
-                source_producer = EPICSProducer(producerpv)
+            if pv:
+                source = EPICSSource(pv)
+            elif expression:
+                source = CALCSource(expression)
             else:
-                source_producer = CALCProducer(producerexpression)
+                source = Source()
 
             if alarmclass is None:
                 alarmclass = "base"
 
             value = AlarmInstance(alarmclass,
-                                  source_producer,
+                                  source,
                                   location,
                                   maskedby,
                                   screencommand)
