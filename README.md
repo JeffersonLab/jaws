@@ -111,7 +111,6 @@ This [Python 3.9+](https://www.python.org/) project is built with [setuptools](h
 ```
 git clone https://github.com/JeffersonLab/jaws
 cd jaws
-# Activate venv
 python -m build
 ```
 
