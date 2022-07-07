@@ -16,6 +16,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [Configure](https://github.com/JeffersonLab/jaws#configure)
 - [Build](https://github.com/JeffersonLab/jaws#build) 
 - [Test](https://github.com/JeffersonLab/jaws#test) 
+- [Release](https://github.com/JeffersonLab/jaws#release) 
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
 ---
 
@@ -110,6 +111,7 @@ This [Python 3.9+](https://www.python.org/) project is built with [setuptools](h
 ```
 git clone https://github.com/JeffersonLab/jaws
 cd jaws
+# Activate venv
 python -m build
 ```
 
@@ -134,6 +136,21 @@ docker exec -i jaws bash -c "cd /tests; pytest -p no:cacheprovider"
 ```
 **Note**: You can also run tests directly on the host (instead of inside the jaws container) if you set the environment variables as: 
 `BOOTSTRAP_SERVERS=localhost:9094` and `SCHEMA_REGISTRY=http://localhost:8081`
+
+## Release
+1. Bump the version number in setup.cfg and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).   
+1. Create a new release on the GitHub [Releases](https://github.com/JeffersonLab/jaws/releases) page corresponding to same version in setup.cfg (Enumerate changes and link issues)
+1. Clean build by removing `build`, `dist`, and `docsrc/source/_autosummary` directories
+1. Activate [virtual env](https://gist.github.com/slominskir/e7ed71317ea24fc19b97a0ec006ff4f1#activate-dev-virtual-environment)
+1. From venv build package, build docs, lint, test, and publish new artifact to PyPi with:
+```
+python -m build
+sphinx-build -b html docsrc/source build/docs
+pylint src/jaws_scripts
+pytest
+python -m twine upload --repository pypi dist/*
+```
+4. Update Sphinx docs by copying them from build dir into gh-pages branch and updating index.html (commit, push).
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
