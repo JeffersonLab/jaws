@@ -6,7 +6,7 @@
 
 import click
 
-from jaws_libp.clients import EffectiveRegistrationConsumer
+from jaws_libp.console import EffectiveRegistrationConsoleConsumer
 
 
 # pylint: disable=duplicate-code,disable=too-few-public-methods
@@ -32,7 +32,7 @@ class ClassFilter:
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--alarm_class', help="Only show registrations in the specified class")
 def list_effective_registrations(monitor, nometa, export, alarm_class) -> None:
-    consumer = EffectiveRegistrationConsumer('list_effective_registrations.py')
+    consumer = EffectiveRegistrationConsoleConsumer('list_effective_registrations.py')
 
     filter_obj = ClassFilter(alarm_class)
 

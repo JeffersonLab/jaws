@@ -5,7 +5,7 @@
 """
 
 import click
-from jaws_libp.clients import EffectiveNotificationConsumer
+from jaws_libp.console import EffectiveNotificationConsoleConsumer
 
 
 # pylint: disable=missing-function-docstring,no-value-for-parameter
@@ -14,7 +14,7 @@ from jaws_libp.clients import EffectiveNotificationConsumer
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 def list_effective_notifications(monitor, nometa, export) -> None:
-    consumer = EffectiveNotificationConsumer('list_effective_notifications.py')
+    consumer = EffectiveNotificationConsoleConsumer('list_effective_notifications.py')
 
     consumer.consume_then_done(monitor, nometa, export)
 

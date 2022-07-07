@@ -10,13 +10,13 @@
 import click
 from jaws_libp.clients import EffectiveRegistrationProducer
 from jaws_libp.entities import EffectiveRegistration, \
-    AlarmInstance, SimpleProducer
+    AlarmInstance, Source
 
 
 # pylint: disable=duplicate-code
 def __get_instance():
     return AlarmInstance("base",
-                         SimpleProducer(),
+                         Source(),
                          ["INJ"],
                          "alarm1",
                          "command1")

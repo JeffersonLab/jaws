@@ -21,7 +21,7 @@ if __name__ == "__main__":
     LOCATIONS = consumer.get_keys_then_done()
 
 
-# pylint: disable=duplicate-code,missing-function-docstring,too-many-arguments,no-value-for-parameter
+# pylint: disable=duplicate-code,missing-function-docstring,too-many-arguments,no-value-for-parameter,invalid-name
 @click.command()
 @click.option('--file', is_flag=True,
               help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON "

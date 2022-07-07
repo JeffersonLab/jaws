@@ -12,9 +12,9 @@ import time
 import click
 from jaws_libp.clients import EffectiveAlarmProducer
 from jaws_libp.entities import EffectiveAlarm, AlarmState, AlarmOverrideSet, \
-    OverriddenAlarmType, EffectiveRegistration, EffectiveActivation, \
+    OverriddenAlarmType, EffectiveRegistration, EffectiveNotification, \
     DisabledOverride, FilteredOverride, LatchedOverride, MaskedOverride, OnDelayedOverride, OffDelayedOverride, \
-    ShelvedOverride, ShelvedReason, SimpleProducer, AlarmInstance
+    ShelvedOverride, ShelvedReason, Source, AlarmInstance
 
 
 # pylint: disable=duplicate-code
@@ -44,7 +44,7 @@ def __get_overrides(override):
 
 def __get_instance():
     return AlarmInstance("base",
-                         SimpleProducer(),
+                         Source(),
                          ["INJ"],
                          "alarm1",
                          "command1")
@@ -68,7 +68,7 @@ def set_effective_alarm(unset, state, override, name):
         alarm_instance = __get_instance()
 
         registration = EffectiveRegistration(None, alarm_instance)
-        activation = EffectiveActivation(None, overrides, AlarmState[state])
+        activation = EffectiveNotification(None, overrides, AlarmState[state])
 
         value = EffectiveAlarm(registration, activation)
 

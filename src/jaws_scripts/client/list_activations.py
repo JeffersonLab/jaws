@@ -5,7 +5,7 @@
 """
 
 import click
-from jaws_libp.clients import ActivationConsumer
+from jaws_libp.console import ActivationConsoleConsumer
 
 
 # pylint: disable=missing-function-docstring,no-value-for-parameter
@@ -14,7 +14,7 @@ from jaws_libp.clients import ActivationConsumer
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 def list_activations(monitor, nometa, export) -> None:
-    consumer = ActivationConsumer('list_activations.py')
+    consumer = ActivationConsoleConsumer('list_activations.py')
 
     consumer.consume_then_done(monitor, nometa, export)
 

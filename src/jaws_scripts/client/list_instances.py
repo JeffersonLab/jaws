@@ -6,7 +6,7 @@
 
 import click
 
-from jaws_libp.clients import InstanceConsumer
+from jaws_libp.console import InstanceConsoleConsumer
 
 
 # pylint: disable=too-few-public-methods
@@ -32,7 +32,7 @@ class ClassFilter:
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 @click.option('--alarm_class', help="Only show instances in the specified class")
 def list_instances(monitor, nometa, export, alarm_class) -> None:
-    consumer = InstanceConsumer('list_instances.py')
+    consumer = InstanceConsoleConsumer('list_instances.py')
 
     filter_obj = ClassFilter(alarm_class)
 

@@ -5,7 +5,7 @@
 """
 
 import click
-from jaws_libp.clients import EffectiveAlarmConsumer
+from jaws_libp.console import EffectiveAlarmConsoleConsumer
 
 
 # pylint: disable=missing-function-docstring,no-value-for-parameter
@@ -14,7 +14,7 @@ from jaws_libp.clients import EffectiveAlarmConsumer
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 def list_effective_alarms(monitor, nometa, export):
-    consumer = EffectiveAlarmConsumer('list_effective_alarms.py')
+    consumer = EffectiveAlarmConsoleConsumer('list_effective_alarms.py')
 
     consumer.consume_then_done(monitor, nometa, export)
 

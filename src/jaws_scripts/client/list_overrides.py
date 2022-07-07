@@ -5,7 +5,7 @@
 """
 
 import click
-from jaws_libp.clients import OverrideConsumer
+from jaws_libp.console import OverrideConsoleConsumer
 
 
 # pylint: disable=missing-function-docstring,no-value-for-parameter
@@ -14,7 +14,7 @@ from jaws_libp.clients import OverrideConsumer
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 def list_overrides(monitor, nometa, export) -> None:
-    consumer = OverrideConsumer('list_overrides.py')
+    consumer = OverrideConsoleConsumer('list_overrides.py')
 
     consumer.consume_then_done(monitor, nometa, export)
 

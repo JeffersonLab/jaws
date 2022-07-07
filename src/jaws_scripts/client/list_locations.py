@@ -10,7 +10,7 @@
 
 import click
 
-from jaws_libp.clients import LocationConsumer
+from jaws_libp.console import LocationConsoleConsumer
 
 
 # pylint: disable=missing-function-docstring,no-value-for-parameter
@@ -19,7 +19,7 @@ from jaws_libp.clients import LocationConsumer
 @click.option('--nometa', is_flag=True, help="Exclude audit headers and timestamp")
 @click.option('--export', is_flag=True, help="Dump records in AVRO JSON format")
 def list_locations(monitor, nometa, export) -> None:
-    consumer = LocationConsumer('list_locations.py')
+    consumer = LocationConsoleConsumer('list_locations.py')
 
     consumer.consume_then_done(monitor, nometa, export)
 
