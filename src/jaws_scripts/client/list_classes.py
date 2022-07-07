@@ -8,7 +8,7 @@
 
 import click
 
-from jaws_libp.clients import ClassConsumer, CategoryConsumer
+from jaws_libp.console import CategoryConsoleConsumer, ClassConsoleConsumer
 
 
 # pylint: disable=too-few-public-methods
@@ -30,7 +30,7 @@ class CategoryFilter:
 CATEGORIES = []
 
 if __name__ == "__main__":
-    cat_consumer = CategoryConsumer('list_classes.py')
+    cat_consumer = CategoryConsoleConsumer('list_classes.py')
     CATEGORIES = cat_consumer.get_keys_then_done()
 
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
               help="Only show registered alarms in the specified category (Options queried on-demand from "
                    "alarm-categories topic)")
 def list_classes(monitor, nometa, export, category) -> None:
-    consumer = ClassConsumer('list_classes.py')
+    consumer = ClassConsoleConsumer('list_classes.py')
 
     filter_obj = CategoryFilter(category)
 
