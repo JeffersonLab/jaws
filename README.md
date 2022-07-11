@@ -144,7 +144,8 @@ sphinx-build -b html docsrc/source build/docs
 pylint src/jaws_scripts
 python -m twine upload --repository pypi dist/*
 ```
-4. Update Sphinx docs by copying them from build dir into gh-pages branch and updating index.html (commit, push).
+4. Build and push [Docker image](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#8-build-an-image-based-of-github-tag)
+5. Update Sphinx docs by copying them from build dir into gh-pages branch and updating index.html (commit, push).
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
