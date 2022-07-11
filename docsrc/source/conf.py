@@ -10,7 +10,7 @@ copyright = '2022, Ryan Slominski'
 author = 'Ryan Slominski'
 
 # The full version, including alpha/beta/rc tags
-release = '4.5.1'
+release = '4.5.2'
 
 
 # -- General configuration ---------------------------------------------------
