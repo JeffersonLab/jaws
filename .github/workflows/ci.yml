@@ -16,24 +16,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.9"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements_dev.txt
-    - name: Lint
-      run: |
-        pylint src/jaws_scripts
     - name: Set bind mount permissions
       run: chmod -R +x ./src/jaws_scripts
     - name: Start containers
       run: docker compose -f "test.yml" up -d
     - name: Wait for containers to settle
       run: docker exec -i jaws bash -c "sleep 20"
-    - name: Install pytest
+   - name: Install pytest
       run: docker exec -i jaws bash -c "pip install pytest"
     - name: Run pytest
       run: docker exec -i jaws bash -c "cd /tests; pytest -p no:cacheprovider"

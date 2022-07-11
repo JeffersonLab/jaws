@@ -1,0 +1,42 @@
+ARG BUILD_IMAGE=python:3.9-alpine3.15
+ARG RUN_IMAGE=python:3.9-alpine3.15
+ARG VIRTUAL_ENV=/opt/venv
+
+################## Stage 0
+FROM ${BUILD_IMAGE} as builder
+ARG CUSTOM_CRT_URL
+ARG VIRTUAL_ENV
+ARG BUILD_DEPS="librdkafka gcc linux-headers libc-dev librdkafka-dev"
+USER root
+WORKDIR /
+COPY . /app
+RUN if [ -z "${CUSTOM_CRT_URL}" ] ; then echo "No custom cert needed"; else \
+       wget -O /usr/local/share/ca-certificates/customcert.crt $CUSTOM_CRT_URL \
+       && update-ca-certificates \
+    ; fi \
+    && apk add --no-cache $BUILD_DEPS \
+    && pip install --upgrade pip
+RUN python -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+RUN cd /app \
+    && pip install -r requirements.txt
+
+################## Stage 1
+FROM ${RUN_IMAGE} as runner
+ARG CUSTOM_CRT_URL
+ARG VIRTUAL_ENV
+ARG RUN_USER=guest
+ARG RUN_DEPS="shadow librdkafka curl git bash"
+ENV TZ=UTC
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV PS1="\W \$ "
+USER root
+COPY --from=builder $VIRTUAL_ENV $VIRTUAL_ENV
+RUN if [ -z "${CUSTOM_CRT_URL}" ] ; then echo "No custom cert needed"; else \
+       mkdir -p /usr/local/share/ca-certificates \
+       && wget -O /usr/local/share/ca-certificates/customcert.crt $CUSTOM_CRT_URL \
+       && cat /usr/local/share/ca-certificates/customcert.crt >> /etc/ssl/certs/ca-certificates.crt \
+    ; fi \
+    && pip install --upgrade pip \
+    && apk add --no-cache $RUN_DEPS \
+    && usermod -d /tmp guest
