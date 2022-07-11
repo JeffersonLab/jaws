@@ -114,7 +114,7 @@ else
       rationale="${def[3]}"
       correctiveaction="${def[4]}"
       pointofcontactusername="${def[5]}"
-      latching="${def[6]}"
+      latchable="${def[6]}"
       filterable="${def[7]}"
       ondelayseconds="${def[8]}"
       offdelayseconds="${def[9]}"
@@ -122,10 +122,10 @@ else
       PARMS=("${name}" --category "${category}" --priority "${priority}" --rationale "${rationale}")
       PARMS+=(--correctiveaction "${correctiveaction}" --pointofcontactusername "${pointofcontactusername}")
 
-      if [[ "${latching}" == "True" ]]; then
-        PARMS+=(--latching)
+      if [[ "${latchable}" == "True" ]]; then
+        PARMS+=(--latchable)
       else
-        PARMS+=(--not-latching)
+        PARMS+=(--not-latchable)
       fi
 
       if [[ "${filterable}" == "True" ]]; then
@@ -176,10 +176,8 @@ else
 
       PARMS=("${name}" --alarmclass "${class}" --location "${location}" --screencommand "${screencommand}")
 
-      if [[ -z "${pv}" ]]; then
-        PARMS+=(--producersimple)
-      else
-        PARMS+=(--producerpv "${pv}")
+      if [[ ! -z "${pv}" ]]; then
+        PARMS+=(--pv "${pv}")
       fi
 
       if [[  ! -z "${maskedby}" ]]; then
