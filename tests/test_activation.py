@@ -1,14 +1,14 @@
 from click.testing import CliRunner
 from jaws_libp.avro.serde import ActivationSerde
-from jaws_libp.entities import AlarmActivationUnion, SimpleAlarming, ChannelError, NoteAlarming, EPICSAlarming, \
-    EPICSSTAT, EPICSSEVR
+from jaws_libp.entities import AlarmActivationUnion, Activation, ChannelErrorActivation, NoteActivation, \
+    EPICSActivation, EPICSSTAT, EPICSSEVR
 from jaws_scripts.client.list_activations import list_activations
 from jaws_scripts.client.set_activation import set_activation
 
 
-def test_simple_activation():
+def test_activation():
     alarm_name = "alarm1"
-    activation = AlarmActivationUnion(SimpleAlarming())
+    activation = AlarmActivationUnion(Activation())
 
     runner = CliRunner()
 
@@ -18,7 +18,7 @@ def test_simple_activation():
         assert result.exit_code == 0
 
         # Get
-        result = runner.invoke(list_activations, ['--export'])
+        result = runner.invoke(list_activations, ['--export', '--ignoreoff'])
         assert result.exit_code == 0
 
         activation_serde = ActivationSerde(None)
@@ -33,7 +33,7 @@ def test_simple_activation():
 def test_note_activation():
     alarm_name = "alarm2"
     note = "TESTING"
-    activation = AlarmActivationUnion(NoteAlarming(note))
+    activation = AlarmActivationUnion(NoteActivation(note))
 
     runner = CliRunner()
 
@@ -43,7 +43,7 @@ def test_note_activation():
         assert result.exit_code == 0
 
         # Get
-        result = runner.invoke(list_activations, ['--export'])
+        result = runner.invoke(list_activations, ['--export', '--ignoreoff'])
         assert result.exit_code == 0
 
         activation_serde = ActivationSerde(None)
@@ -59,7 +59,7 @@ def test_epics_activation():
     alarm_name = "alarm3"
     sevr = EPICSSEVR.MINOR
     stat = EPICSSTAT.HIHI
-    activation = AlarmActivationUnion(EPICSAlarming(sevr, stat))
+    activation = AlarmActivationUnion(EPICSActivation(sevr, stat))
 
     runner = CliRunner()
 
@@ -69,7 +69,7 @@ def test_epics_activation():
         assert result.exit_code == 0
 
         # Get
-        result = runner.invoke(list_activations, ['--export'])
+        result = runner.invoke(list_activations, ['--export', '--ignoreoff'])
         assert result.exit_code == 0
 
         activation_serde = ActivationSerde(None)
@@ -84,7 +84,7 @@ def test_epics_activation():
 def test_error_activation():
     alarm_name = "alarm4"
     error = "Never Connected"
-    activation = AlarmActivationUnion(ChannelError(error))
+    activation = AlarmActivationUnion(ChannelErrorActivation(error))
 
     runner = CliRunner()
 
@@ -94,7 +94,7 @@ def test_error_activation():
         assert result.exit_code == 0
 
         # Get
-        result = runner.invoke(list_activations, ['--export'])
+        result = runner.invoke(list_activations, ['--export', '--ignoreoff'])
         assert result.exit_code == 0
 
         activation_serde = ActivationSerde(None)

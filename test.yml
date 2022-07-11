@@ -16,11 +16,14 @@ services:
 
   jaws:
     extends:
-      file: docker-compose.yml
+      file: bind.yml
       service: jaws
-    image: slominskir/jaws:4.4.0
     environment:
       LOGLEVEL: "INFO"
+      ALARM_LOCATIONS: ""
+      ALARM_CATEGORIES: ""
+      ALARM_CLASSES: ""
+      ALARM_INSTANCES: ""
     volumes:
       - ./src/jaws_scripts:/opt/venv/lib/python3.9/site-packages/jaws_scripts
       - ./tests:/tests

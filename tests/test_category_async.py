@@ -3,16 +3,16 @@ from typing import Dict, Any, List
 from confluent_kafka import Message
 
 from jaws_libp.clients import CategoryProducer, CategoryConsumer
-from jaws_libp.eventsource import CacheListener
+from jaws_libp.eventsource import EventSourceListener
 
 
-class CategoryListener(CacheListener):
+class CategoryListener(EventSourceListener):
     _categories: Dict[Any, Message]
 
-    def on_load(self, cache: Dict[Any, Message]) -> None:
+    def on_highwater(self, cache: Dict[Any, Message]) -> None:
         self._categories = cache
 
-    def on_update(self, msgs: List[Message]) -> None:
+    def on_batch(self, msgs: List[Message], highwater_reached: bool) -> None:
         pass
 
     def get_categories(self) -> Dict[Any, Message]:
@@ -31,7 +31,7 @@ def test_category_client():
 
         listener = CategoryListener()
 
-        consumer.add_cache_listener(listener)
+        consumer.add_listener(listener)
 
         consumer.start()
 
