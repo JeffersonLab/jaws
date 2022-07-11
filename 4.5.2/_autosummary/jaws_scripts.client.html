@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jaws_scripts.client &mdash; jaws-scripts 4.5.2 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="jaws_scripts.client.list_activations" href="jaws_scripts.client.list_activations.html" />
+    <link rel="prev" title="jaws_scripts.broker.show_consumer_groups" href="jaws_scripts.broker.show_consumer_groups.html" />
+<link href="../_static/rtd_custom.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> jaws-scripts
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="jaws_scripts.html">jaws_scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="jaws_scripts.broker.html">jaws_scripts.broker</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">jaws_scripts.client</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_activations.html">jaws_scripts.client.list_activations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_categories.html">jaws_scripts.client.list_categories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_classes.html">jaws_scripts.client.list_classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_effective_alarms.html">jaws_scripts.client.list_effective_alarms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_effective_notifications.html">jaws_scripts.client.list_effective_notifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_effective_registrations.html">jaws_scripts.client.list_effective_registrations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_instances.html">jaws_scripts.client.list_instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_locations.html">jaws_scripts.client.list_locations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_overrides.html">jaws_scripts.client.list_overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_activation.html">jaws_scripts.client.set_activation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_category.html">jaws_scripts.client.set_category</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_class.html">jaws_scripts.client.set_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_effective_alarm.html">jaws_scripts.client.set_effective_alarm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_effective_notification.html">jaws_scripts.client.set_effective_notification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_effective_registration.html">jaws_scripts.client.set_effective_registration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_instance.html">jaws_scripts.client.set_instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_location.html">jaws_scripts.client.set_location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_override.html">jaws_scripts.client.set_override</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="jaws_scripts.registry.html">jaws_scripts.registry</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jaws-scripts</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="jaws_scripts.html">jaws_scripts</a> &raquo;</li>
+      <li>jaws_scripts.client</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/jaws_scripts.client.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-jaws_scripts.client">
+<span id="jaws-scripts-client"></span><h1>jaws_scripts.client<a class="headerlink" href="#module-jaws_scripts.client" title="Permalink to this headline"></a></h1>
+<p>CLI client admin scripts</p>
+<p class="rubric">Modules</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaws_scripts.client.list_activations.html#module-jaws_scripts.client.list_activations" title="jaws_scripts.client.list_activations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.list_activations</span></code></a></p></td>
+<td><p>Lists the alarm activations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="jaws_scripts.client.list_categories.html#module-jaws_scripts.client.list_categories" title="jaws_scripts.client.list_categories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.list_categories</span></code></a></p></td>
+<td><p>Lists the alarm categories.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaws_scripts.client.list_classes.html#module-jaws_scripts.client.list_classes" title="jaws_scripts.client.list_classes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.list_classes</span></code></a></p></td>
+<td><p>Lists the alarm registration classes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="jaws_scripts.client.list_effective_alarms.html#module-jaws_scripts.client.list_effective_alarms" title="jaws_scripts.client.list_effective_alarms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.list_effective_alarms</span></code></a></p></td>
+<td><p>Lists the effective alarms.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaws_scripts.client.list_effective_notifications.html#module-jaws_scripts.client.list_effective_notifications" title="jaws_scripts.client.list_effective_notifications"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.list_effective_notifications</span></code></a></p></td>
+<td><p>Lists the alarm effective notifications.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="jaws_scripts.client.list_effective_registrations.html#module-jaws_scripts.client.list_effective_registrations" title="jaws_scripts.client.list_effective_registrations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.list_effective_registrations</span></code></a></p></td>
+<td><p>Lists the effective registrations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaws_scripts.client.list_instances.html#module-jaws_scripts.client.list_instances" title="jaws_scripts.client.list_instances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.list_instances</span></code></a></p></td>
+<td><p>Lists the alarm registration instances.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="jaws_scripts.client.list_locations.html#module-jaws_scripts.client.list_locations" title="jaws_scripts.client.list_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.list_locations</span></code></a></p></td>
+<td><p>Lists the alarm locations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaws_scripts.client.list_overrides.html#module-jaws_scripts.client.list_overrides" title="jaws_scripts.client.list_overrides"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.list_overrides</span></code></a></p></td>
+<td><p>Lists the alarm overrides.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="jaws_scripts.client.set_activation.html#module-jaws_scripts.client.set_activation" title="jaws_scripts.client.set_activation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.set_activation</span></code></a></p></td>
+<td><p>Set alarm activation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaws_scripts.client.set_category.html#module-jaws_scripts.client.set_category" title="jaws_scripts.client.set_category"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.set_category</span></code></a></p></td>
+<td><p>Set alarm category.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="jaws_scripts.client.set_class.html#module-jaws_scripts.client.set_class" title="jaws_scripts.client.set_class"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.set_class</span></code></a></p></td>
+<td><p>Set alarm registration class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaws_scripts.client.set_effective_alarm.html#module-jaws_scripts.client.set_effective_alarm" title="jaws_scripts.client.set_effective_alarm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.set_effective_alarm</span></code></a></p></td>
+<td><p>Set effective alarm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="jaws_scripts.client.set_effective_notification.html#module-jaws_scripts.client.set_effective_notification" title="jaws_scripts.client.set_effective_notification"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.set_effective_notification</span></code></a></p></td>
+<td><p>Set effective notification.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaws_scripts.client.set_effective_registration.html#module-jaws_scripts.client.set_effective_registration" title="jaws_scripts.client.set_effective_registration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.set_effective_registration</span></code></a></p></td>
+<td><p>Set effective registration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="jaws_scripts.client.set_instance.html#module-jaws_scripts.client.set_instance" title="jaws_scripts.client.set_instance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.set_instance</span></code></a></p></td>
+<td><p>Set alarm registration instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="jaws_scripts.client.set_location.html#module-jaws_scripts.client.set_location" title="jaws_scripts.client.set_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.set_location</span></code></a></p></td>
+<td><p>Set alarm location.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="jaws_scripts.client.set_override.html#module-jaws_scripts.client.set_override" title="jaws_scripts.client.set_override"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaws_scripts.client.set_override</span></code></a></p></td>
+<td><p>Set alarm override.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="jaws_scripts.broker.show_consumer_groups.html" class="btn btn-neutral float-left" title="jaws_scripts.broker.show_consumer_groups" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="jaws_scripts.client.list_activations.html" class="btn btn-neutral float-right" title="jaws_scripts.client.list_activations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ryan Slominski.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

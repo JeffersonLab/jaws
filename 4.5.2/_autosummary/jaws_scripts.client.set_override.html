@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jaws_scripts.client.set_override &mdash; jaws-scripts 4.5.2 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="jaws_scripts.registry" href="jaws_scripts.registry.html" />
+    <link rel="prev" title="jaws_scripts.client.set_location" href="jaws_scripts.client.set_location.html" />
+<link href="../_static/rtd_custom.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> jaws-scripts
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="jaws_scripts.html">jaws_scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="jaws_scripts.broker.html">jaws_scripts.broker</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="jaws_scripts.client.html">jaws_scripts.client</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_activations.html">jaws_scripts.client.list_activations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_categories.html">jaws_scripts.client.list_categories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_classes.html">jaws_scripts.client.list_classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_effective_alarms.html">jaws_scripts.client.list_effective_alarms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_effective_notifications.html">jaws_scripts.client.list_effective_notifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_effective_registrations.html">jaws_scripts.client.list_effective_registrations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_instances.html">jaws_scripts.client.list_instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_locations.html">jaws_scripts.client.list_locations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_overrides.html">jaws_scripts.client.list_overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_activation.html">jaws_scripts.client.set_activation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_category.html">jaws_scripts.client.set_category</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_class.html">jaws_scripts.client.set_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_effective_alarm.html">jaws_scripts.client.set_effective_alarm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_effective_notification.html">jaws_scripts.client.set_effective_notification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_effective_registration.html">jaws_scripts.client.set_effective_registration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_instance.html">jaws_scripts.client.set_instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_location.html">jaws_scripts.client.set_location</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">jaws_scripts.client.set_override</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#set-override">set_override</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="jaws_scripts.registry.html">jaws_scripts.registry</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jaws-scripts</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="jaws_scripts.html">jaws_scripts</a> &raquo;</li>
+          <li><a href="jaws_scripts.client.html">jaws_scripts.client</a> &raquo;</li>
+      <li>jaws_scripts.client.set_override</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/jaws_scripts.client.set_override.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-jaws_scripts.client.set_override">
+<span id="jaws-scripts-client-set-override"></span><h1>jaws_scripts.client.set_override<a class="headerlink" href="#module-jaws_scripts.client.set_override" title="Permalink to this headline"></a></h1>
+<p>Set alarm override.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+</tbody>
+</table>
+<section id="set-override">
+<h2>set_override<a class="headerlink" href="#set-override" title="Permalink to this headline"></a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_override <span class="o">[</span>OPTIONS<span class="o">]</span> NAME
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_override-override">
+<span id="cmdoption-set-override-override"></span><span class="sig-name descname"><span class="pre">--override</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;override&gt;</span></span><a class="headerlink" href="#cmdoption-set_override-override" title="Permalink to this definition"></a></dt>
+<dd><p>The type of override</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>Disabled | Filtered | Masked | OnDelayed | OffDelayed | Shelved | Latched</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_override-unset">
+<span id="cmdoption-set-override-unset"></span><span class="sig-name descname"><span class="pre">--unset</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-set_override-unset" title="Permalink to this definition"></a></dt>
+<dd><p>Remove the override</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_override-expirationseconds">
+<span id="cmdoption-set-override-expirationseconds"></span><span class="sig-name descname"><span class="pre">--expirationseconds</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;expirationseconds&gt;</span></span><a class="headerlink" href="#cmdoption-set_override-expirationseconds" title="Permalink to this definition"></a></dt>
+<dd><p>The number of seconds until the override status expires</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_override-expirationts">
+<span id="cmdoption-set-override-expirationts"></span><span class="sig-name descname"><span class="pre">--expirationts</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;expirationts&gt;</span></span><a class="headerlink" href="#cmdoption-set_override-expirationts" title="Permalink to this definition"></a></dt>
+<dd><p>UNIX timestamp (millis since epoch 1970) when the override status expires, Overridden by –expirationseconds (so only use one or the other)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_override-reason">
+<span id="cmdoption-set-override-reason"></span><span class="sig-name descname"><span class="pre">--reason</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reason&gt;</span></span><a class="headerlink" href="#cmdoption-set_override-reason" title="Permalink to this definition"></a></dt>
+<dd><p>The explanation for why this alarm has been shelved</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>Stale_Alarm | Chattering_Fleeting_Alarm | Other</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_override-oneshot">
+<span id="cmdoption-set-override-oneshot"></span><span class="sig-name descname"><span class="pre">--oneshot</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-set_override-oneshot" title="Permalink to this definition"></a></dt>
+<dd><p>Whether shelving is one-shot or continuous</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_override-comments">
+<span id="cmdoption-set-override-comments"></span><span class="sig-name descname"><span class="pre">--comments</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;comments&gt;</span></span><a class="headerlink" href="#cmdoption-set_override-comments" title="Permalink to this definition"></a></dt>
+<dd><p>Operator explanation for why suppressed</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_override-filtername">
+<span id="cmdoption-set-override-filtername"></span><span class="sig-name descname"><span class="pre">--filtername</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;filtername&gt;</span></span><a class="headerlink" href="#cmdoption-set_override-filtername" title="Permalink to this definition"></a></dt>
+<dd><p>Name of filter rule associated with this override</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_override-arg-NAME">
+<span id="cmdoption-set-override-arg-name"></span><span class="sig-name descname"><span class="pre">NAME</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-set_override-arg-NAME" title="Permalink to this definition"></a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="jaws_scripts.client.set_location.html" class="btn btn-neutral float-left" title="jaws_scripts.client.set_location" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="jaws_scripts.registry.html" class="btn btn-neutral float-right" title="jaws_scripts.registry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ryan Slominski.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+jaws\_scripts.registry.delete\_schemas
+======================================
+
+.. automodule:: jaws_scripts.registry.delete_schemas
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   ********************
+   delete_schemas
+   ********************
+   .. parsed-literal::
+      delete_schemas
+   
+   
+   
+
+
+

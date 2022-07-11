@@ -1,0 +1,20 @@
+jaws\_scripts.client.set\_activation
+====================================
+
+.. automodule:: jaws_scripts.client.set_activation
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   .. click:: jaws_scripts.client.set_activation:set_activation
+      :prog: set_activation
+      :nested: full
+   
+   
+   
+
+
+

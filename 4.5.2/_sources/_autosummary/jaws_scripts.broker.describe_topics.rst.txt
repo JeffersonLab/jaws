@@ -1,0 +1,22 @@
+jaws\_scripts.broker.describe\_topics
+=====================================
+
+.. automodule:: jaws_scripts.broker.describe_topics
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   ********************
+   describe_topics
+   ********************
+   .. parsed-literal::
+      describe_topics
+   
+   
+   
+
+
+

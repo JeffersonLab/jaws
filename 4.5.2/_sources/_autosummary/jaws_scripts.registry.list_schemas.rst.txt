@@ -1,0 +1,22 @@
+jaws\_scripts.registry.list\_schemas
+====================================
+
+.. automodule:: jaws_scripts.registry.list_schemas
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   ********************
+   list_schemas
+   ********************
+   .. parsed-literal::
+      list_schemas
+   
+   
+   
+
+
+

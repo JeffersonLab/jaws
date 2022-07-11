@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jaws_scripts.client.set_instance &mdash; jaws-scripts 4.5.2 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="jaws_scripts.client.set_location" href="jaws_scripts.client.set_location.html" />
+    <link rel="prev" title="jaws_scripts.client.set_effective_registration" href="jaws_scripts.client.set_effective_registration.html" />
+<link href="../_static/rtd_custom.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> jaws-scripts
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="jaws_scripts.html">jaws_scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="jaws_scripts.broker.html">jaws_scripts.broker</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="jaws_scripts.client.html">jaws_scripts.client</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_activations.html">jaws_scripts.client.list_activations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_categories.html">jaws_scripts.client.list_categories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_classes.html">jaws_scripts.client.list_classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_effective_alarms.html">jaws_scripts.client.list_effective_alarms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_effective_notifications.html">jaws_scripts.client.list_effective_notifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_effective_registrations.html">jaws_scripts.client.list_effective_registrations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_instances.html">jaws_scripts.client.list_instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_locations.html">jaws_scripts.client.list_locations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.list_overrides.html">jaws_scripts.client.list_overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_activation.html">jaws_scripts.client.set_activation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_category.html">jaws_scripts.client.set_category</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_class.html">jaws_scripts.client.set_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_effective_alarm.html">jaws_scripts.client.set_effective_alarm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_effective_notification.html">jaws_scripts.client.set_effective_notification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_effective_registration.html">jaws_scripts.client.set_effective_registration</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">jaws_scripts.client.set_instance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#set-instance">set_instance</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_location.html">jaws_scripts.client.set_location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jaws_scripts.client.set_override.html">jaws_scripts.client.set_override</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="jaws_scripts.registry.html">jaws_scripts.registry</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jaws-scripts</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="jaws_scripts.html">jaws_scripts</a> &raquo;</li>
+          <li><a href="jaws_scripts.client.html">jaws_scripts.client</a> &raquo;</li>
+      <li>jaws_scripts.client.set_instance</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/jaws_scripts.client.set_instance.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-jaws_scripts.client.set_instance">
+<span id="jaws-scripts-client-set-instance"></span><h1>jaws_scripts.client.set_instance<a class="headerlink" href="#module-jaws_scripts.client.set_instance" title="Permalink to this headline"></a></h1>
+<p>Set alarm registration instance.</p>
+<p><strong>Note</strong>: bulk imports with <code class="docutils literal notranslate"><span class="pre">--file</span></code> expect alarm instance records formatted in
+<a class="reference external" href="https://avro.apache.org/docs/current/spec.html#json_encoding">AVRO JSON Encoding</a>.
+See <a class="reference external" href="https://github.com/JeffersonLab/jaws/blob/main/examples/data/instances">Example file</a>.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+</tbody>
+</table>
+<section id="set-instance">
+<h2>set_instance<a class="headerlink" href="#set-instance" title="Permalink to this headline"></a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_instance <span class="o">[</span>OPTIONS<span class="o">]</span> NAME
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_instance-file">
+<span id="cmdoption-set-instance-file"></span><span class="sig-name descname"><span class="pre">--file</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-set_instance-file" title="Permalink to this definition"></a></dt>
+<dd><p>Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON encoded AVRO formatted per the alarm-instances-value schema</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_instance-unset">
+<span id="cmdoption-set-instance-unset"></span><span class="sig-name descname"><span class="pre">--unset</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-set_instance-unset" title="Permalink to this definition"></a></dt>
+<dd><p>Remove the alarm</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_instance-alarmclass">
+<span id="cmdoption-set-instance-alarmclass"></span><span class="sig-name descname"><span class="pre">--alarmclass</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;alarmclass&gt;</span></span><a class="headerlink" href="#cmdoption-set_instance-alarmclass" title="Permalink to this definition"></a></dt>
+<dd><p>The alarm class</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_instance-pv">
+<span id="cmdoption-set-instance-pv"></span><span class="sig-name descname"><span class="pre">--pv</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;pv&gt;</span></span><a class="headerlink" href="#cmdoption-set_instance-pv" title="Permalink to this definition"></a></dt>
+<dd><p>The name of the EPICS CA PV that directly powers this alarm</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_instance-expression">
+<span id="cmdoption-set-instance-expression"></span><span class="sig-name descname"><span class="pre">--expression</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;expression&gt;</span></span><a class="headerlink" href="#cmdoption-set_instance-expression" title="Permalink to this definition"></a></dt>
+<dd><p>The CALC expression used to generate this alarm</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_instance-l">
+<span id="cmdoption-set-instance-l"></span><span id="cmdoption-set_instance-location"></span><span id="cmdoption-set-instance-location"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--location</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;location&gt;</span></span><a class="headerlink" href="#cmdoption-set_instance-l" title="Permalink to this definition"></a></dt>
+<dd><p>The alarm location (Options queried on-demand from alarm-locations topic).  Multiple locations allowed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_instance-screencommand">
+<span id="cmdoption-set-instance-screencommand"></span><span class="sig-name descname"><span class="pre">--screencommand</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;screencommand&gt;</span></span><a class="headerlink" href="#cmdoption-set_instance-screencommand" title="Permalink to this definition"></a></dt>
+<dd><p>The command to open the related control system screen</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_instance-maskedby">
+<span id="cmdoption-set-instance-maskedby"></span><span class="sig-name descname"><span class="pre">--maskedby</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;maskedby&gt;</span></span><a class="headerlink" href="#cmdoption-set_instance-maskedby" title="Permalink to this definition"></a></dt>
+<dd><p>The optional parent alarm that masks this one</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-set_instance-arg-NAME">
+<span id="cmdoption-set-instance-arg-name"></span><span class="sig-name descname"><span class="pre">NAME</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-set_instance-arg-NAME" title="Permalink to this definition"></a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="jaws_scripts.client.set_effective_registration.html" class="btn btn-neutral float-left" title="jaws_scripts.client.set_effective_registration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="jaws_scripts.client.set_location.html" class="btn btn-neutral float-right" title="jaws_scripts.client.set_location" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ryan Slominski.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

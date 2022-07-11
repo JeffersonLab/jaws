@@ -1,0 +1,20 @@
+jaws\_scripts.client.list\_instances
+====================================
+
+.. automodule:: jaws_scripts.client.list_instances
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   .. click:: jaws_scripts.client.list_instances:list_instances
+      :prog: list_instances
+      :nested: full
+   
+   
+   
+
+
+

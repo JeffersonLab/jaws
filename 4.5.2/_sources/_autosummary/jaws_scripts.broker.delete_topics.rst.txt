@@ -1,0 +1,22 @@
+jaws\_scripts.broker.delete\_topics
+===================================
+
+.. automodule:: jaws_scripts.broker.delete_topics
+
+   
+   
+   .. autosummary::
+      :toctree:
+   
+   
+   ********************
+   delete_topics
+   ********************
+   .. parsed-literal::
+      delete_topics
+   
+   
+   
+
+
+
