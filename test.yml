@@ -16,8 +16,14 @@ services:
 
   jaws:
     extends:
-      file: bind.yml
+      file: docker-compose.yml
       service: jaws
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: tester
+      args:
+        - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
     environment:
       LOGLEVEL: "INFO"
       ALARM_LOCATIONS: ""
