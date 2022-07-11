@@ -10,13 +10,14 @@
 
 import click
 
-from jaws_libp.clients import CategoryConsumer, ClassProducer
+from jaws_libp.clients import ClassProducer
+from jaws_libp.console import CategoryConsoleConsumer
 from jaws_libp.entities import AlarmClass, AlarmPriority
 
 CATEGORIES = []
 
 if __name__ == "__main__":
-    cat_consumer = CategoryConsumer('set_class.py')
+    cat_consumer = CategoryConsoleConsumer('set_class.py')
     CATEGORIES = cat_consumer.get_keys_then_done()
 
 

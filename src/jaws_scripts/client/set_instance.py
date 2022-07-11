@@ -10,14 +10,15 @@
 
 import click
 
-from jaws_libp.clients import LocationConsumer, InstanceProducer
+from jaws_libp.clients import InstanceProducer
+from jaws_libp.console import LocationConsoleConsumer
 from jaws_libp.entities import AlarmInstance, \
     Source, EPICSSource, CALCSource
 
 LOCATIONS = []
 
 if __name__ == "__main__":
-    consumer = LocationConsumer('set_instance.py')
+    consumer = LocationConsoleConsumer('set_instance.py')
     LOCATIONS = consumer.get_keys_then_done()
 
 
