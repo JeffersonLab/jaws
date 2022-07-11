@@ -125,11 +125,7 @@ The integration tests require a docker container environment and are run automat
 ```
 docker compose -f test.yml up
 ```
-2. Install pytest
-```
-docker exec -i jaws bash -c "pip install pytest"
-```
-3. Execute Tests
+2. Execute Tests
 ```
 docker exec -i jaws bash -c "cd /tests; pytest -p no:cacheprovider"
 ```
