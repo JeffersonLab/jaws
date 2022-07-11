@@ -146,7 +146,6 @@ docker exec -i jaws bash -c "cd /tests; pytest -p no:cacheprovider"
 python -m build
 sphinx-build -b html docsrc/source build/docs
 pylint src/jaws_scripts
-pytest
 python -m twine upload --repository pypi dist/*
 ```
 4. Update Sphinx docs by copying them from build dir into gh-pages branch and updating index.html (commit, push).
