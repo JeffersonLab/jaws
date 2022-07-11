@@ -20,8 +20,7 @@ RUN cd /app \
     && cp -r $RUN_VIRTUAL_ENV $BUILD_VIRTUAL_ENV \
     && python -m pip install build pylint \
     && pylint src/jaws_scripts \
-    && python -m build \
-    && pip install /app/dist/*.whl
+    && python -m build
 
 
 ################## Stage 1
