@@ -134,18 +134,18 @@ docker exec -i jaws bash -c "cd /tests; pytest -p no:cacheprovider"
 
 ## Release
 1. Bump the version number in setup.cfg and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).   
-1. Create a new release on the GitHub [Releases](https://github.com/JeffersonLab/jaws/releases) page corresponding to same version in setup.cfg (Enumerate changes and link issues)
-1. Clean build by removing `build`, `dist`, and `docsrc/source/_autosummary` directories
-1. Activate [virtual env](https://gist.github.com/slominskir/e7ed71317ea24fc19b97a0ec006ff4f1#activate-dev-virtual-environment)
-1. From venv build package, build docs, lint, test, and publish new artifact to PyPi with:
+2. Create a new release on the GitHub [Releases](https://github.com/JeffersonLab/jaws/releases) page corresponding to same version in setup.cfg (Enumerate changes and link issues)
+3. Clean build by removing `build`, `dist`, and `docsrc/source/_autosummary` directories
+4. Activate [virtual env](https://gist.github.com/slominskir/e7ed71317ea24fc19b97a0ec006ff4f1#activate-dev-virtual-environment)
+5. From venv build package, build docs, lint, test, and publish new artifact to PyPi with:
 ```
 python -m build
 sphinx-build -b html docsrc/source build/docs
 pylint src/jaws_scripts
 python -m twine upload --repository pypi dist/*
 ```
-4. Build and push [Docker image](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#8-build-an-image-based-of-github-tag)
-5. Update Sphinx docs by copying them from build dir into gh-pages branch and updating index.html (commit, push).
+6. Build and push [Docker image](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#8-build-an-image-based-of-github-tag)
+7. Update Sphinx docs by copying them from build dir into gh-pages branch and updating index.html (commit, push).
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
