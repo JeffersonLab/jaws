@@ -15,7 +15,7 @@ services:
       service: registry
 
   effective:
-    image: slominskir/jaws-effective-processor:4.1.0
+    image: slominskir/jaws-effective-processor:4.2.0
     hostname: effective
     container_name: effective
     depends_on:
@@ -25,7 +25,7 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   jaws:
-    image: slominskir/jaws:4.4.0
+    image: slominskir/jaws:4.5.3
     tty: true
     stdin_open: true
     hostname: jaws
@@ -35,7 +35,7 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-      ALARM_LOCATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/locations
-      ALARM_CATEGORIES: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/categories
-      ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/classes
-      ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/4af87ea36eda05a5ca5b432b0e68096ef9f3ef88/instances/box
+      ALARM_LOCATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/main/locations
+      ALARM_CATEGORIES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/categories
+      ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/classes
+      ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
