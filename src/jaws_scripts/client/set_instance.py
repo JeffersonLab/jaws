@@ -9,17 +9,12 @@
 """
 
 import click
+from click import Choice
 
 from jaws_libp.clients import InstanceProducer
 from jaws_libp.console import LocationConsoleConsumer
 from jaws_libp.entities import AlarmInstance, \
     Source, EPICSSource, CALCSource
-
-LOCATIONS = []
-
-if __name__ == "__main__":
-    consumer = LocationConsoleConsumer('set_instance.py')
-    LOCATIONS = consumer.get_keys_then_done()
 
 
 # pylint: disable=duplicate-code,missing-function-docstring,too-many-arguments,no-value-for-parameter,invalid-name
@@ -31,7 +26,7 @@ if __name__ == "__main__":
 @click.option('--alarmclass', help="The alarm class")
 @click.option('--pv', help="The name of the EPICS CA PV that directly powers this alarm")
 @click.option('--expression', help="The CALC expression used to generate this alarm")
-@click.option('--location', '-l', type=click.Choice(LOCATIONS), multiple=True,
+@click.option('--location', '-l', type=click.Choice([]), multiple=True,
               help="The alarm location (Options queried on-demand from alarm-locations topic).  Multiple locations "
                    "allowed.")
 @click.option('--screencommand', help="The command to open the related control system screen")
@@ -69,6 +64,11 @@ def set_instance(file, unset, alarmclass, pv, expression, location,
 
 
 def click_main() -> None:
+    consumer = LocationConsoleConsumer('set_instance.py')
+    locations = consumer.get_keys_then_done()
+
+    set_instance.params[5].type = Choice(locations)
+
     set_instance()
 
 

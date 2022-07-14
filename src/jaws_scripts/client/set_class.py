@@ -9,16 +9,11 @@
 """
 
 import click
+from click import Choice
 
 from jaws_libp.clients import ClassProducer
 from jaws_libp.console import CategoryConsoleConsumer
 from jaws_libp.entities import AlarmClass, AlarmPriority
-
-CATEGORIES = []
-
-if __name__ == "__main__":
-    cat_consumer = CategoryConsoleConsumer('set_class.py')
-    CATEGORIES = cat_consumer.get_keys_then_done()
 
 
 # pylint: disable=duplicate-code,missing-function-docstring,no-value-for-parameter,too-many-arguments
@@ -27,7 +22,7 @@ if __name__ == "__main__":
               help="Imports a file of key=value pairs (one per line) where the key is alarm name and value is JSON "
                    "encoded AVRO formatted per the alarm-classes-value schema")
 @click.option('--unset', is_flag=True, help="Remove the class")
-@click.option('--category', type=click.Choice(CATEGORIES),
+@click.option('--category', type=click.Choice([]),
               help="The alarm category (Options queried on-demand from alarm-categories topic)")
 @click.option('--priority', type=click.Choice(list(map(lambda c: c.name, AlarmPriority))), help="The alarm priority")
 @click.option('--filterable/--not-filterable', is_flag=True, default=True,
@@ -82,6 +77,11 @@ def set_class(file, unset, category,
 
 
 def click_main() -> None:
+    cat_consumer = CategoryConsoleConsumer('set_class.py')
+    categories = cat_consumer.get_keys_then_done()
+
+    set_class.params[2].type = Choice(categories)
+
     set_class()
 
 
