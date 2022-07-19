@@ -80,7 +80,7 @@ pip install jaws-scripts
 **Note**: It's generally recommended to use a Python virtual environment to avoid dependency conflicts (else a dedicated Docker container can be used).
 
 ### Entire application
-The entire JAWS application consists of multiple microservices and each one has a separate installation.  However, you can launch them all using the docker compose [here](https://github.com/JeffersonLab/jaws/blob/main/examples/compose/all.yml).   This compose file (and it's references) answers the question of which version of each microservice to use.   In a production environment you'll likely want to use some orchestration tooling, which could be literally anything from bash scripts leveraging `systemctl --host` to Ansible/Chef/Puppet/Whatever, or perhaps Kubernetes + tooling.
+The entire JAWS application consists of multiple microservices and each one has a separate installation.  However, you can launch them all using the docker compose [here](https://github.com/JeffersonLab/jaws/blob/main/examples/compose/all.yml).   This compose file (and it's references) answers the question of which version of each microservice to use.   In a production environment you'll likely want to use some orchestration tooling, which could be anything from bash scripts to Ansible/Chef/Puppet/Whatever, or perhaps Kubernetes + tooling.  JLab is currently using a set of bash scripts that leverage `systemctl --host` to centrally manage systemd services plus bash HereDoc scripts to stage and deploy new versions on each of the various VMs and documented [internally](https://accwiki.acc.jlab.org/do/view/SysAdmin/JAWS).
 
 ## API
 Admin Scripts API
