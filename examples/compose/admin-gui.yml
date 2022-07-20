@@ -25,7 +25,7 @@ services:
       service: jaws
 
   admin:
-    image: slominskir/jaws-admin-gui:4.1.1
+    image: slominskir/jaws-admin-gui:4.2.0
     hostname: admin
     container_name: admin
     ports:
