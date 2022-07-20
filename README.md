@@ -145,7 +145,8 @@ pylint src/jaws_scripts
 python -m twine upload --repository pypi dist/*
 ```
 6. Build and push [Docker image](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#8-build-an-image-based-of-github-tag)
-7. Update Sphinx docs by copying them from build dir into gh-pages branch and updating index.html (commit, push).
+7. Bump and commit quick start [image version](https://github.com/JeffersonLab/jaws/blob/main/docker-compose.override.yml)
+8. Update Sphinx docs by copying them from build dir into gh-pages branch and updating index.html (commit, push).
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
