@@ -51,7 +51,7 @@ Both effective registrations and effective notifications are combined by the JAW
 git clone https://github.com/JeffersonLab/jaws
 cd jaws
 ```
-2. Launch Docker
+2. Launch [Compose](https://github.com/docker/compose)
 ```
 docker compose up
 ```
