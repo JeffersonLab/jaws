@@ -7,7 +7,7 @@ fastavro==1.4.9
 idna==3.3
 psutil==5.9.0
 pytz==2020.1
-requests==2.27.1
+requests==2.31.0
 tabulate==0.8.9
 urllib3==1.26.8
 jaws-libp==4.4.1
