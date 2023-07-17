@@ -1,9 +1,4 @@
 services:
-  zookeeper:
-    extends:
-      file: docker-compose.yml
-      service: zookeeper
-
   kafka:
     extends:
       file: docker-compose.yml

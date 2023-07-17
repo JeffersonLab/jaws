@@ -1,5 +1,7 @@
 #!/bin/bash
 
+beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
+
 # Set Timezone
 export TZ="/usr/share/zoneinfo/$TZ"
 
@@ -22,10 +24,6 @@ echo "---------------------------------------"
 echo "Step 3: Adding Schemas to the registry "
 echo "---------------------------------------"
 /scripts/registry/create_schemas.py
-
-
-beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
-
 
 
 echo "-------------------------"

@@ -1,9 +1,4 @@
 services:
-  zookeeper:
-    extends:
-      file: build.yml
-      service: zookeeper
-
   kafka:
     extends:
       file: build.yml

@@ -1,9 +1,4 @@
 services:
-  zookeeper:
-    extends:
-      file: deps.yml
-      service: zookeeper
-
   kafka:
     extends:
       file: deps.yml
@@ -20,10 +15,8 @@ services:
     hostname: jaws
     container_name: jaws
     depends_on:
-      - zookeeper
-      - kafka
-      - registry
+      kafka:
+        condition: service_healthy
     environment:
       TZ: "America/New_York"
       BOOTSTRAP_SERVERS: "kafka:9092"
-      SCHEMA_REGISTRY: "http://registry:8081"
