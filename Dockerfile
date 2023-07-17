@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=slominskir/jaws-base:4.0.0
+ARG BASE_IMAGE=slominskir/jaws-base:4.1.1
 ARG BUILD_IMAGE=$BASE_IMAGE
 ARG RUN_IMAGE=$BASE_IMAGE
 ARG BUILD_VIRTUAL_ENV=/opt/venv_dev
