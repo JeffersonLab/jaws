@@ -3,20 +3,15 @@
 </p>
 
 
-# JLab Alarm Warning System (JAWS) [![CI](https://github.com/JeffersonLab/jaws/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/jaws/actions/workflows/ci.yml) [![PyPI](https://img.shields.io/pypi/v/jaws-scripts)](https://pypi.org/project/jaws-scripts/) [![Docker](https://img.shields.io/docker/v/slominskir/jaws?label=DockerHub&sort=semver)](https://hub.docker.com/r/slominskir/jaws)
+# JLab Alarm Warning System (JAWS)
 > "Don't get bit!"
 
-An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project defines Kafka topics and [AVRO](https://avro.apache.org/) schemas, ties together the message pipeline services that make up the core alarm system in a docker-compose file, and provides Python scripts for configuring and interacting with the system.  JAWS attempts to comply with [ANSI/ISA 18.2-2016](https://www.isa.org/products/ansi-isa-18-2-2016-management-of-alarm-systems-for) where appropriate.
+An alarm system built on [Kafka](https://kafka.apache.org/) that supports pluggable alarm sources.  This project integrates all the services that make up JAWS via Docker Compose.  JAWS attempts to comply with [ANSI/ISA 18.2-2016](https://www.isa.org/products/ansi-isa-18-2-2016-management-of-alarm-systems-for) where appropriate.
 
 ---
 - [Overview](https://github.com/JeffersonLab/jaws#overview)
 - [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
-- [Install](https://github.com/JeffersonLab/jaws#install) 
-- [API](https://github.com/JeffersonLab/jaws#api)
-- [Configure](https://github.com/JeffersonLab/jaws#configure)
-- [Build](https://github.com/JeffersonLab/jaws#build) 
-- [Test](https://github.com/JeffersonLab/jaws#test) 
-- [Release](https://github.com/JeffersonLab/jaws#release) 
+- [Install](https://github.com/JeffersonLab/jaws#install)
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
 ---
 
@@ -36,7 +31,7 @@ Both effective registrations and effective notifications are combined by the JAW
 
 **APIs**
 - [jaws-libj](https://github.com/JeffersonLab/jaws-libj): Java API library for JAWS
-- [jaws-libp](https://github.com/JeffersonLab/jaws-libp): Python API library for JAWS
+- [jaws-libp](https://github.com/JeffersonLab/jaws-libp): Python API library for JAWS including Kafka topic and Registry schema setup
 
 **Data**
 - [JLab Alarms](https://github.com/JeffersonLab/alarms)
@@ -57,11 +52,11 @@ docker compose up
 ```
 3. Monitor active alarms
 ```
-docker exec -it jaws /scripts/client/list_activations.py --monitor
+docker exec -it jaws-libp list_activations --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec jaws /scripts/client/set_activation.py alarm1
+docker exec jaws-libp set_activation alarm1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
@@ -70,83 +65,7 @@ docker exec jaws /scripts/client/set_activation.py alarm1
 **See**: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
 
 ## Install
-### Core scripts
-Requires [Python 3.9+](https://www.python.org/)
-
-```
-pip install jaws-scripts
-```
-
-**Note**: It's generally recommended to use a Python virtual environment to avoid dependency conflicts (else a dedicated Docker container can be used).
-
-### Entire application
-The entire JAWS application consists of multiple microservices and each one has a separate installation.  However, you can launch them all using the docker compose [here](https://github.com/JeffersonLab/jaws/blob/main/examples/compose/all.yml).   This compose file (and it's references) answers the question of which version of each microservice to use.   In a production environment you'll likely want to use some orchestration tooling, which could be anything from bash scripts to Ansible/Chef/Puppet/Whatever, or perhaps Kubernetes + tooling.  JLab is currently using a set of bash scripts that leverage `systemctl --host` to centrally manage systemd services plus bash HereDoc scripts to stage and deploy new versions on each of the various VMs and is documented [internally](https://accwiki.acc.jlab.org/do/view/SysAdmin/JAWS).
-
-## API
-Admin Scripts API
-
-[Sphinx Docs](https://jeffersonlab.github.io/jaws/)
-
-
-## Configure
-The following environment variables are required by the scripts:
-
-| Name             | Description                                                                                                                |
-|------------------|----------------------------------------------------------------------------------------------------------------------------|
-| BOOTSTRAP_SERVER | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluster; example: `kafka:9092` |
-| SCHEMA_REGISTRY  | URL to Confluent Schema Registry; example: `http://registry:8081`                                                          |
-
-The Docker container requires the script environment variables, plus can optionally handle the following environment variables as well:
-
-| Name            | Description                                                                                                                                                                                                                                                                                                                                             |
-|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ALARM_LOCATIONS | Path to an alarm locations file to import ([example file](https://github.com/JeffersonLab/jaws/blob/main/examples/data/locations)), else an https URL to a file, else a comma separated list of location definitions with fields separated by the pipe symbol.  Example Inline CSV: `name\|parent` |
-| ALARM_CATEGORIES | Path to an alarm categories file to import ([example file](https://github.com/JeffersonLab/jaws/blob/main/examples/data/categories)), else an https URL to a file, else a comma separated list of catgory definitions with fields.  Example Inline CSV: `name` |
-| ALARM_CLASSES   | Path to an alarm classes file to import ([example file](https://github.com/JeffersonLab/jaws/blob/main/examples/data/classes)), else an https URL to a file, else a comma separated list of class definitions with fields separated by the pipe symbol.  Example Inline CSV: `name\|category\|priority\|rationale\|correctiveaction\|pointofcontactusername\|latching\|filterable\|ondelayseconds\|offdelayseconds` |
-| ALARM_INSTANCES | Path to an alarm instances file to import ([example file](https://github.com/JeffersonLab/jaws/blob/main/examples/data/instances)), else an https URL to a file, else a comma separated list of instance definitions with fields separated by the pipe symbol.  Leave epicspv field empty for SimpleProducer. Example Inline CSV: `name\|class\|epicspv\|location\|maskedby\|screencommand` |
-
-## Build
-This [Python 3.9+](https://www.python.org/) project is built with [setuptools](https://setuptools.pypa.io/en/latest/setuptools.html) and may be run using either the Python [virtual environment](https://docs.python.org/3/tutorial/venv.html) feature or a dedicated Docker container to isolate dependencies.   The [pip](https://pypi.org/project/pip/) tool can be used to download dependencies.  Docker was used extensively for development due to the dependency on the Kafka ecosystem.
-
-```
-git clone https://github.com/JeffersonLab/jaws
-cd jaws
-python -m build
-```
-
-**Note for JLab On-Site Users**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
-
-**See**: [Python Development Notes](https://gist.github.com/slominskir/e7ed71317ea24fc19b97a0ec006ff4f1) and [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
-
-## Test
-The integration tests require a docker container environment and are run automatically as a GitHub Action on git push.   You can also run tests from a local workstation using the following instructions:
-
-1. Start Docker Test environment
-```
-docker compose -f test.yml up
-```
-2. Execute Tests
-```
-docker exec -i jaws bash -c "cd /tests; pytest -p no:cacheprovider"
-```
-**Note**: You can also run tests directly on the host (instead of inside the jaws container) if you set the environment variables as: 
-`BOOTSTRAP_SERVERS=localhost:9094` and `SCHEMA_REGISTRY=http://localhost:8081`
-
-## Release
-1. Bump the version number in setup.cfg and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).   
-2. Create a new release on the GitHub [Releases](https://github.com/JeffersonLab/jaws/releases) page corresponding to same version in setup.cfg (Enumerate changes and link issues)
-3. Clean build by removing `build`, `dist`, and `docsrc/source/_autosummary` directories
-4. Activate [virtual env](https://gist.github.com/slominskir/e7ed71317ea24fc19b97a0ec006ff4f1#activate-dev-virtual-environment)
-5. From venv build package, build docs, lint, test, and publish new artifact to PyPi with:
-```
-python -m build
-sphinx-build -b html docsrc/source build/docs
-pylint src/jaws_scripts
-python -m twine upload --repository pypi dist/*
-```
-6. Build and push [Docker image](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#8-build-an-image-based-of-github-tag)
-7. Bump and commit quick start [image version](https://github.com/JeffersonLab/jaws/blob/main/docker-compose.override.yml)
-8. Update Sphinx docs by copying them from build dir into gh-pages branch and updating index.html (commit, push).
+The entire JAWS application consists of multiple microservices and each one has a separate installation.  However, you can launch them all using the docker compose [here](https://github.com/JeffersonLab/jaws/blob/main/examples/compose/all.yml).   This Docker Compose file (and it's references) answers the question of which version of each microservice to use.   In a production environment you'll likely want to use some orchestration tooling, which could be anything from bash scripts to Ansible/Chef/Puppet/Whatever, or perhaps Kubernetes + tooling.  JLab is currently using a set of bash scripts that leverage `systemctl --host` to centrally manage systemd services plus bash HereDoc scripts to stage and deploy new versions on each of the various VMs and is documented [internally](https://accwiki.acc.jlab.org/do/view/SysAdmin/JAWS).
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)

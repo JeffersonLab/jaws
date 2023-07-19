@@ -1,3 +1,0 @@
-"""
-    Schema Registry admin scripts
-"""

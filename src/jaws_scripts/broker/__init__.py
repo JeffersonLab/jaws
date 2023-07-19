@@ -1,3 +1,0 @@
-"""
-    Kafka broker admin scripts
-"""
