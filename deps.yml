@@ -23,13 +23,14 @@ services:
       retries: 5
 
   registry:
-    image: confluentinc/cp-schema-registry:7.4.1
+    image: bitnami/schema-registry:7.4
     hostname: registry
     container_name: registry
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     ports:
       - 8081:8081
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
-      SCHEMA_REGISTRY_HOST_NAME: registry
+      - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
+      - SCHEMA_REGISTRY_KAFKA_BROKERS=PLAINTEXT://kafka:9092
