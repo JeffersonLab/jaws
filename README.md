@@ -52,11 +52,11 @@ docker compose up
 ```
 3. Monitor active alarms
 ```
-docker exec -it jaws-libp list_activations --monitor
+docker exec -it jaws list_activations --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec jaws-libp set_activation alarm1
+docker exec jaws set_activation alarm1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 

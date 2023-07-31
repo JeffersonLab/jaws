@@ -1,17 +1,12 @@
 services:
-  zookeeper:
-    extends:
-      file: ../../deps.yml
-      service: zookeeper
-
   kafka:
     extends:
-      file: ../../deps.yml
+      file: ../../docker-compose.yml
       service: kafka
 
   registry:
     extends:
-      file: ../../deps.yml
+      file: ../../docker-compose.yml
       service: registry
 
   effective:
