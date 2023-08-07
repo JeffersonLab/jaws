@@ -9,15 +9,15 @@ services:
       file: ../../docker-compose.yml
       service: registry
 
+  jaws:
+    extends:
+      file: ../../docker-compose.yml
+      service: jaws
+
   effective:
     extends:
       file: effective.yml
       service: effective
-
-  jaws:
-    extends:
-      file: effective.yml
-      service: jaws
 
   softioc:
     extends:

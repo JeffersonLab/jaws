@@ -10,7 +10,7 @@ services:
       service: registry
 
   effective:
-    image: slominskir/jaws-effective-processor:4.3.0
+    image: jeffersonlab/jaws-effective-processor:4.3.0
     hostname: effective
     container_name: effective
     depends_on:
