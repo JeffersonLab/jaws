@@ -9,6 +9,11 @@ services:
       file: ../../docker-compose.yml
       service: registry
 
+  jaws:
+    extends:
+      file: ../../docker-compose.yml
+      service: jaws
+
   effective:
     image: jeffersonlab/jaws-effective-processor:4.3.0
     hostname: effective
@@ -18,8 +23,3 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-
-  jaws:
-    extends:
-      file: ../../docker-compose.yml
-      service: jaws
