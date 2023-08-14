@@ -24,7 +24,7 @@ Activations indicate an alarm is annunciating (active), and timely operator acti
 
 Both effective registrations and effective notifications are combined by the JAWS effective processor on the _effective-alarms_ topic.
 
-**Services**
+**Apps**
 - [jaws-effective-processor](https://github.com/JeffersonLab/jaws-effective-processor): Process classes and overrides and provide effective state on the _effective-registrations_, _effective-notifications_, and _effective-alarms_ topics
 - [jaws-admin-gui](https://github.com/JeffersonLab/jaws-admin-gui): GUI for managing alarm registrations
 - [jaws-operator-gui](https://github.com/JeffersonLab/graphical-alarm-client): GUI for monitoring alarms and managing overrides
@@ -36,7 +36,7 @@ Both effective registrations and effective notifications are combined by the JAW
 **Data**
 - [JLab Alarms](https://github.com/JeffersonLab/alarms)
 
-**Plugins**
+**Extensions**
 - [jaws-epics2kafka](https://github.com/JeffersonLab/jaws-epics2kafka): Connects EPICS alarms to JAWS
 - [registrations2epics](https://github.com/JeffersonLab/registrations2epics): Notifies epics2kafka of EPICS alarm registration updates
 
