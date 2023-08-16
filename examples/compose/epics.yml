@@ -43,7 +43,7 @@ services:
       - ../connect-config:/config
 
   registrations2epics:
-    image: jeffersonlab/registrations2epics:4.3.0
+    image: jeffersonlab/jaws-registrations2epics:4.5.0
     hostname: registrations2epics
     container_name: registrations2epics
     depends_on:
