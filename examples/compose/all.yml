@@ -33,3 +33,8 @@ services:
     extends:
       file: epics.yml
       service: registrations2epics
+
+  admin:
+    extends:
+      file: admin-gui.yml
+      service: admin
