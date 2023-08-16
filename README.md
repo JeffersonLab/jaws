@@ -38,7 +38,7 @@ Both effective registrations and effective notifications are combined by the JAW
 
 **Extensions**
 - [jaws-epics2kafka](https://github.com/JeffersonLab/jaws-epics2kafka): Connects EPICS alarms to JAWS
-- [registrations2epics](https://github.com/JeffersonLab/registrations2epics): Notifies epics2kafka of EPICS alarm registration updates
+- [jaws-registrations2epics](https://github.com/JeffersonLab/jaws-registrations2epics): Notifies epics2kafka of EPICS alarm registration updates
 
 ## Quick Start with Compose 
 1. Grab project
