@@ -95,6 +95,7 @@ services:
     hostname: admin
     container_name: admin
     ports:
+      - 443:8443
       - 8080:8080
       - 9990:9990
     depends_on:
@@ -102,3 +103,5 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
+    volumes:
+      - ./admin-config/server.p12:/opt/jboss/wildfly/standalone/configuration/server.p12
