@@ -91,7 +91,7 @@ services:
       - SCHEMA_REGISTRY=http://registry:8081
 
   admin:
-    image: jeffersonlab/jaws-admin-gui:4.3.0
+    image: jeffersonlab/jaws-admin-gui:4.4.0
     hostname: admin
     container_name: admin
     ports:
