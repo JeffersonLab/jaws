@@ -1,0 +1,91 @@
+services:
+  kafka:
+    image: bitnami/kafka:3.5.0
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - "9094:9094"
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_KRAFT_CLUSTER_ID=Cl1akjnHRoG9df2FiSicNg
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_LOG_CLEANER_MIN_CLEANABLE_RATIO=0.1
+      - KAFKA_CFG_LOG_CLEANER_MAX_COMPACTION_LAG_MS=600000
+      - KAFKA_CFG_LOG_CLEANER_MIN_COMPACTION_LAG_MS=300000
+      - KAFKA_CFG_LOG_ROLL_MS=300000
+    healthcheck:
+      test: kafka-topics.sh --bootstrap-server kafka:9092 --list
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  registry:
+    image: bitnami/schema-registry:7.4
+    hostname: registry
+    container_name: registry
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - 8081:8081
+    environment:
+      - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
+      - SCHEMA_REGISTRY_KAFKA_BROKERS=PLAINTEXT://kafka:9092
+
+  jaws:
+    image: jeffersonlab/jaws-libp:4.6.3
+    tty: true
+    stdin_open: true
+    hostname: jaws
+    container_name: jaws
+    depends_on:
+      - kafka
+      - registry
+    environment:
+      TZ: "America/New_York"
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
+      LOGLEVEL: "INFO"
+      ALARM_LOCATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/main/locations
+      ALARM_CATEGORIES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/categories
+      ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/classes
+      ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
+
+  effective:
+    image: jeffersonlab/jaws-effective-processor:4.3.0
+    hostname: effective
+    container_name: effective
+    depends_on:
+      - jaws
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
+
+  epics2kafka:
+    image: jeffersonlab/jaws-epics2kafka:4.6.0
+    hostname: epics2kafka
+    container_name: epics2kafka
+    ports:
+      - 8083:8083
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      CONFIG_STORAGE_TOPIC: connect-configs
+      OFFSET_STORAGE_TOPIC: connect-offsets
+      STATUS_STORAGE_TOPIC: connect-status
+    volumes:
+      - ../connect-config:/config
+
+  registrations2epics:
+    image: jeffersonlab/jaws-registrations2epics:4.5.0
+    hostname: registrations2epics
+    container_name: registrations2epics
+    depends_on:
+      - kafka
+      - registry
+      - jaws
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - SCHEMA_REGISTRY=http://registry:8081

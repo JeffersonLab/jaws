@@ -1,0 +1,16 @@
+{
+  "name" : "ca-source",
+  "config" : {
+    "connector.class" : "org.jlab.kafka.connect.CASourceConnector",
+    "tasks.max" : 1,
+    "monitor.addr.list": "129.57.235.4 129.57.235.6 129.57.235.10",
+    "command.bootstrap.servers": "kafka://kafka:9092",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://registry:8081",
+    "value.converter.enhanced.avro.schema.support":  true,
+    "value.converter.connect.meta.data": false,
+    "transforms": "alarmsValue",
+    "transforms.alarmsValue.type": "org.jlab.jaws.EpicsToAlarm$Value"
+  }
+}
