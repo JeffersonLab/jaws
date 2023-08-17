@@ -76,7 +76,7 @@ services:
       OFFSET_STORAGE_TOPIC: connect-offsets
       STATUS_STORAGE_TOPIC: connect-status
     volumes:
-      - ../connect-config:/config
+      - ./connect-config:/config
 
   registrations2epics:
     image: jeffersonlab/jaws-registrations2epics:4.5.0
