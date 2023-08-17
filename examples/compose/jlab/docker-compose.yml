@@ -89,3 +89,16 @@ services:
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - SCHEMA_REGISTRY=http://registry:8081
+
+  admin:
+    image: jeffersonlab/jaws-admin-gui:4.3.0
+    hostname: admin
+    container_name: admin
+    ports:
+      - 8080:8080
+      - 9990:9990
+    depends_on:
+      - jaws
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
