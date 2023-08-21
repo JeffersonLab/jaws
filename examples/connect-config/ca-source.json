@@ -3,7 +3,7 @@
   "config" : {
     "connector.class" : "org.jlab.kafka.connect.CASourceConnector",
     "tasks.max" : 1,
-    "monitor.addr.list": "softioc",
+    "monitor.addr.list": "129.57.235.4 129.57.235.6 129.57.235.10",
     "command.bootstrap.servers": "kafka://kafka:9092",
     "key.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter": "io.confluent.connect.avro.AvroConverter",

@@ -45,14 +45,14 @@ services:
       - kafka
       - registry
     environment:
-      TZ: "America/New_York"
-      BOOTSTRAP_SERVERS: "kafka:9092"
-      SCHEMA_REGISTRY: "http://registry:8081"
-      LOGLEVEL: "INFO"
-      ALARM_LOCATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/main/locations
-      ALARM_CATEGORIES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/categories
-      ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/classes
-      ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
+      - TZ=America/New_York
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - SCHEMA_REGISTRY=http://registry:8081
+      - LOGLEVEL=INFO
+      - ALARM_LOCATIONS=https://raw.githubusercontent.com/JeffersonLab/alarms/main/locations
+      - ALARM_CATEGORIES=https://raw.githubusercontent.com/JeffersonLab/alarms/main/categories
+      - ALARM_CLASSES=https://raw.githubusercontent.com/JeffersonLab/alarms/main/classes
+      - ALARM_INSTANCES=https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
 
   effective:
     image: jeffersonlab/jaws-effective-processor:4.3.0
@@ -61,8 +61,8 @@ services:
     depends_on:
       - jaws
     environment:
-      BOOTSTRAP_SERVERS: "kafka:9092"
-      SCHEMA_REGISTRY: "http://registry:8081"
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - SCHEMA_REGISTRY=http://registry:8081
 
   epics2kafka:
     image: jeffersonlab/jaws-epics2kafka:4.6.0
@@ -71,10 +71,10 @@ services:
     ports:
       - 8083:8083
     environment:
-      BOOTSTRAP_SERVERS: "kafka:9092"
-      CONFIG_STORAGE_TOPIC: connect-configs
-      OFFSET_STORAGE_TOPIC: connect-offsets
-      STATUS_STORAGE_TOPIC: connect-status
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - CONFIG_STORAGE_TOPIC=connect-configs
+      - OFFSET_STORAGE_TOPIC=connect-offsets
+      - STATUS_STORAGE_TOPIC=connect-status
     volumes:
       - ./connect-config:/config
 
@@ -91,7 +91,7 @@ services:
       - SCHEMA_REGISTRY=http://registry:8081
 
   admin:
-    image: jeffersonlab/jaws-admin-gui:4.4.0
+    image: jeffersonlab/jaws-admin-gui:4.5.0
     hostname: admin
     container_name: admin
     ports:
@@ -101,7 +101,11 @@ services:
     depends_on:
       - jaws
     environment:
-      BOOTSTRAP_SERVERS: "kafka:9092"
-      SCHEMA_REGISTRY: "http://registry:8081"
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - SCHEMA_REGISTRY=http://registry:8081
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - KEYCLOAK_RESOURCE=${KEYCLOAK_RESOURCE}
+      - KEYCLOAK_SECRET=${KEYCLOAK_SECRET}
+      - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL}
     volumes:
       - ./admin-config/server.p12:/opt/jboss/wildfly/standalone/configuration/server.p12

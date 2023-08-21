@@ -34,6 +34,11 @@ services:
       file: epics.yml
       service: registrations2epics
 
+  keycloak:
+    extends:
+      file: admin-gui.yml
+      service: keycloak
+
   admin:
     extends:
       file: admin-gui.yml
