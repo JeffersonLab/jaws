@@ -44,7 +44,7 @@ services:
       - SCHEMA_REGISTRY_KAFKA_BROKERS=PLAINTEXT://kafka:9092
 
   jaws:
-    image: jeffersonlab/jaws-libp:4.6.3
+    image: jeffersonlab/jaws-libp:4.7.0
     tty: true
     stdin_open: true
     hostname: jaws
@@ -67,7 +67,8 @@ services:
     hostname: effective
     container_name: effective
     depends_on:
-      - jaws
+      jaws:
+        condition: service_healthy
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - SCHEMA_REGISTRY=http://registry:8081
@@ -76,6 +77,9 @@ services:
     image: jeffersonlab/jaws-epics2kafka:4.6.0
     hostname: epics2kafka
     container_name: epics2kafka
+    depends_on:
+      jaws:
+        condition: service_healthy
     ports:
       - 8083:8083
     environment:
@@ -91,9 +95,8 @@ services:
     hostname: registrations2epics
     container_name: registrations2epics
     depends_on:
-      - kafka
-      - registry
-      - jaws
+      jaws:
+        condition: service_healthy
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - SCHEMA_REGISTRY=http://registry:8081
@@ -102,12 +105,13 @@ services:
     image: jeffersonlab/jaws-admin-gui:4.5.0
     hostname: admin
     container_name: admin
+    depends_on:
+      jaws:
+        condition: service_healthy
     ports:
       - 443:8443
       - 8080:8080
       - 9990:9990
-    depends_on:
-      - jaws
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - SCHEMA_REGISTRY=http://registry:8081

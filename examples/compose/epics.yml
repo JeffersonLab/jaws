@@ -32,6 +32,9 @@ services:
     image: jeffersonlab/jaws-epics2kafka:4.6.0
     hostname: epics2kafka
     container_name: epics2kafka
+    depends_on:
+      jaws:
+        condition: service_healthy
     ports:
       - 8083:8083
     environment:
@@ -47,9 +50,8 @@ services:
     hostname: registrations2epics
     container_name: registrations2epics
     depends_on:
-      - kafka
-      - registry
-      - jaws
+      jaws:
+        condition: service_healthy
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - SCHEMA_REGISTRY=http://registry:8081

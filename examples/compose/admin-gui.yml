@@ -45,12 +45,13 @@ services:
     image: jeffersonlab/jaws-admin-gui:4.5.0
     hostname: admin
     container_name: admin
+    depends_on:
+      jaws:
+        condition: service_healthy
     ports:
       - 8443:8443
       - 8080:8080
       - 9990:9990
-    depends_on:
-      - jaws
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - SCHEMA_REGISTRY=http://registry:8081
