@@ -19,7 +19,7 @@ services:
     hostname: effective
     container_name: effective
     healthcheck:
-      test: test $(ps | grep jaws | wc -l) -gt 0
+      test: test $(ps | grep jaws | wc -l) -gt 1
       start_period: 30s
       start_interval: 5s
       #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830

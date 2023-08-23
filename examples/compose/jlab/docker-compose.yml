@@ -77,7 +77,7 @@ services:
     hostname: effective
     container_name: effective
     healthcheck:
-      test: test $(ps | grep jaws | wc -l) -gt 0
+      test: test $(ps | grep jaws | wc -l) -gt 1
       start_period: 30s
       start_interval: 5s
       #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
@@ -95,6 +95,14 @@ services:
     image: jeffersonlab/jaws-epics2kafka:4.6.0
     hostname: epics2kafka
     container_name: epics2kafka
+    healthcheck:
+      test: test $(/scripts/show-status.sh | grep RUNNING | wc -l) -eq 2
+      start_period: 30s
+      start_interval: 5s
+      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
+      interval: 5s
+      timeout: 10s
+      retries: 5
     depends_on:
       jaws:
         condition: service_healthy
@@ -112,6 +120,14 @@ services:
     image: jeffersonlab/jaws-registrations2epics:4.5.0
     hostname: registrations2epics
     container_name: registrations2epics
+    healthcheck:
+      test: test $(ps | grep jaws | wc -l) -gt 1
+      start_period: 30s
+      start_interval: 5s
+      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
+      interval: 5s
+      timeout: 10s
+      retries: 5
     depends_on:
       jaws:
         condition: service_healthy
