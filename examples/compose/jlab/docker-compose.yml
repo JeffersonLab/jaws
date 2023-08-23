@@ -3,6 +3,13 @@ services:
     image: bitnami/kafka:3.5.0
     hostname: kafka
     container_name: kafka
+    healthcheck:
+      test: kafka-topics.sh --bootstrap-server kafka:9092 --list
+      start_period: 20s
+      start_interval: 10s
+      interval: 10s
+      timeout: 10s
+      retries: 5
     ports:
       - "9094:9094"
     environment:
@@ -15,17 +22,18 @@ services:
       - KAFKA_CFG_LOG_CLEANER_MAX_COMPACTION_LAG_MS=600000
       - KAFKA_CFG_LOG_CLEANER_MIN_COMPACTION_LAG_MS=300000
       - KAFKA_CFG_LOG_ROLL_MS=300000
-    healthcheck:
-      test: kafka-topics.sh --bootstrap-server kafka:9092 --list
-      start_period: 10s
-      interval: 5s
-      timeout: 10s
-      retries: 5
 
   registry:
     image: bitnami/schema-registry:7.4
     hostname: registry
     container_name: registry
+    healthcheck:
+      test: schema-registry-run-class io.confluent.kafka.schemaregistry.tools.SchemaRegistryPerformance http://localhost:8081 healthcheck 1 1 JSON
+      start_period: 20s
+      start_interval: 10s
+      interval: 10s
+      timeout: 10s
+      retries: 5
     depends_on:
       kafka:
         condition: service_healthy
@@ -42,8 +50,8 @@ services:
     hostname: jaws
     container_name: jaws
     depends_on:
-      - kafka
-      - registry
+      registry:
+        condition: service_healthy
     environment:
       - TZ=America/New_York
       - BOOTSTRAP_SERVERS=kafka:9092
