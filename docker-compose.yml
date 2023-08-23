@@ -7,7 +7,8 @@ services:
       test: kafka-topics.sh --bootstrap-server kafka:9092 --list
       start_period: 30s
       start_interval: 5s
-      interval: 30s
+      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
+      interval: 5s
       timeout: 10s
       retries: 5
     ports:
@@ -31,7 +32,8 @@ services:
       test: schema-registry-run-class io.confluent.kafka.schemaregistry.tools.SchemaRegistryPerformance http://localhost:8081 healthcheck 1 1 JSON
       start_period: 30s
       start_interval: 5s
-      interval: 30s
+      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
+      interval: 5s
       timeout: 10s
       retries: 5
     depends_on:
@@ -49,6 +51,14 @@ services:
     stdin_open: true
     hostname: jaws
     container_name: jaws
+    healthcheck:
+      test: test $(list_schemas | wc -l) -gt 20
+      start_period: 30s
+      start_interval: 5s
+      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
+      interval: 5s
+      timeout: 10s
+      retries: 5
     depends_on:
       registry:
         condition: service_healthy
