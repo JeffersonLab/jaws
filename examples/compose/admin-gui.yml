@@ -27,7 +27,8 @@ services:
       test: curl http://localhost:8080 -sf -o /dev/null
       start_period: 30s
       start_interval: 5s
-      interval: 30s
+      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
+      interval: 5s
       timeout: 10s
       retries: 5
     ports:
@@ -52,6 +53,14 @@ services:
     image: jeffersonlab/jaws-admin-gui:4.5.0
     hostname: admin
     container_name: admin
+    healthcheck:
+      test: curl http://localhost:8080 -sf -o /dev/null
+      start_period: 30s
+      start_interval: 5s
+      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
+      interval: 5s
+      timeout: 10s
+      retries: 5
     depends_on:
       jaws:
         condition: service_healthy
