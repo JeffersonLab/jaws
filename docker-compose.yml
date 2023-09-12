@@ -46,7 +46,7 @@ services:
       - SCHEMA_REGISTRY_KAFKA_BROKERS=PLAINTEXT://kafka:9092
 
   jaws:
-    image: jeffersonlab/jaws-libp:4.7.0
+    image: jeffersonlab/jaws-libp:4.8.0
     tty: true
     stdin_open: true
     hostname: jaws
@@ -63,11 +63,12 @@ services:
       registry:
         condition: service_healthy
     environment:
-      TZ: "America/New_York"
-      BOOTSTRAP_SERVERS: "kafka:9092"
-      SCHEMA_REGISTRY: "http://registry:8081"
-      LOGLEVEL: "INFO"
-      ALARM_LOCATIONS: https://raw.githubusercontent.com/JeffersonLab/alarms/main/locations
-      ALARM_CATEGORIES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/categories
-      ALARM_CLASSES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/classes
-      ALARM_INSTANCES: https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
+      - TZ=America/New_York
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - SCHEMA_REGISTRY=http://registry:8081
+      - LOGLEVEL=INFO
+      - ALARM_LOCATIONS=https://raw.githubusercontent.com/JeffersonLab/alarms/main/locations
+      - ALARM_CATEGORIES=https://raw.githubusercontent.com/JeffersonLab/alarms/main/categories
+      - ALARM_CLASSES=https://raw.githubusercontent.com/JeffersonLab/alarms/main/classes
+      - ALARM_INSTANCES=https://raw.githubusercontent.com/JeffersonLab/alarms/main/instances/box
+      - ALARM_OVERRIDES=https://raw.githubusercontent.com/JeffersonLab/alarms/main/overrides
