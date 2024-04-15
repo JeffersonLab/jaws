@@ -1,5 +1,5 @@
 <p>
-<a href="#"><img align="right" width="200" height="150" src="https://raw.githubusercontent.com/JeffersonLab/jaws/main/logo.png"/></a>     
+<a href="#"><img align="right" width="100" height="75" src="https://raw.githubusercontent.com/JeffersonLab/jaws/main/logo.png"/></a>     
 </p>
 
 
