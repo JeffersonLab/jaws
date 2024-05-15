@@ -12,6 +12,8 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 - [Overview](https://github.com/JeffersonLab/jaws#overview)
 - [Quick Start with Compose](https://github.com/JeffersonLab/jaws#quick-start-with-compose)
 - [Install](https://github.com/JeffersonLab/jaws#install)
+- [Release](https://github.com/JeffersonLab/jaws#release) 
+- [Deploy](https://github.com/JeffersonLab/jaws#deploy) 
 - [See Also](https://github.com/JeffersonLab/jaws#see-also)
 ---
 
@@ -63,7 +65,30 @@ docker exec jaws set_activation alarm1
 **See**: More [Usage Examples](https://github.com/JeffersonLab/jaws/wiki/Usage-Examples)
 
 ## Install
-The entire JAWS application consists of multiple microservices and each one has a separate installation.  However, you can install and launch them all using the docker compose [here](https://github.com/JeffersonLab/jaws/blob/main/examples/compose/all.yml).   This Docker Compose file (and it's references) answers the question of which version of each microservice to use.   In a production environment you'll likely want to use some orchestration tooling, which could be anything from bash scripts to Compose/Ansible/Chef/Puppet/Whatever, or perhaps Kubernetes + tooling.  JLab is currently using Docker Compose on a beefy VM and the entire system is ephemeral, loading it's data from the [alarms](https://github.com/JeffersonLab/alarms) GitHub repo.  The system can be upgraded and restarted in seconds. See [internal docs](https://accwiki.acc.jlab.org/do/view/SysAdmin/JAWS).
+The core JAWS application consists of a set of containerized microservices which can be launched with a container orchestration tool such as Docker Compose.  The following microservices are internal to JAWS:
+- Kafka
+- Schema Registry
+- Effective Processor
+- Shell Admin Console
+
+Optionally, the following extra containerized services are available:
+- Web Admin Console
+- JAWS EPICS Service
+
+There are external services required to be available for the Admin Console and EPICS Service that can be optionally containerized as well, but at JLab we use separately managed shared instances.   You can launch a fully containerized version of JAWS which includes containerized external dependencies in the [JAWS web admin project](https://github.com/jeffersonlab/jaws-admin-gui) and [JAWS epics2kafka project](https://github.com/jeffersonlab/jaws-epics2kafka).  These external services include:
+- Keycloak
+- Oracle RDMS
+- EPICS IOCs
+
+The core JAWS system supports import and export of data from files.   The optional Admin Console adds support for loading and saving from an Oracle database.
+  
+## Release
+The versioned artifact of this project is a set of Docker Compose files which answer the question of which version of each microservice to use together.
+
+## Deploy
+At JLab we use Docker Compose.
+
+See: See [internal docs](https://accwiki.acc.jlab.org/do/view/SysAdmin/JAWS).
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
