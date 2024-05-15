@@ -88,7 +88,7 @@ The versioned artifact of this project is a set of Docker Compose files which an
 ## Deploy
 At JLab we use Docker Compose.
 
-See: See [internal docs](https://accwiki.acc.jlab.org/do/view/SysAdmin/JAWS).
+See: [internal docs](https://accwiki.acc.jlab.org/do/view/SysAdmin/JAWS).
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
