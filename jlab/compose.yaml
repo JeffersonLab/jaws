@@ -138,17 +138,9 @@ services:
       - SCHEMA_REGISTRY=http://registry:8081
 
   admin:
-    image: jeffersonlab/jaws-admin-gui:4.5.0
+    image: jeffersonlab/jaws-admin-gui:4.6.2
     hostname: admin
     container_name: admin
-    healthcheck:
-      test: curl http://localhost:8080 -sf -o /dev/null
-      start_period: 30s
-      start_interval: 5s
-      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
-      interval: 5s
-      timeout: 10s
-      retries: 5
     depends_on:
       jaws:
         condition: service_healthy
@@ -163,5 +155,9 @@ services:
       - KEYCLOAK_RESOURCE=${KEYCLOAK_RESOURCE}
       - KEYCLOAK_SECRET=${KEYCLOAK_SECRET}
       - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL}
+      - ORACLE_PASS=${ORACLE_PASS}
+      - ORACLE_SERVER=${ORACLE_SERVER}
+      - ORACLE_SERVICE=${ORACLE_SERVICE}
+      - ORACLE_USER=${ORACLE_USER}
     volumes:
       - ./admin-config/server.p12:/opt/jboss/wildfly/standalone/configuration/server.p12
