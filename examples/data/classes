@@ -1,1 +1,0 @@
-base={"category": "RF", "priority": "P3_MINOR", "rationale": "Timely operator action required", "correctiveaction": "Call Expert", "pointofcontactusername": "helpdesk", "latchable": true, "filterable": true, "ondelayseconds": 0, "offdelayseconds": 0}

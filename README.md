@@ -73,17 +73,22 @@ The core JAWS application consists of a set of containerized microservices which
 
 Optionally, the following extra containerized services are available:
 - Web Admin Console
-- JAWS EPICS Service
+- JAWS EPICS Services
 
-There are external services required to be available for the Admin Console and EPICS Service that can be optionally containerized as well, but at JLab we use separately managed shared instances.   You can launch a fully containerized version of JAWS which includes containerized external dependencies in the [JAWS web admin project](https://github.com/jeffersonlab/jaws-admin-gui) and [JAWS epics2kafka project](https://github.com/jeffersonlab/jaws-epics2kafka).  These external services include:
+There are external services required to be available for the Admin Console and EPICS Services that can be optionally containerized as well, but at JLab we use separately managed shared instances.   You can launch a fully containerized version of JAWS which includes containerized external dependencies in the [web admin project](https://github.com/jeffersonlab/jaws-admin-gui) and [epics2kafka project](https://github.com/jeffersonlab/jaws-epics2kafka).  These external services include:
 - Keycloak
 - Oracle RDMS
 - EPICS IOCs
 
-The core JAWS system supports import and export of data from files.   The optional Admin Console adds support for loading and saving from an Oracle database.
+The core JAWS system supports import and export of data from files.   The optional Web Admin Console adds support for loading and saving from an Oracle database.
   
 ## Release
 The versioned artifact of this project is a set of Docker Compose files which answer the question of which version of each microservice to use together.
+
+ - [Core compose.yaml](https://raw.githubusercontent.com/JeffersonLab/jaws/main/compose.yaml)
+ - [JLab compose.yaml](https://raw.githubusercontent.com/JeffersonLab/jaws/main/jlab/compose.yaml)
+
+**Note**: You can fetch a specific tagged version by replacing `main` with a semver tag in the URLs above.
 
 ## Deploy
 At JLab we use Docker Compose.
