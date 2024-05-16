@@ -75,7 +75,7 @@ Optionally, the following extra containerized services are available:
 - Web Admin Console
 - JAWS EPICS Services
 
-There are external services required to be available for the Admin Console and EPICS Services that can be optionally containerized as well, but at JLab we use separately managed shared instances.   You can launch a fully containerized version of JAWS which includes containerized external dependencies in the [web admin project](https://github.com/jeffersonlab/jaws-admin-gui) and [epics2kafka project](https://github.com/jeffersonlab/jaws-epics2kafka).  These external services include:
+There are external services required to be available for the Web Admin Console and EPICS Services that can be optionally containerized as well, but at JLab we use separately managed shared instances.   You can launch a fully containerized version of JAWS which includes containerized external dependencies in the [web admin project](https://github.com/jeffersonlab/jaws-admin-gui) and [epics2kafka project](https://github.com/jeffersonlab/jaws-epics2kafka).  These external services include:
 - Keycloak
 - Oracle RDMS
 - EPICS IOCs
