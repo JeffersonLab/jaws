@@ -91,9 +91,13 @@ The versioned artifact of this project is a pair of Docker Compose files which a
 **Note**: You can fetch a specific tagged version by replacing `main` with a semver tag in the URLs above.
 
 ## Deploy
-At JLab we use Docker Compose.
+At JLab this app is found at [ace.jlab.org/jaws](https://ace.jlab.org/jaws) and internally at [acctest.acc.jlab.org/jaws](https://acctest.acc.jlab.org/jaws). However, those servers are proxies for jaws.acc.jlab.org and jawstest.acc.jlab.org respectively. A [deploy](https://raw.githubusercontent.com/JeffersonLab/jaws/main/jlab/deploy.sh) script is provided on each server to automate wget and deploy. Example:
 
-See: [internal docs](https://accwiki.acc.jlab.org/do/view/SysAdmin/JAWS).
+```
+/opt/jaws/deploy.sh v1.2.3
+```
+
+See: [JLab internal docs](https://accwiki.acc.jlab.org/do/view/SysAdmin/JAWS)
 
 ## See Also
  - [Overrides and Effective State](https://github.com/JeffersonLab/jaws/wiki/Overrides-and-Effective-State)
