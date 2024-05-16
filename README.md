@@ -83,7 +83,7 @@ There are external services required to be available for the Web Admin Console a
 The core JAWS system supports import and export of data from files.   The optional Web Admin Console adds support for loading and saving from an Oracle database.
   
 ## Release
-The versioned artifact of this project is a set of Docker Compose files which answer the question of which version of each microservice to use together.
+The versioned artifact of this project is a pair of Docker Compose files which answer the question of which version of each microservice to use together.
 
  - [Core compose.yaml](https://raw.githubusercontent.com/JeffersonLab/jaws/main/compose.yaml)
  - [JLab compose.yaml](https://raw.githubusercontent.com/JeffersonLab/jaws/main/jlab/compose.yaml)
