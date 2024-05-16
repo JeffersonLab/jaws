@@ -138,7 +138,7 @@ services:
       - SCHEMA_REGISTRY=http://registry:8081
 
   admin:
-    image: jeffersonlab/jaws-admin-gui:4.6.3
+    image: jeffersonlab/jaws-admin-gui:4.6.4
     hostname: admin
     container_name: admin
     depends_on:
