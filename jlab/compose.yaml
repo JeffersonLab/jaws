@@ -142,16 +142,7 @@ services:
       - 443:8443
       - 8080:8080
       - 9990:9990
-    environment:
-      - BOOTSTRAP_SERVERS=kafka:9092
-      - SCHEMA_REGISTRY=http://registry:8081
-      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
-      - KEYCLOAK_RESOURCE=${KEYCLOAK_RESOURCE}
-      - KEYCLOAK_SECRET=${KEYCLOAK_SECRET}
-      - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL}
-      - ORACLE_PASS=${ORACLE_PASS}
-      - ORACLE_SERVER=${ORACLE_SERVER}
-      - ORACLE_SERVICE=${ORACLE_SERVICE}
-      - ORACLE_USER=${ORACLE_USER}
+    env_file:
+      - admin.env
     volumes:
       - ./admin-config/server.p12:/opt/jboss/wildfly/standalone/configuration/server.p12
