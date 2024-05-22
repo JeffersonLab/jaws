@@ -100,7 +100,7 @@ services:
       timeout: 10s
       retries: 5
     depends_on:
-      jaws:
+      admin:
         condition: service_healthy
     ports:
       - 8083:8083
@@ -125,7 +125,7 @@ services:
       timeout: 10s
       retries: 5
     depends_on:
-      jaws:
+      admin:
         condition: service_healthy
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
