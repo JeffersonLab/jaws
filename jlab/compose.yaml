@@ -23,6 +23,7 @@ services:
       - KAFKA_CFG_LOG_CLEANER_MAX_COMPACTION_LAG_MS=600000
       - KAFKA_CFG_LOG_CLEANER_MIN_COMPACTION_LAG_MS=300000
       - KAFKA_CFG_LOG_ROLL_MS=300000
+      - KAFKA_CFG_LOG_MESSAGE_TIMESTAMP_TYPE=LogAppendTime
 
   registry:
     image: bitnami/schema-registry:7.4
