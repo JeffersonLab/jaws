@@ -16,3 +16,5 @@ mv /tmp/jaws/service-versions.env ${APP_HOME}
 mv /tmp/jaws/jaws-version.env ${APP_HOME}
 systemctl start jaws
 }
+
+deploy
