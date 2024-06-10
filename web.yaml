@@ -1,0 +1,18 @@
+services:
+  web:
+    image: jeffersonlab/jaws-admin-gui:${WEB_ADMIN_VERSION}
+    hostname: web
+    container_name: web
+    depends_on:
+      cli:
+        condition: service_healthy
+    ports:
+      - 443:8443
+      - 8080:8080
+      - 9990:9990
+    env_file:
+      - web.env
+      - service-versions.env
+      - jaws-version.env
+    volumes:
+      - ./container/web/config/server.p12:/opt/jboss/wildfly/standalone/configuration/server.p12

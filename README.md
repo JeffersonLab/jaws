@@ -54,11 +54,11 @@ docker compose up
 ```
 3. Monitor active alarms
 ```
-docker exec -it jaws list_activations --monitor
+docker exec -it cli list_activations --monitor
 ```
 4. Trip an alarm  
 ```
-docker exec jaws set_activation alarm1
+docker exec cli set_activation alarm1
 ```
 **Note**: The docker-compose services require significant system resources - tested with 4 CPUs and 4GB memory.
 
@@ -69,7 +69,7 @@ The core JAWS application consists of a set of containerized microservices which
 - Kafka
 - Schema Registry
 - Effective Processor
-- Shell Admin Console
+- CLI Admin Console
 
 Optionally, the following extra containerized services are available:
 - Web Admin Console
@@ -83,10 +83,10 @@ There are external services required to be available for the Web Admin Console a
 The core JAWS system supports import and export of data from files.   The optional Web Admin Console adds support for loading and saving from an Oracle database.
   
 ## Release
-The versioned artifact of this project is a pair of Docker Compose files which answer the question of which version of each microservice to use together.
+The versioned artifact of this project is a [versions.env](https://raw.githubusercontent.com/JeffersonLab/jaws/main/versions.env) file that accompanies a set of Docker Compose files which answer the question of which version of each microservice to use together.
 
- - [Core compose.yaml](https://raw.githubusercontent.com/JeffersonLab/jaws/main/compose.yaml)
- - [JLab compose.yaml](https://raw.githubusercontent.com/JeffersonLab/jaws/main/jlab/compose.yaml)
+ - [compose.yaml](https://raw.githubusercontent.com/JeffersonLab/jaws/main/compose.yaml)
+ - [jlab.yaml](https://raw.githubusercontent.com/JeffersonLab/jaws/main/jlab.yaml)
 
 **Note**: You can fetch a specific tagged version by replacing `main` with a semver tag in the URLs above.
 

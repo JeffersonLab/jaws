@@ -1,6 +1,6 @@
 services:
   kafka:
-    image: bitnami/kafka:3.5.0
+    image: bitnami/kafka:${KAFKA_VERSION}
     hostname: kafka
     container_name: kafka
     healthcheck:
@@ -26,7 +26,7 @@ services:
       - KAFKA_CFG_LOG_MESSAGE_TIMESTAMP_TYPE=LogAppendTime
 
   registry:
-    image: bitnami/schema-registry:7.4
+    image: bitnami/schema-registry:${REGISTRY_VERSION}
     hostname: registry
     container_name: registry
     healthcheck:
@@ -46,12 +46,12 @@ services:
       - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
       - SCHEMA_REGISTRY_KAFKA_BROKERS=PLAINTEXT://kafka:9092
 
-  jaws:
-    image: jeffersonlab/jaws-libp:4.8.0
+  cli:
+    image: jeffersonlab/jaws-libp:${CLI_ADMIN_VERSION}
     tty: true
     stdin_open: true
-    hostname: jaws
-    container_name: jaws
+    hostname: cli
+    container_name: cli
     healthcheck:
       test: test $(list_schemas | wc -l) -gt 20
       start_period: 30s
@@ -69,10 +69,10 @@ services:
       - SCHEMA_REGISTRY=http://registry:8081
       - LOGLEVEL=INFO
 
-  effective:
-    image: jeffersonlab/jaws-effective-processor:4.4.0
-    hostname: effective
-    container_name: effective
+  processor:
+    image: jeffersonlab/jaws-effective-processor:${PROCESSOR_VERSION}
+    hostname: processor
+    container_name: processor
     healthcheck:
       test: test $(ps | grep jaws | wc -l) -gt 1
       start_period: 30s
@@ -82,68 +82,8 @@ services:
       timeout: 10s
       retries: 5
     depends_on:
-      jaws:
+      cli:
         condition: service_healthy
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - SCHEMA_REGISTRY=http://registry:8081
-
-  epics2kafka:
-    image: jeffersonlab/jaws-epics2kafka:4.6.0
-    hostname: epics2kafka
-    container_name: epics2kafka
-    healthcheck:
-      test: test $(/scripts/show-status.sh | grep RUNNING | wc -l) -eq 2
-      start_period: 30s
-      start_interval: 5s
-      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
-      interval: 5s
-      timeout: 10s
-      retries: 5
-    depends_on:
-      admin:
-        condition: service_healthy
-    ports:
-      - 8083:8083
-    environment:
-      - BOOTSTRAP_SERVERS=kafka:9092
-      - CONFIG_STORAGE_TOPIC=connect-configs
-      - OFFSET_STORAGE_TOPIC=connect-offsets
-      - STATUS_STORAGE_TOPIC=connect-status
-    volumes:
-      - ./connect-config:/config
-
-  registrations2epics:
-    image: jeffersonlab/jaws-registrations2epics:4.5.0
-    hostname: registrations2epics
-    container_name: registrations2epics
-    healthcheck:
-      test: test $(ps | grep jaws | wc -l) -gt 1
-      start_period: 30s
-      start_interval: 5s
-      #      interval: 30s      # waiting for https://github.com/docker/compose/issues/10830
-      interval: 5s
-      timeout: 10s
-      retries: 5
-    depends_on:
-      admin:
-        condition: service_healthy
-    environment:
-      - BOOTSTRAP_SERVERS=kafka:9092
-      - SCHEMA_REGISTRY=http://registry:8081
-
-  admin:
-    image: jeffersonlab/jaws-admin-gui:4.7.0
-    hostname: admin
-    container_name: admin
-    depends_on:
-      jaws:
-        condition: service_healthy
-    ports:
-      - 443:8443
-      - 8080:8080
-      - 9990:9990
-    env_file:
-      - admin.env
-    volumes:
-      - ./admin-config/server.p12:/opt/jboss/wildfly/standalone/configuration/server.p12

@@ -1,6 +1,8 @@
 include:
   - path:
       - core.yaml
+      - epics.yaml
+      - web.yaml
     env_file:
       - service-versions.env
       - host.env
