@@ -20,7 +20,7 @@ An alarm system built on [Kafka](https://kafka.apache.org/) that supports plugga
 ## Overview
 The JAWS alarm system is composed primarily of two subsystems: registrations and notifications.  
 
-The inventory of all possible alarms (the master alarm database) is stored in Kafka as alarm instances, and these instances are organized into classes so that some properties are provided by their assigned alarm class.  The alarm instances are maintained on the _alarm-instances_ topic.  Alarm classes define group-shared properties such as corrective action and rationale and are persisted on the _alarm-classes_ topic.   The JAWS effective processor joins classes to instances to form effective alarm registrations on the _effective-registrations_ topic.   
+The inventory of all possible alarms (the master alarm database) is stored in Kafka as alarm instances, and each is assigned an alarm action.  The alarm instances are maintained on the _alarms_ topic.  Alarm actions define group-shared properties such as corrective action and rationale and are persisted on the _alarm-actions_ topic.   The JAWS effective processor joins actions to alarms to form effective alarm registrations on the _effective-registrations_ topic.   
 
 Activations indicate an alarm is annunciating (active), and timely operator action is required.  Alarms are triggered active by producing messages on the _alarm-activations_ topic.  An alarm can be overridden to either suppress or incite the active state by placing a message on the _alarm-overrides_ topic.  The effective notification state considering both activations and overrides is calculated by JAWS from _activations_ and _overrides_ and made available on the _effective-notifications_ topic. 
 
@@ -29,7 +29,7 @@ Both effective registrations and effective notifications are combined by the JAW
 **Apps**
 - [jaws-effective-processor](https://github.com/JeffersonLab/jaws-effective-processor): Process classes and overrides and provide effective state on the _effective-registrations_, _effective-notifications_, and _effective-alarms_ topics
 - [jaws-admin-gui](https://github.com/JeffersonLab/jaws-admin-gui): GUI for managing alarm registrations
-- [jaws-operator-gui](https://github.com/JeffersonLab/graphical-alarm-client): GUI for monitoring alarms and managing overrides
+- Operator Desktop App: GUI for monitoring alarms and managing overrides
 
 **APIs**
 - [jaws-libj](https://github.com/JeffersonLab/jaws-libj): Java API library for JAWS
