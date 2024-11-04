@@ -28,8 +28,7 @@ Both effective registrations and effective notifications are combined by the JAW
 
 **Apps**
 - [jaws-effective-processor](https://github.com/JeffersonLab/jaws-effective-processor): Process classes and overrides and provide effective state on the _effective-registrations_, _effective-notifications_, and _effective-alarms_ topics
-- [jaws-web](https://github.com/JeffersonLab/jaws-web): GUI for managing alarm registrations
-- Operator Desktop App: GUI for monitoring alarms and managing overrides
+- [jaws-web](https://github.com/JeffersonLab/jaws-web): Web app for managing alarm notifications and inventory
 
 **APIs**
 - [jaws-libj](https://github.com/JeffersonLab/jaws-libj): Java API library for JAWS
