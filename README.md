@@ -28,7 +28,7 @@ Both effective registrations and effective notifications are combined by the JAW
 
 **Apps**
 - [jaws-effective-processor](https://github.com/JeffersonLab/jaws-effective-processor): Process classes and overrides and provide effective state on the _effective-registrations_, _effective-notifications_, and _effective-alarms_ topics
-- [jaws-admin-gui](https://github.com/JeffersonLab/jaws-admin-gui): GUI for managing alarm registrations
+- [jaws-web](https://github.com/JeffersonLab/jaws-web): GUI for managing alarm registrations
 - Operator Desktop App: GUI for monitoring alarms and managing overrides
 
 **APIs**
@@ -75,7 +75,7 @@ Optionally, the following extra containerized services are available:
 - Web Admin Console
 - JAWS EPICS Services
 
-There are external services required to be available for the Web Admin Console and EPICS Services that can be optionally containerized as well, but at JLab we use separately managed shared instances.   You can launch a fully containerized version of JAWS which includes containerized external dependencies in the [web admin project](https://github.com/jeffersonlab/jaws-admin-gui) and [epics2kafka project](https://github.com/jeffersonlab/jaws-epics2kafka).  These external services include:
+There are external services required to be available for the Web Admin Console and EPICS Services that can be optionally containerized as well, but at JLab we use separately managed shared instances.   You can launch a fully containerized version of JAWS which includes containerized external dependencies in the [web admin project](https://github.com/jeffersonlab/jaws-web) and [epics2kafka project](https://github.com/jeffersonlab/jaws-epics2kafka).  These external services include:
 - Keycloak
 - Oracle RDMS
 - EPICS IOCs
