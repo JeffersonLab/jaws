@@ -1,6 +1,6 @@
 services:
   web:
-    image: jeffersonlab/jaws-admin-gui:${WEB_ADMIN_VERSION}
+    image: jeffersonlab/jaws-web:${WEB_VERSION}
     hostname: web
     container_name: web
     depends_on:
