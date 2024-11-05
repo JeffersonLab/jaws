@@ -74,12 +74,12 @@ Optionally, the following extra containerized services are available:
 - Web App
 - JAWS EPICS Services
 
-There are external services required to be available for the Web Admin Console and EPICS Services that can be optionally containerized as well, but at JLab we use separately managed shared instances.   You can launch a fully containerized version of JAWS which includes containerized external dependencies in the [web admin project](https://github.com/jeffersonlab/jaws-web) and [epics2kafka project](https://github.com/jeffersonlab/jaws-epics2kafka).  These external services include:
+There are external services required to be available for the Web app and EPICS Services that can be optionally containerized as well, but at JLab we use separately managed shared instances.   You can launch a fully containerized version of JAWS which includes containerized external dependencies in the [web app project](https://github.com/jeffersonlab/jaws-web) and [epics2kafka project](https://github.com/jeffersonlab/jaws-epics2kafka).  These external services include:
 - Keycloak
 - Oracle RDMS
 - EPICS IOCs
 
-The core JAWS system supports import and export of data from files.   The optional Web Admin Console adds support for loading and saving from an Oracle database.
+The core JAWS system supports import and export of data from files.   The optional Web app adds support for loading and saving from an Oracle database.
   
 ## Release
 Bump the version number in the `jaws-version.env` file and commit and push to GitHub (using Semantic Versioning).  The release GitHub Action should run automatically to tag the source and create release notes summarizing any pull requests. Edit the release notes to add any missing details.
