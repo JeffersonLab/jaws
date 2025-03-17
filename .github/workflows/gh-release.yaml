@@ -12,12 +12,16 @@ on:
       semvertag:
         description: "The semantic versioning tag name created"
         value: ${{ jobs.release.outputs.semvertag }}
+      semver:
+        description: "The semantic versioning name created (no prefix)"
+        value: ${{ jobs.release.outputs.semver }}
 
 jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
       semvertag: ${{ steps.getver.outputs.semvertag }}
+      semver: ${{ jobs.release.outputs.semver }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,8 +31,18 @@ jobs:
           . jaws-version.env
           echo "VERSION=v$JAWS_VERSION" >> $GITHUB_ENV
           echo "semvertag=v$JAWS_VERSION" >> $GITHUB_OUTPUT
+          echo "semver=$JAWS_VERSION" >> $GITHUB_OUTPUT
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
           tag_name: ${{ env.VERSION }}
+  acctest_deploy:
+    needs:
+      - release
+    uses: jeffersonlab/general-workflows/.github/workflows/jlab-deploy-app.yaml@v2
+    with:
+      app: jaws
+      env: jawstest
+      ver: ${{ needs.release.outputs.semver }}
+    secrets: inherit
