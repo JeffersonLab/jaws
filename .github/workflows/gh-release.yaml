@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       semvertag: ${{ steps.getver.outputs.semvertag }}
-      semver: ${{ jobs.release.outputs.semver }}
+      semver: ${{ steps.getver.outputs.semver }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
